@@ -1,5 +1,5 @@
 #include "pfb.h"
-
+#include <iostream>
 #include <assert.h>
 #include <math.h>
 
@@ -13,7 +13,7 @@ PolyphaseFilterBank::PolyphaseFilterBank (double sampling_rate_, int Nfft_, int 
   assert (Nfft % 2 == 0);
   Ncomplex = Nfft / 2 + 1;
   weights = new float*[Ntaps];
-  work = fftwf_alloc_real (Ncomplex);
+  work = fftwf_alloc_real (Nfft);
   for (size_t i=0; i<Ntaps; i++) {
     weights[i] = fftwf_alloc_real (Nfft);
   }
@@ -21,11 +21,14 @@ PolyphaseFilterBank::PolyphaseFilterBank (double sampling_rate_, int Nfft_, int 
   double L = Ntaps * Nfft;
   for (size_t i=0; i<Ntaps; i++) {
     for (size_t j=0; j<Nfft; j++) {
-      double x = (i*Nfft+j - L/2)/Nfft; // this is almost certainly wrong
+      // replaces this with a proper PI
+      double x = 3.1415*(i*Nfft+j - L/2)/Nfft; 
       if (x==0)
 	weights [i][j] = 1;
       else
 	weights [i][j] = sin(x)/x;
+      std::cout << i << " " << j <<  " " <<weights[i][j] <<std::endl;
+
       // add window function
     }
   }
@@ -49,7 +52,7 @@ void PolyphaseFilterBank::setup_plan (fftwf_complex *data_out_example) {
 
 
 void PolyphaseFilterBank::process (float **data_in, fftwf_complex *data_out) {
-  for (size_t i=0;i<Nfft;i++) work[i] = 0.0;
+  for (size_t j=0;j<Nfft;j++) work[j] = 0.0;
 
   for (size_t i=0; i<Ntaps; i++) {
     for (size_t j=0; j<Nfft; j++) {
