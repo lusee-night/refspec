@@ -1,5 +1,4 @@
 #include "pfb.h"
-#include <iostream>
 #include <assert.h>
 #include <math.h>
 
@@ -22,13 +21,11 @@ PolyphaseFilterBank::PolyphaseFilterBank (double sampling_rate_, int Nfft_, int 
   for (size_t i=0; i<Ntaps; i++) {
     for (size_t j=0; j<Nfft; j++) {
       // replaces this with a proper PI
-      double x = 3.1415*(i*Nfft+j - L/2)/Nfft; 
+      double x = M_PI*(i*Nfft+j - L/2)/Nfft; 
       if (x==0)
 	weights [i][j] = 1;
       else
 	weights [i][j] = sin(x)/x;
-      std::cout << i << " " << j <<  " " <<weights[i][j] <<std::endl;
-
       // add window function
     }
   }
