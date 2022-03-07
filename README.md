@@ -9,7 +9,7 @@ tar xfvz fftw-3.3.10.tar.gz
 cd fftw-3.3.10
 
 # Build two versions of the library, with
-# and w/o fload option enabled:
+# and w/o float option enabled:
 
 ./configure --enable-float
 make -j4 # if you have at least 4 cores that helps speed
