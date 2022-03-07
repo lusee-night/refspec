@@ -1,6 +1,7 @@
 CXX = g++
 CXXFLAGS = -Ofast
 
+# -L/usr/local/lib/
 FFTW_LINK = -lfftw3 -lfftw3f 
 LINKFLAGS = -static
 
