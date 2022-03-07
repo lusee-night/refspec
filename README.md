@@ -1,2 +1,4 @@
-# refspec
-LuSEE-Night Reference Spectrometer
+# refspec -- the LuSEE-Night Reference Spectrometer
+
+Work in progress
+
