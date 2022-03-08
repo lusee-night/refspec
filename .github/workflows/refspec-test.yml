@@ -1,0 +1,21 @@
+name: luseepy-test
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Enable manual activation, too
+  workflow_dispatch:
+jobs:
+  hello-world:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - uses: actions/checkout@v2
+      - run: which g++
+      - run: date
+      - run: echo 'end'
+
