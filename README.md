@@ -1,7 +1,7 @@
 # refspec -- the LuSEE-Night Reference Spectrometer
 
 
-## Installing the FFTW package
+## Installing the FFTW package locally
 
 ```bash
 wget http://www.fftw.org/fftw-3.3.10.tar.gz
@@ -19,5 +19,10 @@ make install
 make -j4 # if you have at least 4 cores that helps speed
 make install
 ```
+
+## Docker
+
+A Docker image is in preparation to facilitate testing, see the ```docker```
+folder in this repo.
 
 
