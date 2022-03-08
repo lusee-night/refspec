@@ -16,5 +16,5 @@ jobs:
         uses: actions/checkout@v2
       - run: ls ${{ github.workspace }}
       - run: which g++
-      - run: make
+#      - run: make
       - run: echo 'end'
