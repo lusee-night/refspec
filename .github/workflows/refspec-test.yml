@@ -9,14 +9,12 @@ on:
   # Enable manual activation, too
   workflow_dispatch:
 jobs:
-  hello-world:
+  refcpec-build:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - name: Checkout
         uses: actions/checkout@v2
       - run: ls ${{ github.workspace }}
       - run: which g++
-      - run: date
+      - run: make
       - run: echo 'end'
