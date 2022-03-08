@@ -1,0 +1,26 @@
+#
+# Basic Dockerfile used to build a Debian image
+# in which to build refspec
+# 
+# This file is to be referenced when building the luseepy
+# images from a folder one level above. Example:
+#
+# sudo docker build -f docker/Dockerfile-myfile -t MYTAGNAME .
+#
+
+FROM python:3.10.1-bullseye
+
+WORKDIR /fftw
+
+# We may have a few versions of requirements.
+# Reference will be given by the name, to simplify
+# experiments with configuration.
+
+RUN g++ --version
+
+RUN wget http://www.fftw.org/fftw-3.3.10.tar.gz && tar xfvz fftw-3.3.10.tar.gz
+RUN cd fftw-3.3.10 && ./configure --enable-float && make && make install
+RUN cd fftw-3.3.10 && ./configure && make && make install
+
+WORKDIR /user
+
