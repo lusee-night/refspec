@@ -18,5 +18,6 @@ jobs:
         # Check later why this doesn't work anymore: - run: ls ${{ github.workspace }}
       - run: pwd
       - run: ls -l
-#      - run: make
+      - run: make
+      - run: ls -l test
       - run: echo 'end'
