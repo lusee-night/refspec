@@ -1,4 +1,8 @@
 #pragma once
+#include "pfb.h"
+
+#include <string>
+#include <cstdint>
 
 #define MAX_CHANNELS 4
 #define MAX_CALIB_SIGS 2
@@ -17,8 +21,12 @@ enum spec_mode_t {
 class SpecConfig {
 
  public:
-  LuSEESpecConfig();
+  // default constructor wiht some same defaults
+  SpecConfig();
 
+  // load from a file
+  SpecConfig(std::string filename);
+  
   
  private:
 
@@ -41,8 +49,9 @@ class SpecConfig {
   uint32_t average_samples;
   
   // calibrator detector_setup
+  int8_t Ncalib;
   uint32_t calibrator_cycles [MAX_CALIB_SIGS];
   
-}
+};
  
   

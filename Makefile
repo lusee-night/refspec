@@ -4,10 +4,10 @@ CXXFLAGS = -Ofast
 FFTW_LINK = -lfftw3 -lfftw3f 
 LINKFLAGS = -static
 
-SOURCES = src/pfb.cpp
+SOURCES = src/pfb.cpp src/SpecConfig.cpp
 OBJS = $(SOURCES:.cpp=.o)
 
-TEST_SOURCES = test/test_pfb.cpp
+TEST_SOURCES = test/test_pfb.cpp 
 TEST_EXECS = $(TEST_SOURCES:.cpp=.out)
 
 LIBRARY = refspec.a
