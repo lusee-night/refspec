@@ -32,7 +32,7 @@ class SpecConfig {
 
   // spectrometer mode
   spec_mode_t mode;
-  
+
   // number of channels and config
   int8_t nchannels;
   int8_t plus_channel[MAX_CHANNELS]; // ADC for channel i takes plus_channel[i]-minus_channel[i]

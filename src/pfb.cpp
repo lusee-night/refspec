@@ -2,11 +2,10 @@
 #include <assert.h>
 #include <math.h>
 
-PolyphaseFilterBank::PolyphaseFilterBank (double sampling_rate_, int Nfft_, int Ntaps_, window_t window_) {
-  sampling_rate = sampling_rate_;
-  Nfft = Nfft_;
-  Ntaps = Ntaps_;
-  window = window_;
+PolyphaseFilterBank::PolyphaseFilterBank (double sampling_rate, int Nfft, int Ntaps, window_t window) :
+  sampling_rate(sampling_rate),Nfft(Nfft), Ntaps(Ntaps), window(window)
+
+{
   // nothing else implemented at the moment
   assert ( window == None);
   assert (Nfft % 2 == 0);
@@ -36,6 +35,7 @@ PolyphaseFilterBank::~PolyphaseFilterBank () {
   if (have_plan)
     fftwf_destroy_plan(plan);
 }
+
 
 void PolyphaseFilterBank::setup_plan (fftwf_complex *data_out_example) {
     align_out = fftwf_alignment_of((float*)data_out_example);
