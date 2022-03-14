@@ -34,6 +34,9 @@ PolyphaseFilterBank::PolyphaseFilterBank (double sampling_rate, int Nfft, int Nt
 PolyphaseFilterBank::~PolyphaseFilterBank () {
   if (have_plan)
     fftwf_destroy_plan(plan);
+  fftwf_free (work);
+  for (size_t i=0; i<Ntaps; i++) fftw_free(weights[i]);
+  delete weights;
 }
 
 

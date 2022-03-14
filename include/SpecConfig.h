@@ -34,7 +34,7 @@ class SpecConfig {
   spec_mode_t mode;
 
   // number of channels and config
-  int8_t nchannels;
+  int8_t Nchannels;
   int8_t plus_channel[MAX_CHANNELS]; // ADC for channel i takes plus_channel[i]-minus_channel[i]
   int8_t minus_channel[MAX_CHANNELS]; // input to minus. Use -1 for ground;
   
@@ -51,7 +51,8 @@ class SpecConfig {
   // calibrator detector_setup
   int8_t Ncalib;
   uint32_t calibrator_cycles [MAX_CALIB_SIGS];
-  
+  friend class SpecOutput;
+
 };
  
   
