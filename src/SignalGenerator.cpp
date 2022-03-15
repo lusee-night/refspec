@@ -2,9 +2,9 @@
 #include "pfb.h"
 #include <math.h>
 
-SignalGenerator::SignalGenerator (uint32_t block_size, uint32_t Nblocks, float frequency,
+SignalGenerator::SignalGenerator (size_t block_size, size_t Nchannels, size_t Nblocks, float frequency,
 				  float sampling_rate, float Ampl, float noise_rms) :
-  SignalSource(block_size), Nblocks(Nblocks), frequency(frequency), sampling_rate(sampling_rate),
+  SignalSource(block_size, Nchannels), Nblocks(Nblocks), frequency(frequency), sampling_rate(sampling_rate),
   Ampl(Ampl), noise_rms(noise_rms)
 {
   buffer = fftwf_alloc_real (block_size * Nblocks);
@@ -13,11 +13,11 @@ SignalGenerator::SignalGenerator (uint32_t block_size, uint32_t Nblocks, float f
 }
 
 
-float* SignalGenerator::next_block() {
+void SignalGenerator::next_block(float **place) {
   float *cur = &(buffer[cur_block * block_size]);
   if ((cur_block == 0) && (phase_offset > 0)) fill_buffer();
   cur_block = (cur_block+1) % Nblocks;;
-  return cur;
+  
 }
   
 

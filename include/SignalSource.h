@@ -1,17 +1,18 @@
 #pragma once
 #include <cstdint>
-
+#include "SpecConfig.h"
 
 class SignalSource {
 
  public:
-  SignalSource(uint32_t block_size); 
+  SignalSource(size_t block_size, size_t nchannels) :
+    block_size(block_size), nchannels(nchannels){}
 
-  virtual float* next_block(); 
+  virtual void next_block(float **place); 
 
-  uint32_t get_block_size() const {return block_size;}
+  size_t get_block_size() const {return block_size;}
   
  protected:
-  uint32_t block_size;
+  size_t block_size, nchannels;
 
 };

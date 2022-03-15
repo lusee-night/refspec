@@ -1,18 +1,29 @@
 #pragma once
 
 #include "SpecConfig.h"
+#include "SpecOutput.h"
+#include "SignalSource.h"
 
 class RefSpectrometer{
 
 
  public:
-  RefSpectrometer (SingnalSource *source, SignalSink *sink, SpecConfig config);
+  RefSpectrometer (SignalSource *source, SpecConfig const *config);
 
   // run for nblock, forever if 0
-  void run (int nblocks);
+  SpecOutput run (int nblocks=0);
 
 
-}
+private:
+
+  SignalSource *source;
+  SpecConfig const *c;
+  float ***buffer; // nchan x Ntaps x Nfft
+  //  float *data_buffer[
+  PolyphaseFilterBank pfb;
+  fftwf_complex ***pfb_out; // BlockSize x Nchannels x Ncomplex
+  size_t counter;
+};
   
 
 			 

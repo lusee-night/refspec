@@ -6,14 +6,14 @@
 
 class SignalGenerator: public SignalSource {
 
-  SignalGenerator(uint32_t block_size, uint32_t Nblocks, float frequency,
+  SignalGenerator(size_t block_size, size_t Nchannels, size_t Nblocks, float frequency,
 	       float sampling_rate, float Ampl, float noise_rms);
 
-  virtual float* next_block(); 
+  virtual void next_block(float **place); 
 
  private:
   float *buffer;
-  uint32_t Nblocks;
+  size_t Nblocks;
   double frequency, sampling_rate, Ampl, noise_rms;
   double phase_offset;
   size_t cur_block ;

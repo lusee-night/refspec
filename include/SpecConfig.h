@@ -6,6 +6,8 @@
 
 #define MAX_CHANNELS 4
 #define MAX_CALIB_SIGS 2
+#define MAX_TAPS 128
+
 
 // enumeration of possible modes spectrometer can be in 
 enum spec_mode_t {
@@ -34,25 +36,25 @@ class SpecConfig {
   spec_mode_t mode;
 
   // number of channels and config
-  int8_t Nchannels;
-  int8_t plus_channel[MAX_CHANNELS]; // ADC for channel i takes plus_channel[i]-minus_channel[i]
-  int8_t minus_channel[MAX_CHANNELS]; // input to minus. Use -1 for ground;
+  size_t Nchannels;
+  int plus_channel[MAX_CHANNELS]; // ADC for channel i takes plus_channel[i]-minus_channel[i]
+  int minus_channel[MAX_CHANNELS]; // input to minus. Use -1 for ground;
   
 
   // PFB engine setup
   double sampling_rate;
-  uint32_t Nfft;
-  uint16_t Ntaps;
+  size_t Nfft;
+  size_t Ntaps;
   window_t window;
 
-  // average
-  uint32_t average_samples;
+  // average size
+  uint32_t BlockSize; 
   
   // calibrator detector_setup
-  int8_t Ncalib;
-  uint32_t calibrator_cycles [MAX_CALIB_SIGS];
+  size_t Ncalib;
+  size_t calibrator_cycles [MAX_CALIB_SIGS];
   friend class SpecOutput;
-
+  friend class RefSpectrometer;
 };
  
   

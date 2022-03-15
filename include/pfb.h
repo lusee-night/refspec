@@ -20,6 +20,8 @@ class PolyphaseFilterBank {
   // process filter for a vector [Ntaps][Nfft] sized into [Nfft//2+1] output
   void process (float **data_in, fftwf_complex *data_out);
 
+  int get_Ncomplex() { return Ncomplex; }
+  
  private:
 
   double sampling_rate; 

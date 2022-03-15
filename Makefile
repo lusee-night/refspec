@@ -4,7 +4,9 @@ CXXFLAGS = -Ofast
 FFTW_LINK = -lfftw3 -lfftw3f 
 LINKFLAGS = -static
 
-SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp 
+SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp \
+          src/RefSpectrometer.cpp
+
 OBJS = $(SOURCES:.cpp=.o)
 
 TEST_SOURCES = test/test_pfb.cpp 
