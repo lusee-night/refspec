@@ -29,7 +29,11 @@ class SpecConfig {
   // load from a file
   SpecConfig(std::string filename);
   
-  
+
+  // getter functions
+  size_t get_Nfft() const {return Nfft;}
+  size_t get_Nchannels() const {return Nchannels;}
+  double get_sampling_rate() const {return sampling_rate;}
  private:
 
   // spectrometer mode
@@ -48,7 +52,7 @@ class SpecConfig {
   window_t window;
 
   // average size
-  uint32_t BlockSize; 
+  uint32_t AverageSize; 
   
   // calibrator detector_setup
   size_t Ncalib;

@@ -10,7 +10,8 @@ SpecOutput::SpecOutput (SpecConfig const *config) : mode(config->mode),
      break;
    case production:
      avg_pspec = new float*[Nspec];
-     for (size_t i=0;i<Nspec;i++) avg_pspec[i] = new float[Nbins];
+     for (size_t i=0;i<Nspec;i++) 
+       avg_pspec[i] = new float[Nbins];
      // add calibration thing
      break;
    default:

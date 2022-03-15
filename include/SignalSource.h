@@ -8,7 +8,7 @@ class SignalSource {
   SignalSource(size_t block_size, size_t nchannels) :
     block_size(block_size), nchannels(nchannels){}
 
-  virtual void next_block(float **place); 
+  virtual void next_block(float **place) = 0; 
 
   size_t get_block_size() const {return block_size;}
   

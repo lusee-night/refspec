@@ -13,7 +13,6 @@ class RefSpectrometer{
   // run for nblock, forever if 0
   SpecOutput run (int nblocks=0);
 
-
 private:
 
   SignalSource *source;
@@ -23,6 +22,10 @@ private:
   PolyphaseFilterBank pfb;
   fftwf_complex ***pfb_out; // BlockSize x Nchannels x Ncomplex
   size_t counter;
+
+  SpecOutput process_output(); 
+
+
 };
   
 

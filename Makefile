@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Ofast
+CXXFLAGS = -Ofast -g
 
 FFTW_LINK = -lfftw3 -lfftw3f 
 LINKFLAGS = -static
@@ -9,7 +9,7 @@ SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.
 
 OBJS = $(SOURCES:.cpp=.o)
 
-TEST_SOURCES = test/test_pfb.cpp 
+TEST_SOURCES = test/test_pfb.cpp test/test_spectro.cpp
 TEST_EXECS = $(TEST_SOURCES:.cpp=.out)
 
 LIBRARY = refspec.a
