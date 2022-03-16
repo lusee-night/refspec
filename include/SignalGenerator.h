@@ -10,6 +10,8 @@ public:
   SignalGenerator(size_t block_size, size_t Nchannels, size_t Nblocks, float frequency,
 	       float sampling_rate, float Ampl, float noise_rms);
 
+  ~SignalGenerator();
+  
   virtual void next_block(float **place); 
 
 private:

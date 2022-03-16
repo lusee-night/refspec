@@ -20,21 +20,7 @@ enum spec_mode_t {
 };
 
 
-class SpecConfig {
-
- public:
-  // default constructor wiht some same defaults
-  SpecConfig();
-
-  // load from a file
-  SpecConfig(std::string filename);
-  
-
-  // getter functions
-  size_t get_Nfft() const {return Nfft;}
-  size_t get_Nchannels() const {return Nchannels;}
-  double get_sampling_rate() const {return sampling_rate;}
- private:
+struct  SpecConfig {
 
   // spectrometer mode
   spec_mode_t mode;
@@ -57,8 +43,16 @@ class SpecConfig {
   // calibrator detector_setup
   size_t Ncalib;
   size_t calibrator_cycles [MAX_CALIB_SIGS];
-  friend class SpecOutput;
-  friend class RefSpectrometer;
+
+
+  // notch filter for picket fence
+  bool notch;
+
+ public:
+  // default constructor with some same defaults
+  SpecConfig();
+
+  double fundamental_frequency() {return sampling_rate/Nfft;} 
 };
  
   

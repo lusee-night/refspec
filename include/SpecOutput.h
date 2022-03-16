@@ -2,22 +2,18 @@
 
 #include "SpecConfig.h"
 
-class SpecOutput {
+struct SpecOutput {
 
-public:
-  SpecOutput(): avg_pspec(NULL) {};
-  SpecOutput(SpecConfig const *config);
-
-  ~SpecOutput();
-
-private:
   spec_mode_t mode;
-  int8_t Nchannels, Nspec, Nbins;
-  uint32_t Nfft;
+  size_t Nchannels, Nspec, Nbins;
+  size_t Nfft;
 
   float **avg_pspec;
 
-  friend class RefSpectrometer;
-  // float **calib; //comes later
+  SpecOutput(): constructed (false) {};
+  SpecOutput(SpecConfig const *config);
+  ~SpecOutput();
 
+private:
+  bool constructed;
 };

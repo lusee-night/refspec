@@ -1,9 +1,11 @@
 #include "SpecConfig.h"
 
-SpecConfig::SpecConfig() :
-  mode (production), Nchannels(1), sampling_rate(1e8), Nfft(4096),
-  Ntaps(8), window(None), AverageSize(64), Ncalib(0)
+SpecConfig::SpecConfig() :  mode (production), Nchannels(1), sampling_rate(1e8), Nfft(4096),
+			    Ntaps(8), window(None), AverageSize(64), Ncalib(0), notch(false)
 {
-  plus_channel[0] = 0;
-  minus_channel[0] = -1;
+  for (size_t i=0;i<MAX_CHANNELS;i++) {
+    plus_channel[i] = i;
+    minus_channel[i] = -1;
+ }
+
 }

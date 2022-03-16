@@ -11,8 +11,10 @@ class RefSpectrometer{
   RefSpectrometer (SignalSource *source, SpecConfig const *config);
 
   // run for nblock, forever if 0
-  SpecOutput run (int nblocks=0);
+  void run (SpecOutput *res, int nblocks=0);
 
+  size_t blocks_processed() { return counter; }
+  
 private:
 
   SignalSource *source;
@@ -23,7 +25,7 @@ private:
   fftwf_complex ***pfb_out; // BlockSize x Nchannels x Ncomplex
   size_t counter;
 
-  SpecOutput process_output(); 
+  void process_output(SpecOutput *res); 
 
 
 };

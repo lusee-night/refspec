@@ -1,9 +1,11 @@
 #include "SpecOutput.h"
-#include "assert.h"
+#include <assert.h>
+#include <iostream>
 
 SpecOutput::SpecOutput (SpecConfig const *config) : mode(config->mode),
- Nchannels(config->Nchannels), Nfft(config->Nfft) {
-   Nspec = Nchannels*Nchannels; // think about matrix;
+    Nchannels(config->Nchannels), Nfft(config->Nfft), constructed(true) {
+  //std::cout << "constructing"<<std::endl;
+  Nspec = Nchannels*Nchannels; // think about matrix;
    Nbins = Nfft / 2 + 1;
    switch (mode) {
    case idle:
@@ -20,6 +22,14 @@ SpecOutput::SpecOutput (SpecConfig const *config) : mode(config->mode),
 }
 
 SpecOutput::~SpecOutput() {
-  for (size_t i=0;i<Nspec;i++) delete avg_pspec[i];
-  delete avg_pspec;
+  //std::cout << "deconstructing"<<constructed<<std::endl;
+  if (constructed) {
+    switch (mode) {
+    case idle:
+      break;
+    case production:
+      for (size_t i=0;i<Nspec;i++) delete avg_pspec[i];
+      delete avg_pspec;
+   }
+  }
 }
