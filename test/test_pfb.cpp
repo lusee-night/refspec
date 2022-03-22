@@ -16,11 +16,11 @@ int main() {
   P.setup_plan(data_out);
 
 
-  for (double freq = 3; freq<7; freq+=0.01) { 
+  for (double freq = 3; freq<7; freq+=0.01) {
     for (size_t j=0;j<NTAPS;j++) {
       for (size_t i=0;i<NFFT;i++) {
 	float x = j*NFFT+i;
-	data[j][i] = cos(x*freq*(2*M_PI)/NFFT);     
+	data[j][i] = cos(x*freq*(2*M_PI)/NFFT);
       }
     }
     P.process(data, data_out);

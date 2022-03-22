@@ -2,7 +2,7 @@
 
 #include<fftw3.h>
 
-enum window_t { None, Hanning, Hamming };
+enum window_t { None, Hanning, Hamming, BlackmanNuttall };
 
 class PolyphaseFilterBank {
 
@@ -14,17 +14,17 @@ class PolyphaseFilterBank {
 
   // Destructor
   ~PolyphaseFilterBank();
-  
+
   // must call once to set up fftw plan
   void setup_plan (fftwf_complex *data_out_example);
   // process filter for a vector [Ntaps][Nfft] sized into [Nfft//2+1] output
   void process (float **data_in, fftwf_complex *data_out);
 
   int get_Ncomplex() { return Ncomplex; }
-  
+
  private:
 
-  double sampling_rate; 
+  double sampling_rate;
   int Nfft, Ntaps, Ncomplex;
   window_t window;
   float **weights;
@@ -33,4 +33,3 @@ class PolyphaseFilterBank {
   bool have_plan;
   int align_out;
 };
-

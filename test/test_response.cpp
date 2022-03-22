@@ -22,19 +22,23 @@ int main() {
   float noiseA = 0.0;
   double central = 10; // doesn't really matter
 
-  for (size_t Ntaps=16;Ntaps<20;Ntaps++) {
-    for (int notch = 0; notch < 2; notch++) {
-      std::stringstream fname;
-      fname << "response_" << Ntaps<<"_"<<notch<<".dat";
-      std::ofstream outfile;
-      outfile.open(fname.str());
+  int win = 0;
+  window_t window = (window_t)win;
 
-      cfg.Ntaps = Ntaps;
-      cfg.notch = notch;
-			 
-	
-      for (double freq = central -3 ; freq< central + 3; freq+=0.01) {
-  
+  for (size_t Ntaps=4;Ntaps<17;Ntaps++) {
+    for (int notch = 0; notch < 2; notch++) {
+      for ( win = 0; win < 4; win++) {
+        std::stringstream fname;
+        fname << "response_" << Ntaps<< "_" << notch << "_" << win << ".dat";
+        std::ofstream outfile;
+        outfile.open(fname.str());
+
+        cfg.Ntaps = Ntaps;
+        cfg.notch = notch;
+
+
+      for (double freq = central - 3 ; freq< central + 3; freq+=0.01) {
+
 	SignalGenerator signal(cfg.Nfft, cfg.Nchannels, blocks,
 			       freq*fundamental, cfg.sampling_rate, Ampl, noiseA);
 	RefSpectrometer S(&signal,&cfg);
@@ -45,8 +49,9 @@ int main() {
       outfile.close();
     }
   }
+}
 
 
-  
+
   return 0;
 }
