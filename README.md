@@ -1,5 +1,7 @@
-# refspec -- the LuSEE-Night Reference Spectrometer
 
+# refspec - the LuSEE-Night Reference Spectrometer
+
+![example workflow](https://github.com/lusee-night/refspec/actions/workflows/refspec-test.yml/badge.svg)
 
 ## Installing the FFTW package locally
 
