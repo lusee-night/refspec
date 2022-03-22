@@ -19,5 +19,6 @@ jobs:
       - run: make
       - run: ./test/test_pfb.out > ./pfb_test1.dat
       - run: cat ./pfb_test1.dat
+      - run: diff ./pfb_test1.dat data/pfb_test1.dat
       - run: echo 'end'
       
