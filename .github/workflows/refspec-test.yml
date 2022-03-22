@@ -19,15 +19,15 @@ jobs:
         # Check later why this doesn't work anymore: - run: ls ${{ github.workspace }}
       - run: make
       - run: ./test/test_pfb.exe > ./pfb_test1.dat
-      - run: diff ./pfb_test1.dat ./data/pfb_test1.dat
-
-      # -mxp-
-      # Will decide later how to compare best, now stick with literal equivalency
-      #      - run: python3 -c "import numpy as np; a=np.loadtxt('pfb_test1.dat')[:,1]; b=np.loadtxt('data/pfb_test1.dat')[:,1]; assert(np.all(np.abs(a-b)/(0.5*(a+b))<1e-4))"
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v3
         with:
           name: my-artifact
           path: pfb_test1.dat
           retention-days: 5
-      
+      - run: diff ./pfb_test1.dat ./data/pfb_test1.dat
+
+      # -mxp-
+      # Will decide later how to compare best, now stick with literal equivalency
+      #      - run: python3 -c "import numpy as np; a=np.loadtxt('pfb_test1.dat')[:,1]; b=np.loadtxt('data/pfb_test1.dat')[:,1]; assert(np.all(np.abs(a-b)/(0.5*(a+b))<1e-4))"
+
