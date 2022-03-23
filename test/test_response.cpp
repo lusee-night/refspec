@@ -22,7 +22,7 @@ int main() {
   float noiseA = 0.0;
   double central = 10; // doesn't really matter
 
-  for (size_t Ntaps=16;Ntaps<20;Ntaps++) {
+  for (size_t Ntaps=20;Ntaps<21;Ntaps++) {
     for (int notch = 0; notch < 2; notch++) {
       std::stringstream fname;
       fname << "response_" << Ntaps<<"_"<<notch<<".dat";
