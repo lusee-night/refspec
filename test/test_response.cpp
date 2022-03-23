@@ -16,9 +16,22 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  size_t taps_start = atoi(argv[1]);
-  size_t taps_end = atoi(argv[2]);
-
+  int taps_start = atoi(argv[1]);
+  int taps_end = atoi(argv[2]);
+  size_t notch_start = 0;
+  size_t notch_end = 1;
+  size_t win_start = 0;
+  size_t win_end = 4;
+  bool CI_mode = false; 
+  
+  if (taps_start <0) {
+    std::cout << "CI test" <<std::endl;
+    taps_start = taps_end = 4;
+    notch_start = notch_end = 0;
+    win_start = win_end = 3;
+    CI_mode = true;
+  }
+  
   SpecConfig cfg;
 
   cfg.Ntaps       = 7;
@@ -35,10 +48,13 @@ int main(int argc, char *argv[]) {
 
   for (size_t Ntaps=taps_start; Ntaps<=taps_end; Ntaps++) {
     std::cout << "Doing taps: " << Ntaps << std::endl;
-    for (int notch = 0; notch < 2; notch++) {
-       for (int win = 0; win < 4; win++) {
+    for (int notch = notch_start; notch <= notch_end; notch++) {
+       for (int win = win_start; win <= win_end; win++) {
         std::stringstream fname;
-        fname << "response_" << Ntaps<< "_" << notch << "_" << win << ".dat";
+	if (CI_mode) 
+	  fname << "response_test.dat";
+	else
+	  fname << "response_" << Ntaps<< "_" << notch << "_" << win << ".dat";
         std::ofstream outfile;
         outfile.open(fname.str());
         cfg.Ntaps = Ntaps;

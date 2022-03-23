@@ -31,11 +31,11 @@ jobs:
 
       - run: ./test/test_response.exe 4 4 
 
-      - name: 'response_16_0 Artifact'
+      - name: 'response_test Artifact'
         uses: actions/upload-artifact@v3
         with:
-          name: response_4_0_2
-          path: response_4_0_2.dat
+          name: response_test
+          path: response_test.dat
           retention-days: 5
       
       - run: diff ./response_4_0_2.dat ./testdata/response_4_0_2.dat
