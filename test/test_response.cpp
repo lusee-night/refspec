@@ -8,16 +8,44 @@
 #include <fstream>
 #include <sstream>
 
+// CLI aruments handling:
+#include "lyra.hpp"
+
 
 int main(int argc, char *argv[]) {
 
-  if (argc!=3) {
-    std::cout << "Specify taps_start taps_end at the command line." <<std::endl;
-    return 1;
+  bool verbose            =   false;
+
+
+  size_t taps_start   = 0;
+  size_t taps_end     = 0;
+
+  auto cli = lyra::cli()
+      | lyra::opt(verbose)
+        ["-v"]["--verbose"]("verbose" )
+      | lyra::opt(taps_start, "taps_start" )
+        ["-s"]["--taps_start"]("taps_start")
+      | lyra::opt(taps_end,   "taps_end" )
+        ["-e"]["--taps_end"]("taps_end")
+     ;
+
+    auto result = cli.parse( { argc, argv } );
+    if ( !result ) {
+            std::cerr << "Error in command line: " << result.errorMessage() << std::endl;
+            exit(1);
+    }
+
+  if(verbose) {
+    std::cout << "*** Verbose mode activated ***" << std::endl;
+    std::cout << "Taps start: " << taps_start<<"      Taps end:" << taps_end << std::endl;
   }
 
-  size_t taps_start = atoi(argv[1]);
-  size_t taps_end = atoi(argv[2]);
+  if(taps_start==0 || taps_end==0) {
+    if(verbose) {
+      std::cout << "*** Error: Specify taps_start and taps_end at the command line. ***" << std::endl;
+    }
+    exit(-1);
+  }
 
   SpecConfig cfg;
 
@@ -34,7 +62,10 @@ int main(int argc, char *argv[]) {
   double central  = 10; // doesn't really matter
 
   for (size_t Ntaps=taps_start; Ntaps<=taps_end; Ntaps++) {
-    std::cout << "Doing taps: " << Ntaps << std::endl;
+    if(verbose) {
+      std::cout << "Doing taps: " << Ntaps << std::endl;
+    }
+    
     for (int notch = 0; notch < 2; notch++) {
       std::stringstream fname;
       fname << "response_" << Ntaps <<"_"<<notch<<".dat";

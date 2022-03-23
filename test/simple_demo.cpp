@@ -12,13 +12,14 @@
 int main() {
   SpecConfig cfg;
 
-  cfg.Ntaps = 8;
-  cfg.Nchannels = 1;
-  cfg.AverageSize = 64;
-  double fundamental = cfg.fundamental_frequency();
-  size_t blocks = cfg.AverageSize+2*cfg.Ntaps;
-  float Ampl = 10;
-  float noiseA = 0.0;
+  cfg.Ntaps           = 8;
+  cfg.Nchannels       = 1;
+  cfg.AverageSize     = 64;
+  double fundamental  = cfg.fundamental_frequency();
+  
+  size_t blocks       = cfg.AverageSize+2*cfg.Ntaps;
+  float Ampl          = 10;
+  float noiseA        = 0.0;
   
   SignalGenerator signal(cfg.Nfft, cfg.Nchannels, blocks,
 			 10e6, cfg.sampling_rate, Ampl, noiseA);
