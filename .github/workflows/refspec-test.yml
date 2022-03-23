@@ -20,18 +20,29 @@ jobs:
       - run: make
       - run: ./test/test_pfb.exe > ./pfb_test.dat
 
-      - name: 'Upload Artifact'
+      - name: 'pfb_test Artifact'
         uses: actions/upload-artifact@v3
         with:
-          name: my-artifact
+          name: pfb_test
           path: pfb_test.dat
           retention-days: 5
+      
       - run: diff ./pfb_test.dat ./testdata/pfb_test.dat
 
       - run: ./test/test_response.exe
-      - run: ls ./response_16_0.dat
 
+      - name: 'response_16_0 Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: response_16_0
+          path: response_16_0.dat
+          retention-days: 5
+      
+      - run: diff ./response_16_0.dat ./testdata/response_16_0.dat
+
+      ###########################################################
       # -mxp-
       # Will decide later how to compare best, now stick with literal equivalency
+      # We could do precision-based comparison, too like --
       #      - run: python3 -c "import numpy as np; a=np.loadtxt('pfb_test1.dat')[:,1]; b=np.loadtxt('data/pfb_test1.dat')[:,1]; assert(np.all(np.abs(a-b)/(0.5*(a+b))<1e-4))"
 
