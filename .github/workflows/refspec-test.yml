@@ -29,7 +29,7 @@ jobs:
       
       - run: diff ./pfb_test.dat ./testdata/pfb_test.dat
 
-      - run: ./test/test_response.exe
+      - run: ./test/test_response.exe 16 16 
 
       - name: 'response_16_0 Artifact'
         uses: actions/upload-artifact@v3

@@ -9,7 +9,16 @@
 #include <sstream>
 
 
-int main() {
+int main(int argc, char *argv[]) {
+
+  if (argc!=3) {
+    std::cout << "Specify taps_start taps_end at the command line." <<std::endl;
+    return 1;
+  }
+
+  size_t taps_start = atoi(argv[1]);
+  size_t taps_end = atoi(argv[2]);
+
   SpecConfig cfg;
 
   cfg.Ntaps       = 7;
@@ -24,7 +33,8 @@ int main() {
   float noiseA    = 0.0;
   double central  = 10; // doesn't really matter
 
-  for (size_t Ntaps=16; Ntaps<20; Ntaps++) {
+  for (size_t Ntaps=taps_start; Ntaps<=taps_end; Ntaps++) {
+    std::cout << "Doing taps: " << Ntaps << std::endl;
     for (int notch = 0; notch < 2; notch++) {
       std::stringstream fname;
       fname << "response_" << Ntaps <<"_"<<notch<<".dat";
