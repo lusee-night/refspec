@@ -1,6 +1,5 @@
 CXX = g++
 CXXFLAGS = -Ofast -g
-#CXXFLAGS = -g
 
 FFTW_LINK = -lfftw3 -lfftw3f 
 LINKFLAGS = -static
@@ -27,8 +26,6 @@ $(TEST_EXECS): %.exe: %.cpp $(LIBRARY)
 $(LIBRARY): $(OBJS) Makefile 
 	rm -f $(LIBRARY)
 	ar rcs $(LIBRARY) $(OBJS)
-
-
 
 clean:
 	rm $(LIBRARY) $(OBJS)

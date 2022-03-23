@@ -18,14 +18,18 @@ jobs:
         # -mxp-
         # Check later why this doesn't work anymore: - run: ls ${{ github.workspace }}
       - run: make
-      - run: ./test/test_pfb.exe > ./pfb_test1.dat
+      - run: ./test/test_pfb.exe > ./pfb_test.dat
+
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v3
         with:
           name: my-artifact
-          path: pfb_test1.dat
+          path: pfb_test.dat
           retention-days: 5
-      - run: diff ./pfb_test1.dat ./data/pfb_test1.dat
+      - run: diff ./pfb_test.dat ./testdata/pfb_test.dat
+
+      - run: ./test/test_response.exe
+      - run: ls ./response_16_0.dat
 
       # -mxp-
       # Will decide later how to compare best, now stick with literal equivalency
