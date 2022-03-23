@@ -38,7 +38,7 @@ jobs:
           path: response_test.dat
           retention-days: 5
       
-      - run: diff ./response_4_0_2.dat ./testdata/response_4_0_2.dat
+      - run: diff ./response_test.dat ./testdata/response_test.dat
 
       ###########################################################
       # -mxp-
