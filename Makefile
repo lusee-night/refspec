@@ -9,13 +9,8 @@ SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.
 
 OBJS = $(SOURCES:.cpp=.o)
 
-<<<<<<< HEAD
 TEST_SOURCES = test/test_pfb.cpp test/test_timing.cpp test/test_response.cpp test/test_demo.cpp
-TEST_EXECS = $(TEST_SOURCES:.cpp=.out)
-=======
-TEST_SOURCES = test/test_pfb.cpp test/test_timing.cpp test/test_response.cpp
 TEST_EXECS = $(TEST_SOURCES:.cpp=.exe)
->>>>>>> 53dbf01213285f718751d8dff40de760a422674a
 
 LIBRARY = refspec.a
 
