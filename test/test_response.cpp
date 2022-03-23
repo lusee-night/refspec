@@ -43,9 +43,10 @@ int main(int argc, char *argv[]) {
         outfile.open(fname.str());
         cfg.Ntaps = Ntaps;
         cfg.notch = notch;
+	cfg.window = window_t(win);
         for (double freq = central -3 ; freq< central + 3; freq+=0.01) {
-    	    SignalGenerator signal(cfg.Nfft, cfg.Nchannels, blocks, freq*fundamental, cfg.sampling_rate, Ampl, noiseA);
-	        RefSpectrometer S(&signal,&cfg);    
+	  SignalGenerator signal(cfg.Nfft, cfg.Nchannels, blocks, freq*fundamental, cfg.sampling_rate, Ampl, noiseA);
+	  RefSpectrometer S(&signal,&cfg);    
           SpecOutput O(&cfg);
 	        S.run(&O);
 	        outfile <<freq-central << " " << O.avg_pspec[0][int(central)] << std::endl;

@@ -21,23 +21,19 @@ PolyphaseFilterBank::PolyphaseFilterBank (double sampling_rate, int Nfft, int Nt
   for (size_t i=0; i<Ntaps; i++) {
     for (size_t j=0; j<Nfft; j++) {
       // replaces this with a proper PI
-      double x = (i*Nfft+j - L/2)/Nfft;
+      double x = M_PI*(i*Nfft+j - L/2)/Nfft;
       if (x==0)
 	weights [i][j] = 1;
       else
-	weights [i][j] = sin(x)/(x) ;
-
-  //std::cout << (i*Nfft+j) << "  " <<  weights[i][j] << "  " ;
-
-  if (window == Hamming)
-    weights[i][j] = (0.53836 - 0.46164 * cos((2 * M_PI * (i*Nfft+j)) / (L - 1))) * weights[i][j];
-  if (window == Hanning)
-    weights[i][j] = 0.5 * (1 - cos((2 * M_PI * (i*Nfft+j)) / (L - 1))) * weights[i][j];
-  if (window == BlackmanNuttall)
-    weights[i][j] = 0.3635819 - (0.4891775 * cos((2 * M_PI * (i*Nfft+j)) / (L - 1))) + (0.1365995 * cos((4 * M_PI * (i*Nfft+j)) /  (L - 1))) - (0.01064118 * cos((6 * M_PI * (i*Nfft+j)) / (L - 1))) * weights[i][j];
-
-  //std::cout << weights[i][j] << " xx " << std::endl;
-
+	weights [i][j] = sin(x)/x;
+      
+      double xw = 2 * M_PI * (i*Nfft+j) / (L - 1);
+      if (window == Hamming)
+	weights[i][j] *= 0.53836 - 0.46164 * cos(xw);
+      if (window == Hanning)
+	weights[i][j] *= 0.5 * (1 - cos(xw));
+      if (window == BlackmanNuttall)
+	weights[i][j] *= 0.3635819 - 0.4891775 * cos(xw) + 0.1365995 * cos(2*xw) - 0.01064118 * cos(3*xw); 
     }
   }
 
