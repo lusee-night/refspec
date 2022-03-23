@@ -29,16 +29,16 @@ jobs:
       
       - run: diff ./pfb_test.dat ./testdata/pfb_test.dat
 
-      - run: ./test/test_response.exe 16 16 
+      - run: ./test/test_response.exe 4 4 
 
       - name: 'response_16_0 Artifact'
         uses: actions/upload-artifact@v3
         with:
-          name: response_16_0
-          path: response_16_0.dat
+          name: response_4_0_2
+          path: response_4_0_2.dat
           retention-days: 5
       
-      - run: diff ./response_16_0.dat ./testdata/response_16_0.dat
+      - run: diff ./response_4_0_2.dat ./testdata/response_4_0_2.dat
 
       ###########################################################
       # -mxp-

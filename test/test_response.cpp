@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
   for (size_t Ntaps=taps_start; Ntaps<=taps_end; Ntaps++) {
     std::cout << "Doing taps: " << Ntaps << std::endl;
     for (int notch = 0; notch < 2; notch++) {
-       for ( win = 0; win < 4; win++) {
+       for (int win = 0; win < 4; win++) {
         std::stringstream fname;
         fname << "response_" << Ntaps<< "_" << notch << "_" << win << ".dat";
         std::ofstream outfile;
