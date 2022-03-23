@@ -52,7 +52,9 @@ struct  SpecConfig {
   // default constructor with some same defaults
   SpecConfig();
 
-  double fundamental_frequency() {return sampling_rate/Nfft;} 
+  double fundamental_frequency() const {return sampling_rate/Nfft;} 
+  size_t Nbins() const { return Nfft/2 +1; } // number of frequency bins
+
 };
  
   
