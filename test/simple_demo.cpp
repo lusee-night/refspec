@@ -1,4 +1,3 @@
-
 #include "RefSpectrometer.h"
 #include "SignalGenerator.h"
 #include "SpecConfig.h"

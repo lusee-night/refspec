@@ -1,13 +1,14 @@
 #include "pfb.h"
 #include <assert.h>
 #include <math.h>
+#include <iostream>
 
 PolyphaseFilterBank::PolyphaseFilterBank (double sampling_rate, int Nfft, int Ntaps, window_t window) :
   sampling_rate(sampling_rate),Nfft(Nfft), Ntaps(Ntaps), window(window)
 
 {
   // nothing else implemented at the moment
-  assert ( window == None);
+  //assert ( window == None);
   assert (Nfft % 2 == 0);
   Ncomplex = Nfft / 2 + 1;
   weights = new float*[Ntaps];
@@ -20,14 +21,24 @@ PolyphaseFilterBank::PolyphaseFilterBank (double sampling_rate, int Nfft, int Nt
   for (size_t i=0; i<Ntaps; i++) {
     for (size_t j=0; j<Nfft; j++) {
       // replaces this with a proper PI
-      double x = M_PI*(i*Nfft+j - L/2)/Nfft; 
+      double x = M_PI*(i*Nfft+j - L/2)/Nfft;
       if (x==0)
 	weights [i][j] = 1;
       else
 	weights [i][j] = sin(x)/x;
-      // add window function
+      
+      double xw = 2 * M_PI * (i*Nfft+j) / (L - 1);
+      if (window == Hamming)
+	weights[i][j] *= 0.53836 - 0.46164 * cos(xw);
+      if (window == Hanning)
+	weights[i][j] *= 0.5 * (1 - cos(xw));
+      if (window == BlackmanNuttall)
+	weights[i][j] *= 0.3635819 - 0.4891775 * cos(xw) + 0.1365995 * cos(2*xw) - 0.01064118 * cos(3*xw); 
     }
   }
+
+
+
   have_plan = false;
 }
 
@@ -45,7 +56,7 @@ void PolyphaseFilterBank::setup_plan (fftwf_complex *data_out_example) {
     plan = fftwf_plan_dft_r2c_1d(Nfft, work, data_out_example, FFTW_MEASURE || FFTW_DESTROY_INPUT);
     assert (plan != NULL);
     have_plan = true;
-      
+
 
 }
 

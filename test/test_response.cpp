@@ -12,21 +12,38 @@
 #include "lyra.hpp"
 
 
+// CLI aruments handling:
+#include "lyra.hpp"
+
 int main(int argc, char *argv[]) {
 
-  bool verbose            =   false;
+  bool verbose        =   false;
+  bool cimode         =   false;
 
 
-  size_t taps_start   = 0;
-  size_t taps_end     = 0;
+  size_t notch_start  = 0;
+  size_t notch_end    = 1;
+
+  size_t win_start    = 0;
+  size_t win_end      = 4;
 
   auto cli = lyra::cli()
       | lyra::opt(verbose)
         ["-v"]["--verbose"]("verbose" )
+      | lyra::opt(cimode)
+        ["-c"]["--cimode"]("cimode" )        
       | lyra::opt(taps_start, "taps_start" )
         ["-s"]["--taps_start"]("taps_start")
       | lyra::opt(taps_end,   "taps_end" )
         ["-e"]["--taps_end"]("taps_end")
+      | lyra::opt(notch_start, "notch_start" )
+        ["-d"]["--notch_start"]("notch_start")
+      | lyra::opt(notch_end,   "notch_end" )
+        ["-r"]["--notch_end"]("notch_end")
+      | lyra::opt(win_start, "win_start" )
+        ["-f"]["--win_start"]("win_start")
+      | lyra::opt(win_end,   "win_end" )
+        ["-t"]["--win_end"]("win_end")
      ;
 
     auto result = cli.parse( { argc, argv } );
@@ -37,15 +54,28 @@ int main(int argc, char *argv[]) {
 
   if(verbose) {
     std::cout << "*** Verbose mode activated ***" << std::endl;
-    std::cout << "Taps start: " << taps_start<<"      Taps end:" << taps_end << std::endl;
+  }
+
+  if(cimode) {
+    taps_start  = taps_end  = 4;
+    notch_start = notch_end = 0;
+    win_start   = win_end   = 3;
+  }
+
+  if(verbose) {
+    if(cimode) {
+      std::cout << "*** Switching to CI mode ***" << std::endl;
+    }
+    std::cout << "Taps start:  " << taps_start  <<"       Taps end:"  << taps_end   << std::endl;
+    std::cout << "Notch start: " << notch_start <<"       Notch end:" << notch_end  << std::endl;
+    std::cout << "Win start:   " << win_start   <<"       Win end:"   << win_end    << std::endl;    
   }
 
   if(taps_start==0 || taps_end==0) {
     if(verbose) {
       std::cout << "*** Error: Specify taps_start and taps_end at the command line. ***" << std::endl;
     }
-    exit(-1);
-  }
+  // Finished parsing, starting setup:
 
   SpecConfig cfg;
 
@@ -62,6 +92,7 @@ int main(int argc, char *argv[]) {
   double central  = 10; // doesn't really matter
 
   for (size_t Ntaps=taps_start; Ntaps<=taps_end; Ntaps++) {
+
     if(verbose) {
       std::cout << "Doing taps: " << Ntaps << std::endl;
     }
@@ -85,7 +116,8 @@ int main(int argc, char *argv[]) {
       }
 
       outfile.close();
-    }
-  }
+      } 
+    } 
+  } 
   return 0;
 }
