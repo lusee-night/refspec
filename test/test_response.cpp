@@ -8,18 +8,18 @@
 #include <fstream>
 #include <sstream>
 
+// CLI aruments handling:
+#include "lyra.hpp"
+
 
 // CLI aruments handling:
 #include "lyra.hpp"
 
 int main(int argc, char *argv[]) {
 
-
   bool verbose        =   false;
   bool cimode         =   false;
 
-  size_t taps_start   = 0;
-  size_t taps_end     = 0;
 
   size_t notch_start  = 0;
   size_t notch_end    = 1;
@@ -75,11 +75,6 @@ int main(int argc, char *argv[]) {
     if(verbose) {
       std::cout << "*** Error: Specify taps_start and taps_end at the command line. ***" << std::endl;
     }
-    exit(-1);
-  }
-
-
-
   // Finished parsing, starting setup:
 
   SpecConfig cfg;
@@ -102,28 +97,25 @@ int main(int argc, char *argv[]) {
       std::cout << "Doing taps: " << Ntaps << std::endl;
     }
     
-    for (int notch=notch_start; notch <= notch_end; notch++) {
-       for (int win=win_start; win <= win_end; win++) {
-        std::stringstream fname;
-	      if (cimode) 
-      	  fname << "response_test.dat";
-	      else
-	        fname << "response_" << Ntaps<< "_" << notch << "_" << win << ".dat";
-          std::ofstream outfile;
-          outfile.open(fname.str());
-          cfg.Ntaps = Ntaps;
-          cfg.notch = notch;
-	        cfg.window = window_t(win);
+    for (int notch = 0; notch < 2; notch++) {
+      std::stringstream fname;
+      fname << "response_" << Ntaps <<"_"<<notch<<".dat";
+      std::ofstream outfile;
+      outfile.open(fname.str());
 
-          for (double freq=central-3 ; freq<central+3; freq+=0.01) {
-	          SignalGenerator signal(cfg.Nfft, cfg.Nchannels, blocks, freq*fundamental, cfg.sampling_rate, Ampl, noiseA);
-	          RefSpectrometer S(&signal,&cfg);    
-            SpecOutput O(&cfg);
-	          S.run(&O);
-	          outfile <<freq-central << " " << O.avg_pspec[0][int(central)] << std::endl;
-          }
+      cfg.Ntaps = Ntaps;
+      cfg.notch = notch;
 
-        outfile.close();
+      for (double freq = central -3 ; freq< central + 3; freq+=0.01) {
+  	    SignalGenerator signal(cfg.Nfft, cfg.Nchannels, blocks, freq*fundamental, cfg.sampling_rate, Ampl, noiseA);
+	      RefSpectrometer S(&signal,&cfg);
+	      
+        SpecOutput O(&cfg);
+	      S.run(&O);
+	      outfile <<freq-central << " " << O.avg_pspec[0][10] << std::endl;
+      }
+
+      outfile.close();
       } 
     } 
   } 
