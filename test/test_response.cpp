@@ -20,6 +20,8 @@ int main(int argc, char *argv[]) {
   bool verbose        =   false;
   bool cimode         =   false;
 
+  size_t taps_start   = 0;
+  size_t taps_end     = 1;
 
   size_t notch_start  = 0;
   size_t notch_end    = 1;
@@ -52,9 +54,7 @@ int main(int argc, char *argv[]) {
             exit(1);
     }
 
-  if(verbose) {
-    std::cout << "*** Verbose mode activated ***" << std::endl;
-  }
+  if(verbose) {std::cout << "*** Verbose mode activated ***" << std::endl;}
 
   if(cimode) {
     taps_start  = taps_end  = 4;
@@ -63,20 +63,18 @@ int main(int argc, char *argv[]) {
   }
 
   if(verbose) {
-    if(cimode) {
-      std::cout << "*** Switching to CI mode ***" << std::endl;
-    }
+    if(cimode) {std::cout << "*** Switching to CI mode ***" << std::endl;}
     std::cout << "Taps start:  " << taps_start  <<"       Taps end:"  << taps_end   << std::endl;
     std::cout << "Notch start: " << notch_start <<"       Notch end:" << notch_end  << std::endl;
     std::cout << "Win start:   " << win_start   <<"       Win end:"   << win_end    << std::endl;    
   }
 
   if(taps_start==0 || taps_end==0) {
-    if(verbose) {
-      std::cout << "*** Error: Specify taps_start and taps_end at the command line. ***" << std::endl;
-    }
-  // Finished parsing, starting setup:
+    if(verbose) {std::cout << "*** Error: Specify taps_start and taps_end at the command line. ***" << std::endl;}
+  }
 
+
+  // Finished parsing, starting setup:
   SpecConfig cfg;
 
   cfg.Ntaps       = 7;
@@ -93,9 +91,7 @@ int main(int argc, char *argv[]) {
 
   for (size_t Ntaps=taps_start; Ntaps<=taps_end; Ntaps++) {
 
-    if(verbose) {
-      std::cout << "Doing taps: " << Ntaps << std::endl;
-    }
+    if(verbose) {std::cout << "Doing taps: " << Ntaps << std::endl;}
     
     for (int notch = 0; notch < 2; notch++) {
       std::stringstream fname;
@@ -116,8 +112,9 @@ int main(int argc, char *argv[]) {
       }
 
       outfile.close();
-      } 
-    } 
-  } 
-  return 0;
+    }
+  }
+
+return 0;
 }
+
