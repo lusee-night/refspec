@@ -93,9 +93,16 @@ int main(int argc, char *argv[]) {
 
     if(verbose) {std::cout << "Doing taps: " << Ntaps << std::endl;}
     
-    for (int notch = 0; notch < 2; notch++) {
+    for (int notch = notch_start; notch <= notch_end; notch++) {
       std::stringstream fname;
-      fname << "response_" << Ntaps <<"_"<<notch<<".dat";
+
+      if(cimode) {
+        fname << "response_test.dat";
+      }
+      else {
+        fname << "response_" << Ntaps <<"_"<<notch<<".dat";
+      }
+      
       std::ofstream outfile;
       outfile.open(fname.str());
 
