@@ -20,8 +20,8 @@ int main(int argc, char *argv[]) {
   bool verbose        =   false;
   bool cimode         =   false;
 
-  size_t taps_start   = 0;
-  size_t taps_end     = 1;
+  size_t taps_start   = 4;
+  size_t taps_end     = 4;
 
   size_t notch_start  = 0;
   size_t notch_end    = 1;
@@ -94,20 +94,22 @@ int main(int argc, char *argv[]) {
     if(verbose) {std::cout << "Doing taps: " << Ntaps << std::endl;}
     
     for (int notch = notch_start; notch <= notch_end; notch++) {
-      std::stringstream fname;
-
-      if(cimode) {
-        fname << "response_test.dat";
-      }
-      else {
-        fname << "response_" << Ntaps <<"_"<<notch<<".dat";
-      }
+      for (int win = win_start; win <= win_end; win++) {
+	std::stringstream fname;
+	
+	if(cimode) {
+	  fname << "response_test.dat";
+	}
+	else {
+	  fname << "response_" << Ntaps <<"_"<<notch<<"_"<<win<<".dat";
+	}
       
       std::ofstream outfile;
       outfile.open(fname.str());
 
       cfg.Ntaps = Ntaps;
       cfg.notch = notch;
+      cfg.window = (window_t)(win);
 
       for (double freq = central -3 ; freq< central + 3; freq+=0.01) {
   	    SignalGenerator signal(cfg.Nfft, cfg.Nchannels, blocks, freq*fundamental, cfg.sampling_rate, Ampl, noiseA);
@@ -117,8 +119,9 @@ int main(int argc, char *argv[]) {
 	      S.run(&O);
 	      outfile <<freq-central << " " << O.avg_pspec[0][10] << std::endl;
       }
-
+      
       outfile.close();
+      }
     }
   }
 
