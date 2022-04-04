@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
   size_t notch_end    = 1;
 
   size_t win_start    = 0;
-  size_t win_end      = 4;
+  size_t win_end      = 3;
 
   auto cli = lyra::cli()
       | lyra::opt(verbose)
