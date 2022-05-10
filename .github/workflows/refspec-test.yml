@@ -15,8 +15,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        # -mxp-
-        # Check later why this doesn't work anymore: - run: ls ${{ github.workspace }}
+        # -mxp- Check later why this doesn't work anymore: - run: ls ${{ github.workspace }}
       - run: make
       - run: ./test/test_pfb.exe > ./pfb_test.dat
 

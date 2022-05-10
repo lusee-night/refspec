@@ -27,4 +27,12 @@ make install
 A Docker image is in preparation to facilitate testing, see the ```docker```
 folder in this repo.
 
+## Checking for memory leaks
+
+When using ```valgrind```, the following option will help eliminate chatty output reporting "uninitialized variables/conditional jump":
+
+```bash
+ valgrind --undef-value-errors=no myExecutable.exe
+```
+
 

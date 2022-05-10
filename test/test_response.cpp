@@ -12,13 +12,12 @@
 #include "lyra.hpp"
 
 
-// CLI aruments handling:
-#include "lyra.hpp"
-
+// -----------------------------------------------------
 int main(int argc, char *argv[]) {
 
   bool verbose        =   false;
   bool cimode         =   false;
+  bool help           =   false;
 
   size_t taps_start   = 4;
   size_t taps_end     = 4;
@@ -31,28 +30,34 @@ int main(int argc, char *argv[]) {
 
   auto cli = lyra::cli()
       | lyra::opt(verbose)
-        ["-v"]["--verbose"]("verbose" )
+        ["-v"]["--verbose"]("bool - verbose mode" )
       | lyra::opt(cimode)
-        ["-c"]["--cimode"]("cimode" )        
-      | lyra::opt(taps_start, "taps_start" )
-        ["-s"]["--taps_start"]("taps_start")
+        ["-c"]["--cimode"]("bool - produces a single file for regression test in CI" )
+      | lyra::help(help)
+      | lyra::opt(taps_start, "taps_start")
+        ["-s"]["--taps_start"]("taps_start: default 4, starting point for tap scan")
       | lyra::opt(taps_end,   "taps_end" )
-        ["-e"]["--taps_end"]("taps_end")
-      | lyra::opt(notch_start, "notch_start" )
-        ["-d"]["--notch_start"]("notch_start")
+        ["-e"]["--taps_end"]("taps_end: default 4, end point for tap scan")
+      | lyra::opt(notch_start, "notch_start")
+        ["-d"]["--notch_start"]("notch_start: default 0, start point for notch scan")
       | lyra::opt(notch_end,   "notch_end" )
-        ["-r"]["--notch_end"]("notch_end")
-      | lyra::opt(win_start, "win_start" )
-        ["-f"]["--win_start"]("win_start")
-      | lyra::opt(win_end,   "win_end" )
-        ["-t"]["--win_end"]("win_end")
+        ["-r"]["--notch_end"]("notch_end: default 1, end point for notch scan")
+      | lyra::opt(win_start, "win_start")
+        ["-f"]["--win_start"]("win_start: default 0, start point for window scan")
+      | lyra::opt(win_end,   "win_end")
+        ["-t"]["--win_end"]("win_end: default 3, end point for window scan")
      ;
 
-    auto result = cli.parse( { argc, argv } );
-    if ( !result ) {
-            std::cerr << "Error in command line: " << result.errorMessage() << std::endl;
-            exit(1);
-    }
+  auto result = cli.parse( { argc, argv } );
+  if ( !result ) {
+    std::cerr << "Error in command line: " << result.errorMessage() << std::endl;
+    exit(1);
+  }
+
+  if(help) {
+    std::cout << cli << std::endl;
+    exit(0);
+  }
 
   if(verbose) {std::cout << "*** Verbose mode activated ***" << std::endl;}
 
@@ -63,14 +68,18 @@ int main(int argc, char *argv[]) {
   }
 
   if(verbose) {
-    if(cimode) {std::cout << "*** Switching to CI mode ***" << std::endl;}
+    if(cimode) {
+      std::cout << "*** Switching to CI mode ***" << std::endl;
+    }
     std::cout << "Taps start:  " << taps_start  <<"       Taps end:"  << taps_end   << std::endl;
     std::cout << "Notch start: " << notch_start <<"       Notch end:" << notch_end  << std::endl;
     std::cout << "Win start:   " << win_start   <<"       Win end:"   << win_end    << std::endl;    
   }
 
   if(taps_start==0 || taps_end==0) {
-    if(verbose) {std::cout << "*** Error: Specify taps_start and taps_end at the command line. ***" << std::endl;}
+    if(verbose) {
+      std::cout << "*** Error: Specify taps_start and taps_end at the command line. ***" << std::endl;
+    }
   }
 
 
