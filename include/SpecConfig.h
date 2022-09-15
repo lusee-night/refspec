@@ -3,11 +3,13 @@
 
 #include <string>
 #include <cstdint>
+#include <iostream>
 
 #define MAX_CHANNELS 4
 #define MAX_CALIB_SIGS 2
 #define MAX_TAPS 128
 
+using namespace::std;
 
 // enumeration of possible modes spectrometer can be in 
 enum spec_mode_t {
@@ -56,5 +58,38 @@ struct  SpecConfig {
   size_t Nbins() const { return Nfft/2 +1; } // number of frequency bins
 
 };
+
+
+
+extern "C" {
+    SpecConfig* sc_new() {return new SpecConfig();}
+
+    unsigned long sc_Nfft(SpecConfig* sc) {
+      return sc->Nfft;
+    }
+
+}
+
+/* ATTIC
+
+
+class SX {
+  public:
+    SX() {
+      this->Nfft = 7;
+    };
+    int Nfft;
+};
+
+extern "C" {
+    SX* sx_new() {return new SX();}
+    int sx_Nfft(SX* sx) {
+      int x = sx->Nfft;
+      x = 2;
+      cout<<sx;
+      return x; // static_cast<int>(x);
+    }
+}
+*/
  
   

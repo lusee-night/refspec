@@ -1,6 +1,6 @@
 # VS code
 .vscode
-
+__pycache__
 # Prerequisites
 *.d
 

@@ -35,3 +35,6 @@ $(LIBRARY): $(OBJS) Makefile
 clean:
 	rm $(LIBRARY) $(OBJS)
 
+# -mxp- Notes:
+# g++ -shared -Wl,-soname,libcode.so -o libcode.so code.C	
+
