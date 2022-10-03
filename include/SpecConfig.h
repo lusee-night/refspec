@@ -39,6 +39,10 @@ struct  SpecConfig {
 
   // average size
   uint32_t AverageSize; 
+
+  // zoom-in size
+  uint32_t zoomin_st, zoomin_en; // start end end of the zoom in region, C counting
+  uint32_t zoomin_fact; // zoom in factor
   
   // calibrator detector_setup
   size_t Ncalib;
