@@ -14,19 +14,20 @@ int main() {
   cfg.Ntaps           = 8;
   cfg.Nchannels       = 1;
   cfg.AverageSize     = 64;
+  cfg.sampling_rate   =1.0e8;
   double fundamental  = cfg.fundamental_frequency();
 
-  size_t block_size   = cfg.Nfft;
-  size_t Nblocks_gen  = cfg.AverageSize / block_size;
+  size_t block_size   = cfg.Nfft*2;
+  size_t Nblocks_gen  = 100;
 
   size_t Nk = 10000;
   std::vector<double> kk (Nk), Pk(kk);
-  double dk = 50/(Nk-1);
+  double dk = 50./(Nk-1);
   double variance = 0;
   double measured_var = 0;
   for (size_t i=0;i<Nk;i++) {
     kk[i] = 50*i*dk;
-    Pk[i] = exp(-pow(kk[i]-30,2)/(2*4*4)); //Pk is in dvar / Hz
+    Pk[i] = exp(-pow(kk[i]-25,2)/(2*4*4)); //Pk is in dvar / Hz
     variance += Pk[i]*dk*1e6;
   }
 
@@ -34,18 +35,19 @@ int main() {
 		    Nblocks_gen, false, false);
   
   size_t count=0;
-  std::vector<float> buf(block_size);
-  float * pbuf = &(buf[0]);
-  float ** ppbuf = &pbuf;
+  float **buf;
+  buf = new float*[1];
   while (source.data_available()) {
-    source.next_block(ppbuf);
+    source.next_block(buf);
     for (size_t i=0;i<block_size;i++) {
-      measured_var+=buf[i]*buf[i];
+      measured_var+=buf[0][i]*buf[0][i];
       count += 1;
     }
   }
+  
   measured_var /= count;
-
+  std::cout << variance << "  " <<measured_var <<" " <<sqrt(measured_var/variance)<<std::endl;
+  
   return 0;  
   SpecOutput O(&cfg);
   RefSpectrometer S(&source,&cfg);

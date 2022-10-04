@@ -51,11 +51,13 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
   fftwf_complex* fourier = fftwf_alloc_complex(Nfft);
   buffer = fftwf_alloc_real(N);
   bool align_out = fftwf_alignment_of((float*)buffer);
-  fftwf_plan plan = fftwf_plan_dft_c2r_1d(Nfft, fourier, buffer, FFTW_DESTROY_INPUT);
+  std::cout << "Planning " <<Nfft <<std::endl;
+  fftwf_set_timelimit(1.0);
+  fftwf_plan plan = fftwf_plan_dft_c2r_1d(N, fourier, buffer, FFTW_DESTROY_INPUT || FFTW_ESTIMATE);
+  std::cout << "Generating " <<std::endl;
   // now generate fourier variates
   size_t ki=0;
   size_t kj=1;
-  float nyquist = 1/sampling_rate/2;
   float domega = sampling_rate/N/1e6; // we work in MHz
   
   fourier[0][0] = fourier[0][1]=0; // DC component
@@ -63,27 +65,38 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
   std::normal_distribution<double> gauss(0.0,1.0);
 
   size_t NUp = N/2 + (second_fourier*N/2);
-  
-  for (size_t i=1;i<NUp;i++) {
+
+  double Pnorm = sqrt(sampling_rate/N/1e2);
+  for (size_t i=1;i<=NUp;i++) {
     float omega = domega*i;
     size_t j;
     while (omega>kk[kj]) {ki++; kj++;}
     // now interpolate / extrapolate
-    double Phere = Pk[ki]+(Pk[kj]-Pk[ki])/(kk[kj]-kk[ki])*(omega-kk[ki]);
-    double A = sqrt(Phere/2); // fix norm factors
-    if (j<=Nfft) j=i; else j = N-i;
+    double Phere = Pk[ki]+(Pk[kj]-Pk[ki])/(kk[kj]-kk[ki])*(omega-kk[ki]); // in dvar/Hz
+    double A = sqrt(Phere/2)*Pnorm; // fix norm factors
+    if (i<=Nfft) j=i; else j = N-i;
     fourier[j][0]=A*gauss(generator);
     fourier[j][1]=A*gauss(generator);
+    //    if (A>0.5)
+    //  std::cout<<omega<<" " << A <<" " <<kk[ki] <<" " <<fourier[j][0]<<std::endl;
   }
   
+  std::cout << "Transforming " <<std::endl;
+
+  std::cout <<buffer[0]<<" " <<buffer[1]<<std::endl;
   fftwf_execute(plan);
+  std::cout <<buffer[0]<<" " <<buffer[1]<<std::endl;
   fftwf_free(fourier);
+  fftwf_destroy_plan(plan);
+  std::cout << "Done " <<std::endl;
+
 }
 
 
 bool PowerSpecSource::data_available() const
   {
     return repeat || cur_block<(Nblocks-1);
+    
   }
 
 void PowerSpecSource::next_block(float **place) {
