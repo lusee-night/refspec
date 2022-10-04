@@ -61,14 +61,17 @@ struct  SpecConfig {
 
 
 
+/*
 extern "C" {
     SpecConfig* sc_new() {return new SpecConfig();}
 
-    unsigned long sc_Nfft(SpecConfig* sc) {
-      return sc->Nfft;
-    }
+    unsigned long sc_Nfft(SpecConfig* sc)     { return sc->Nfft; }
+
+    double sc_sampling_rate(SpecConfig* sc)   { return sc->sampling_rate; }
 
 }
+*/
+
 
 /* ATTIC
 

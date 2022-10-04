@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -fPIC -g
 
-FFTW_LINK = -lfftw3 -lfftw3f 
+FFTW_LINK = -lfftw3 -lfftw3f
 # -mxp- used to require static, now want to built relocatable
 # LINKFLAGS = -static
 
@@ -18,14 +18,14 @@ LIBRARY = refspec.so
 all: $(LIBRARY) $(TEST_EXECS)
 
 $(OBJS): %.o: %.cpp
-	$(CXX) -c $(CXXFLAGS) -Iinclude  $< -o $@
+	$(CXX) -c $(CXXFLAGS) -Iinclude  -I/usr/local/include/python3.10 $< -o $@
 
 $(TEST_EXECS): %.exe: %.cpp $(LIBRARY)
-	$(CXX) $(CXXFLAGS) -Iinclude   $< $(LIBRARY) $(FFTW_LINK)-o $@ 
+	$(CXX) $(CXXFLAGS) -Iinclude   $< $(LIBRARY)  $(FFTW_LINK)  -lpthread -lpython3.10 -ldl -lutil -pthread -o $@ 
 
 # -mxp- In the original: in the line above $(LINKFLAGS) was present
 
-$(LIBRARY): $(OBJS) Makefile 
+$(LIBRARY): $(OBJS) Makefile-dynamic
 	rm -f $(LIBRARY)
 	ar rcs $(LIBRARY) $(OBJS)
 
