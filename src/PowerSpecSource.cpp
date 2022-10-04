@@ -56,7 +56,7 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
   size_t ki=0;
   size_t kj=1;
   float nyquist = 1/sampling_rate/2;
-  float domega = sampling_rate/N;
+  float domega = sampling_rate/N/1e6; // we work in MHz
   
   fourier[0][0] = fourier[0][1]=0; // DC component
   std::default_random_engine generator;
@@ -81,10 +81,13 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
 }
 
 
-
+bool PowerSpecSource::data_available() const
+  {
+    return repeat || cur_block<(Nblocks-1);
+  }
 
 void PowerSpecSource::next_block(float **place) {
   float *cur = &(buffer[cur_block * block_size]);
-  cur_block = (cur_block+1) % Nblocks;;
+  cur_block = (cur_block+1) % Nblocks;
   for (size_t i=0;i<Nchannels;i++) place[i]=cur;
 }
