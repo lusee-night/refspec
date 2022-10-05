@@ -18,7 +18,7 @@ int main() {
   double fundamental  = cfg.fundamental_frequency();
 
   size_t block_size   = cfg.Nfft*2;
-  size_t Nblocks_gen  = 100;
+  size_t Nblocks_gen  = 100000;
 
   size_t Nk = 10000;
   std::vector<double> kk (Nk), Pk(kk);
@@ -26,11 +26,11 @@ int main() {
   double variance = 0;
   double measured_var = 0;
   for (size_t i=0;i<Nk;i++) {
-    kk[i] = 50*i*dk;
-    Pk[i] = exp(-pow(kk[i]-25,2)/(2*4*4)); //Pk is in dvar / Hz
+    kk[i] = i*dk;
+    Pk[i] = 1e-5*exp(-pow(kk[i]-25,2)/(2*3*3)); //Pk is in dvar / Hz
     variance += Pk[i]*dk*1e6;
   }
-
+  std::cout <<kk[9800] <<std::endl;
   PowerSpecSource source(kk,Pk, cfg.sampling_rate,block_size, cfg.Nchannels,
 		    Nblocks_gen, false, false);
   

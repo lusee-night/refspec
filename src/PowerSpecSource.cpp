@@ -66,7 +66,7 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
 
   size_t NUp = N/2 + (second_fourier*N/2);
 
-  double Pnorm = sqrt(sampling_rate/N/1e2);
+  double Pnorm = sqrt(sampling_rate/N/2);
   for (size_t i=1;i<=NUp;i++) {
     float omega = domega*i;
     size_t j;
