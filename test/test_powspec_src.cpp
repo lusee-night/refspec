@@ -16,7 +16,8 @@ double PkFunc (double k) {
 int main() {
   SpecConfig cfg;
 
-  cfg.Ntaps           = 8;
+  cfg.Nfft            = 2048;
+  cfg.Ntaps           = 4;
   cfg.Nchannels       = 1;
   cfg.AverageSize     = 64;
   cfg.sampling_rate   = 1.0e8;
@@ -27,7 +28,7 @@ int main() {
 
   size_t Nk = 10000;
   std::vector<double> kk (Nk), Pk(kk);
-  double dk = 50./(Nk-1);
+  double dk = 70./(Nk-1);
   double variance = 0;
   double measured_var = 0;
   for (size_t i=0;i<Nk;i++) {
