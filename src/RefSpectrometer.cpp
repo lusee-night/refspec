@@ -42,32 +42,43 @@ RefSpectrometer::RefSpectrometer (SignalSource *source, SpecConfig const *config
 
 void RefSpectrometer::run (SpecOutput *res, int nblocks) {
 
-  int local_counter=0;
+  SpecOutput  avg1(*res);
+  res->zero();
+  int avg1_counter = 0;
+  int pfb_counter = 0;
+  int norm = 0;
+  if (nblocks == 0) nblocks = c->AverageSize;
   while (true) {
-      // shift buffers by one unit
-      for (size_t j=0;j<c->Nchannels;j++) {
-	for (size_t i=0;i<c->Ntaps-1;i++) {
-	  buffer[j][i] = buffer[j][i+1];
-	}
+    // shift buffers by one unit
+    for (size_t j=0;j<c->Nchannels;j++) {
+      for (size_t i=0;i<c->Ntaps-1;i++) {
+	buffer[j][i] = buffer[j][i+1];
       }
+    }
      
-      // get new block of data
-      float* cdata[MAX_CHANNELS];
-      source->next_block(cdata);
-      for (size_t j=0;j<c->Nchannels;j++) {
-	buffer[j][c->Ntaps-1] = cdata[j];
-	pfb.process(buffer[j], pfb_out[local_counter][j]);
-      }
+    // get new block of data
+    float* cdata[MAX_CHANNELS];
+    if (!source->data_available()) break;
+    source->next_block(cdata);
+    for (size_t j=0;j<c->Nchannels;j++) {
+      buffer[j][c->Ntaps-1] = cdata[j];
+      pfb.process(buffer[j], pfb_out[pfb_counter][j]);
+    }
 
-      counter++;
-      local_counter++;
-      
-      if (local_counter == nblocks) break;
-      if (local_counter == c->AverageSize) {
-	process_output(res);
-	break;
-      }
+    counter++;
+    pfb_counter++;
+
+    if (pfb_counter == c->AverageSize) {
+      process_output(&avg1);
+      norm += c->AverageSize;
+      *res += avg1;
+      pfb_counter = 0;
+      avg1_counter++;
+    }
+    if (avg1_counter == nblocks) break;
   }
+  if (norm>0) *res/=float(norm);
+  
 }
   
 
@@ -184,11 +195,6 @@ void RefSpectrometer::process_output(SpecOutput *res) {
       cc+=2;
     }
   }
-
-
-
-
-
 
   assert (cc == res->Nspec); 
 }

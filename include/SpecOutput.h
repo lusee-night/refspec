@@ -14,8 +14,16 @@ struct SpecOutput {
   
   SpecOutput(): constructed (false) {};
   SpecOutput(SpecConfig const *config);
+  SpecOutput (SpecOutput const &S);
+
+
+  void zero();
+  SpecOutput& operator+=(SpecOutput& toadd);
+  SpecOutput& operator/=(float V);
+
   ~SpecOutput();
 
 private:
+  void allocate(); 
   bool constructed;
 };
