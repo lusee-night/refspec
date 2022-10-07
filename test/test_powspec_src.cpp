@@ -17,14 +17,14 @@ int main() {
   SpecConfig cfg;
 
   cfg.Nfft            = 2048;
-  cfg.Ntaps           = 4;
+  cfg.Ntaps           = 8;
   cfg.Nchannels       = 1;
   cfg.AverageSize     = 64;
   cfg.sampling_rate   = 1.0e8;
   double fundamental  = cfg.fundamental_frequency();
 
   size_t block_size   = cfg.Nfft;
-  size_t Nblocks_gen  = 100000;
+  size_t Nblocks_gen  = 300000;
 
   size_t Nk = 10000;
   std::vector<double> kk (Nk), Pk(kk);
@@ -61,12 +61,23 @@ int main() {
   S.run(&O,-1);
 
   std::ofstream of("powspec.txt");
-  
+
+  double sw,sw2;
+  sw=sw2=0.0;
   for (size_t i=1;i<cfg.Nbins();i++) {
     double k = fundamental*i/1e6;
     of << k << " " <<PkFunc(k) << " " << O.avg_pspec[0][i] << " "  << std::endl; 
+    sw+=(O.avg_pspec[0][i]/PkFunc(k));
+    sw2+=pow(O.avg_pspec[0][i]/PkFunc(k),2);
   }
-
+  sw/=cfg.Nbins()-1;
+  sw2/=cfg.Nbins()-1;
+  double mean = sw;
+  double err = sqrt(sw2-mean*mean)/mean;
+  double errt = 1/sqrt(O.Nradiometer);
+  std::cout << mean << " " << err <<" " <<errt<<std::endl;
+  
+    
   of.close();
   return 0;
 }

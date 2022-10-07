@@ -77,8 +77,9 @@ void RefSpectrometer::run (SpecOutput *res, int nblocks) {
     }
     if (avg1_counter == nblocks) break;
   }
-  if (norm>0) *res/=(float(norm)*c->sampling_rate*sqrt(c->Nfft)/2);
   
+  if (norm>0) *res/=(float(norm)*c->sampling_rate*sqrt(c->Nfft)/90.5153); //90 is a fudge
+  res->Nradiometer = norm;
 }
   
 

@@ -2,8 +2,9 @@
 #include <assert.h>
 #include <iostream>
 
-SpecOutput::SpecOutput (SpecConfig const *config) : mode(config->mode),
-    Nchannels(config->Nchannels), Nfft(config->Nfft), constructed(true) {
+SpecOutput::SpecOutput (SpecConfig const *config) :
+  mode(config->mode),  Nchannels(config->Nchannels), Nfft(config->Nfft),
+  Nradiometer(0), constructed(true) {
   //std::cout << "constructing"<<std::endl;
   Nspec = Nchannels*Nchannels; // think about matrix;
   Nbins = Nfft / 2 + 1;
@@ -11,9 +12,9 @@ SpecOutput::SpecOutput (SpecConfig const *config) : mode(config->mode),
   allocate();
 }
 
-SpecOutput::SpecOutput (SpecOutput const &S) : mode(S.mode),
-  Nchannels(S.Nchannels), Nfft(S.Nfft), constructed(true),
-  Nspec(S.Nspec), Nbins(S.Nbins), Nbins_zoom(S.Nbins_zoom)
+SpecOutput::SpecOutput (SpecOutput const &S) :
+  mode(S.mode), Nchannels(S.Nchannels), Nfft(S.Nfft), constructed(true),
+  Nspec(S.Nspec), Nbins(S.Nbins), Nbins_zoom(S.Nbins_zoom), Nradiometer(0)
 {
   allocate();
 }

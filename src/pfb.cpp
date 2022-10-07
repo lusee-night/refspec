@@ -19,7 +19,6 @@ PolyphaseFilterBank::PolyphaseFilterBank (double sampling_rate, int Nfft, int Nt
   // Now need to set up the sinc weight
   double L = Ntaps * Nfft;
   double sw=0.0;
-  double sw2=0.0;
   for (size_t i=0; i<Ntaps; i++) {
     for (size_t j=0; j<Nfft; j++) {
       // replaces this with a proper PI
@@ -36,15 +35,13 @@ PolyphaseFilterBank::PolyphaseFilterBank (double sampling_rate, int Nfft, int Nt
 	weights[i][j] *= 0.5 * (1 - cos(xw));
       if (window == BlackmanNuttall)
 	weights[i][j] *= 0.3635819 - 0.4891775 * cos(xw) + 0.1365995 * cos(2*xw) - 0.01064118 * cos(3*xw); 
-      sw += weights[i][j];
-      sw2 += pow(weights[i][j],2);
+      sw += pow(weights[i][j],2);
     }
   }
-  std::cout << "SW:" << sw<<" " <<sw2 <<" " <<std::endl;
-  sw2=sqrt(sw);
+  sw=sqrt(sw);
   for (size_t i=0; i<Ntaps; i++) {
     for (size_t j=0; j<Nfft; j++) {
-      weights[i][j]/=sqrt(sw2);
+      weights[i][j]/=sw;
     }
   }
 
