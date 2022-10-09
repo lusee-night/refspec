@@ -28,6 +28,8 @@ int main(int argc, char *argv[]) {
   size_t win_start    = 0;
   size_t win_end      = 3;
 
+  size_t zoom_in      = 3;
+  
   auto cli = lyra::cli()
       | lyra::opt(verbose)
         ["-v"]["--verbose"]("bool - verbose mode" )
@@ -46,7 +48,10 @@ int main(int argc, char *argv[]) {
         ["-f"]["--win_start"]("win_start: default 0, start point for window scan")
       | lyra::opt(win_end,   "win_end")
         ["-t"]["--win_end"]("win_end: default 3, end point for window scan")
-     ;
+      | lyra::opt(zoom_in,   "zoom_in")
+        ["-z"]["--zoomin_fact"]("zoom_in: default 3, zoom_in factor 0,3,4,5")
+
+    ;
 
   auto result = cli.parse( { argc, argv } );
   if ( !result ) {
@@ -97,7 +102,8 @@ int main(int argc, char *argv[]) {
   float Ampl      = 10;
   float noiseA    = 0.0;
   double central  = 10; // doesn't really matter
-
+  int central_bin = int(central);
+  
   for (size_t Ntaps=taps_start; Ntaps<=taps_end; Ntaps++) {
 
     if(verbose) {std::cout << "Doing taps: " << Ntaps << std::endl;}
@@ -119,14 +125,20 @@ int main(int argc, char *argv[]) {
       cfg.Ntaps = Ntaps;
       cfg.notch = notch;
       cfg.window = (window_t)(win);
-
+      cfg.zoomin_fact = zoom_in;
+      cfg.zoomin_st = central_bin - 1;
+      cfg.zoomin_en = central_bin + 2;
+      
       for (double freq = central -3 ; freq< central + 3; freq+=0.01) {
   	    SignalGenerator signal(cfg.Nfft, cfg.Nchannels, blocks, freq*fundamental, cfg.sampling_rate, Ampl, noiseA);
-	      RefSpectrometer S(&signal,&cfg);
+	    RefSpectrometer S(&signal,&cfg);
 	      
         SpecOutput O(&cfg);
-	      S.run(&O);
-	      outfile <<freq-central << " " << O.avg_pspec[0][10] << std::endl;
+	S.run(&O,1);
+	S.run(&O,1);
+	outfile <<freq-central << " " << O.avg_pspec[0][central_bin] ;
+	for (size_t i=0; i<zoom_in*3 ;i++) outfile << " " << O.avg_pspec_zoom[0][i];
+	outfile << std::endl;
       }
       
       outfile.close();

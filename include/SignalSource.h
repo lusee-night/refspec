@@ -11,6 +11,7 @@ class SignalSource {
   virtual void next_block(float **place) = 0; 
 
   size_t get_block_size() const {return block_size;}
+  virtual bool data_available() const {return true;}
   
  protected:
   size_t block_size, Nchannels;
