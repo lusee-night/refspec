@@ -51,10 +51,10 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
   fftwf_complex* fourier = fftwf_alloc_complex(Nfft);
   buffer = fftwf_alloc_real(N);
   bool align_out = fftwf_alignment_of((float*)buffer);
-  std::cout << "Planning " <<Nfft <<std::endl;
+  std::cout << "Planning " << N << " samples = " << N/sampling_rate << " seconds."  <<std::endl;
   fftwf_set_timelimit(1.0);
   fftwf_plan plan = fftwf_plan_dft_c2r_1d(N, fourier, buffer, FFTW_DESTROY_INPUT || FFTW_ESTIMATE);
-  std::cout << "Generating " <<std::endl;
+  std::cout << "Generating... " <<std::endl;
   // now generate fourier variates
   size_t ki=0;
   size_t kj=1;
@@ -81,11 +81,9 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
     //  std::cout<<omega<<" " << A <<" " <<kk[ki] <<" " <<fourier[j][0]<<std::endl;
   }
   
-  std::cout << "Transforming " <<std::endl;
+  std::cout << "Transforming... " <<std::endl;
 
-  std::cout <<buffer[0]<<" " <<buffer[1]<<std::endl;
   fftwf_execute(plan);
-  std::cout <<buffer[0]<<" " <<buffer[1]<<std::endl;
   fftwf_free(fourier);
   fftwf_destroy_plan(plan);
   std::cout << "Done " <<std::endl;

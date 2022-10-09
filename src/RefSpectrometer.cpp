@@ -84,8 +84,6 @@ void RefSpectrometer::run (SpecOutput *res, int nblocks) {
   
 
 void RefSpectrometer::process_output(SpecOutput *res) {
-  //std::cout << "here" <<std::endl;
-  //*res = SpecOutput(c);
 
     const float zoom_weights3[3][3][2]  = {{{0.3333333333333333, 0.0 },{-0.16666666666666666, 0.28867513459481287 },{-0.16666666666666666, -0.28867513459481287 }},
 			    {{0.3333333333333333, 0.0 },{0.3333333333333333, 0.0 },{0.3333333333333333, 0.0 }},

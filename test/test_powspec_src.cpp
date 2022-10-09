@@ -52,12 +52,11 @@ int main() {
   }
   
   measured_var /= count;
-  std::cout << variance << "  " <<measured_var <<" " <<sqrt(measured_var/variance)<<std::endl;
+  std::cout << "Variances: "<<variance << "  " <<measured_var <<" " <<sqrt(measured_var/variance)<<std::endl;
   
   SpecOutput O(&cfg);
   RefSpectrometer S(&source,&cfg);
   S.run(&O,1);
-  std::cout << "here" <<std::endl;
   S.run(&O,-1);
 
   std::ofstream of("powspec.txt");
