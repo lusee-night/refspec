@@ -17,7 +17,6 @@ SignalGenerator::SignalGenerator (size_t block_size, size_t Nchannels, size_t Nb
 
 SignalGenerator::~SignalGenerator() {
   fftwf_free(buffer);
-
 }
 
 
