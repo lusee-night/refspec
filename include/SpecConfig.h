@@ -58,47 +58,22 @@ struct  SpecConfig {
   // default constructor with some same defaults
   SpecConfig();
 
-  size_t      get_Ntaps();
+  size_t  get_Ntaps();
 
-  double fundamental_frequency() const {return sampling_rate/Nfft;} 
-  size_t Nbins() const { return Nfft/2 +1; } // number of frequency bins
-
+  double  fundamental_frequency() const { return sampling_rate/Nfft;} 
+  size_t  Nbins() const                 { return Nfft/2 +1;} // number of frequency bins
 };
 
 
+// Below is the initial stub of ctypes version of Python interface,
+// kept here for reference, deprecated in favor of pybind11
 
 /*
 extern "C" {
     SpecConfig* sc_new() {return new SpecConfig();}
-
     unsigned long sc_Nfft(SpecConfig* sc)     { return sc->Nfft; }
-
     double sc_sampling_rate(SpecConfig* sc)   { return sc->sampling_rate; }
 
 }
 */
-
-
-/* ATTIC
-
-
-class SX {
-  public:
-    SX() {
-      this->Nfft = 7;
-    };
-    int Nfft;
-};
-
-extern "C" {
-    SX* sx_new() {return new SX();}
-    int sx_Nfft(SX* sx) {
-      int x = sx->Nfft;
-      x = 2;
-      cout<<sx;
-      return x; // static_cast<int>(x);
-    }
-}
-*/
- 
   

@@ -18,7 +18,7 @@ size_t SpecConfig::get_Ntaps() {
   return Ntaps;
 }
 
-PYBIND11_MODULE(example, m) {
+PYBIND11_MODULE(SpecConfig, m) {
     // optional module docstring
     m.doc() = "pybind11 example plugin";
 

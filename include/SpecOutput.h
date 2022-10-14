@@ -14,6 +14,9 @@ struct SpecOutput {
   SpecOutput(SpecConfig const *config);
   ~SpecOutput();
 
+  size_t get_Nfft();
+  int get_mode();
+
 private:
   bool constructed;
 };
