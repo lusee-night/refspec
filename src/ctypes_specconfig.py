@@ -1,17 +1,11 @@
 #!/usr/bin/env python3
 
+# A simple demo of the ctypes approach to python binding,
+# now deprecated in favor of pybind11. Kept here for reference
 
 import ctypes
 
-lib                     = ctypes.cdll.LoadLibrary('./libspecconfig.so')
-# lib.sx_new.argtypes     = [ctypes.c_void_p]
-#lib.sc_Nfft.argtypes    = [ctypes.c_void_p]
-#lib.sc_Nfft.restype     = ctypes.c_ulong
-
-#sc  = lib.sc_new()
-#x   = lib.sc_Nfft(sc)
-#print(x)
-
+lib = ctypes.cdll.LoadLibrary('./libspecconfig.so')
 
 class SpecConfig(object):
     def __init__(self):

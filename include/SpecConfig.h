@@ -11,6 +11,10 @@
 
 using namespace::std;
 
+
+// Basic build for testing purposes
+// g++ -I../include -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) SpecConfig.cpp -o example$(python3.10-config --extension-suffix)
+
 // enumeration of possible modes spectrometer can be in 
 enum spec_mode_t {
 			idle,   // eat data and do nothing, minimize power
@@ -28,23 +32,23 @@ struct  SpecConfig {
   spec_mode_t mode;
 
   // number of channels and config
-  size_t Nchannels;
-  int plus_channel[MAX_CHANNELS]; // ADC for channel i takes plus_channel[i]-minus_channel[i]
-  int minus_channel[MAX_CHANNELS]; // input to minus. Use -1 for ground;
+  size_t      Nchannels;
+  int         plus_channel[MAX_CHANNELS]; // ADC for channel i takes plus_channel[i]-minus_channel[i]
+  int         minus_channel[MAX_CHANNELS]; // input to minus. Use -1 for ground;
   
 
   // PFB engine setup
-  double sampling_rate;
-  size_t Nfft;
-  size_t Ntaps;
-  window_t window;
+  double      sampling_rate;
+  size_t      Nfft;
+  size_t      Ntaps;
+  window_t    window;
 
   // average size
-  uint32_t AverageSize; 
+  uint32_t    AverageSize; 
   
   // calibrator detector_setup
-  size_t Ncalib;
-  size_t calibrator_cycles [MAX_CALIB_SIGS];
+  size_t      Ncalib;
+  size_t      calibrator_cycles [MAX_CALIB_SIGS];
 
 
   // notch filter for picket fence
@@ -53,6 +57,8 @@ struct  SpecConfig {
  public:
   // default constructor with some same defaults
   SpecConfig();
+
+  size_t      get_Ntaps();
 
   double fundamental_frequency() const {return sampling_rate/Nfft;} 
   size_t Nbins() const { return Nfft/2 +1; } // number of frequency bins
