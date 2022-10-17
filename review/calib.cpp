@@ -1,6 +1,7 @@
 #include "RefSpectrometer.h"
 #include "PowerSpecSource.h"
 #include "CombSource.h"
+#include "WhiteNoise.h"
 #include "SignalCombiner.h"
 #include "SpecConfig.h"
 #include "SpecOutput.h"
@@ -22,12 +23,14 @@ int main() {
   cfg.Ntaps           = 8;
   cfg.Nchannels       = 1;
   cfg.AverageSize     = 80;
-  cfg.notch           = true;
+  cfg.notch           = false;
   double fundamental  = cfg.fundamental_frequency();
 
   size_t block_size   = cfg.Nfft;
   size_t Nblocks_gen  = 300000;
 
+  WhiteNoise Noise (block_size,cfg.Nchannels,100.0);
+  
   CombSource PF(block_size, cfg.Nchannels, 1024,
 		"data/samples/picket_fence_1024.txt", 1, 1.0);
 
@@ -36,7 +39,8 @@ int main() {
 
 
   std::vector<SignalSource*> slist;
-  slist.push_back(&PF);
+  slist.push_back(&Noise);
+  //slist.push_back(&PF);
   slist.push_back(&CalSig);
   SignalCombiner source(slist);
   

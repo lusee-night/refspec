@@ -6,7 +6,7 @@ LINKFLAGS = -static
 
 SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp \
           src/RefSpectrometer.cpp src/FileStreamSource.cpp src/PowerSpecSource.cpp \
-	  src/SignalCombiner.cpp src/CombSource.cpp
+	  src/SignalCombiner.cpp src/CombSource.cpp src/WhiteNoise.cpp
 
 OBJS = $(SOURCES:.cpp=.o)
 
