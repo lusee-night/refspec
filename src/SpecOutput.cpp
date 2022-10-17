@@ -3,7 +3,7 @@
 #include <iostream>
 
 SpecOutput::SpecOutput (SpecConfig const *config) :
-  mode(config->mode),  Nchannels(config->Nchannels), Nfft(config->Nfft),
+  Nchannels(config->Nchannels), Nfft(config->Nfft),
   Nradiometer(0), constructed(true) {
   //std::cout << "constructing"<<std::endl;
   Nspec = Nchannels*Nchannels; // think about matrix;
@@ -13,7 +13,7 @@ SpecOutput::SpecOutput (SpecConfig const *config) :
 }
 
 SpecOutput::SpecOutput (SpecOutput const &S) :
-  mode(S.mode), Nchannels(S.Nchannels), Nfft(S.Nfft), constructed(true),
+  Nchannels(S.Nchannels), Nfft(S.Nfft), constructed(true),
   Nspec(S.Nspec), Nbins(S.Nbins), Nbins_zoom(S.Nbins_zoom), Nradiometer(0)
 {
   allocate();
@@ -63,15 +63,12 @@ SpecOutput& SpecOutput::operator/=(float V) {
 SpecOutput::~SpecOutput() {
   //std::cout << "deconstructing"<<constructed<<std::endl;
   if (constructed) {
-    switch (mode) {
-    case idle:
-      break;
-    case production:
-      for (size_t i=0;i<Nspec;i++) delete avg_pspec[i];
-      if (Nbins_zoom>0)
-	for (size_t i=0;i<Nspec;i++) delete avg_pspec_zoom[i];
-      
-      delete avg_pspec;
-   }
+    for (size_t i=0;i<Nspec;i++) delete avg_pspec[i];
+    delete avg_pspec;
+    if (Nbins_zoom>0) {
+      for (size_t i=0;i<Nspec;i++) delete avg_pspec_zoom[i];
+      delete avg_pspec_zoom;
+    }
+
   }
 }

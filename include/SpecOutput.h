@@ -4,7 +4,6 @@
 
 struct SpecOutput {
 
-  spec_mode_t mode;
   size_t Nchannels, Nspec, Nbins, Nbins_zoom;
   size_t Nfft;
   size_t Nradiometer;

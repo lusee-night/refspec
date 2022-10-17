@@ -9,21 +9,7 @@
 #define MAX_TAPS 128
 
 
-// enumeration of possible modes spectrometer can be in 
-enum spec_mode_t {
-			idle,   // eat data and do nothing, minimize power
-			self_test, // TBD 
-			production,  // normal mode with averaging
-			raw_input,  // send back raw_input waveforms
-			raw_pfb,   // send back raw_PFB data
-			shutdown  // controlled shutdown
-};
-
-
 struct  SpecConfig {
-
-  // spectrometer mode
-  spec_mode_t mode;
 
   // number of channels and config
   size_t Nchannels;
