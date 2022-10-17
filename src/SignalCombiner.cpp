@@ -14,6 +14,7 @@ SignalCombiner::SignalCombiner(std::vector<SignalSource*> sources) : sources(sou
   }
 
   buf = new float*[Nchannels];
+  inbuf = new float*[Nchannels];
   for (size_t i=0;i<Nchannels;i++) buf[i] = fftwf_alloc_real (block_size);
 }
 
@@ -26,16 +27,15 @@ SignalCombiner::SignalCombiner::~SignalCombiner() {
 void SignalCombiner::SignalCombiner::next_block(float **place) {
   bool first_block = true;
   for (SignalSource* source : sources) {
-    float **cur;
-    source->next_block(cur);
+    source->next_block(inbuf);
     for (size_t j=0;j<Nchannels;j++) {
       for (size_t k=0;k<block_size;k++) {
-	if (first_block) buf[j][k] = cur[j][k]; else buf[j][k] += cur[j][k];
+	if (first_block) buf[j][k] = inbuf[j][k]; else buf[j][k] += inbuf[j][k];
       }
     }
     first_block=false;
   }
-  place=buf;
+  for (size_t i=0;i<Nchannels;i++) place[i] = buf[i];
 }
 
 bool SignalCombiner::data_available() const {

@@ -1,7 +1,7 @@
 #include "SpecConfig.h"
 #include <cassert>
 
-SpecConfig::SpecConfig() :  mode (production), Nchannels(1), sampling_rate(1e8), Nfft(4096),
+SpecConfig::SpecConfig() :  mode (production), Nchannels(1), sampling_rate(1.024e8), Nfft(4096),
 			    Ntaps(8), window(None), AverageSize(64), Ncalib(0), notch(false),
 			    zoomin_st(0), zoomin_en(0),zoomin_fact(0)
 {

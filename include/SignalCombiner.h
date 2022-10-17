@@ -18,5 +18,5 @@ class SignalCombiner: public SignalSource {
   size_t block_size, Nchannels, Nsources;
   std::vector <SignalSource*> sources;
   float **buf;
-  
+  float **inbuf;
 };

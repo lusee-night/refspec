@@ -6,13 +6,13 @@ LINKFLAGS = -static
 
 SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp \
           src/RefSpectrometer.cpp src/FileStreamSource.cpp src/PowerSpecSource.cpp \
-	  src/SignalCombiner.cpp
+	  src/SignalCombiner.cpp src/CombSource.cpp
 
 OBJS = $(SOURCES:.cpp=.o)
 
 TEST_SOURCES = test/test_pfb.cpp test/test_timing.cpp test/test_response.cpp \
 	test/simple_demo.cpp test/response_leak_detector.cpp test/psp_run.cpp \
-	test/test_powspec_src.cpp
+	test/test_powspec_src.cpp review/calib.cpp
 
 TEST_EXECS = $(TEST_SOURCES:.cpp=.exe)
 
