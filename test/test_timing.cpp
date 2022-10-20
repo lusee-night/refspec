@@ -22,7 +22,7 @@ int main() {
 
   std::cout << "prefilling signal generator " << std::endl;
   // ask for more blocks than we actually need
-  SignalGenerator signal(cfg.Nfft, cfg.Nchannels, blocks+2*(cfg.Ntaps+cfg.AverageSize), 
+  SignalGenerator signal(cfg.Nfft, cfg.Nchannels, blocks+2*(cfg.Ntaps+cfg.AverageSize()), 
 			 10*fundamental, cfg.sampling_rate, Ampl, noiseA);
   RefSpectrometer S(&signal,&cfg);
   SpecOutput O(&cfg);

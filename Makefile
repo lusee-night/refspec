@@ -1,8 +1,9 @@
 CXX = g++
 CXXFLAGS = -Ofast -g -std=c++17
+#CXXFLAGS = -D_GLIBCXX_DEBUG -g -Wall -Wno-sign-compare -Wno-reorder -std=c++17
 
 FFTW_LINK = -lfftw3 -lfftw3f 
-LINKFLAGS = -static
+LINKFLAGS = -static 
 
 SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp \
           src/RefSpectrometer.cpp src/FileStreamSource.cpp src/PowerSpecSource.cpp \

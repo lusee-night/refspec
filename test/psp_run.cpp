@@ -16,7 +16,8 @@ int main() {
   cfg.sampling_rate   = 38.4e6;
   cfg.Ntaps           = 4;
   cfg.Nchannels       = 1;
-  cfg.AverageSize     = 32768/cfg.Nfft;
+  cfg.Average1Size    = 32768/cfg.Nfft;
+  cfg.Average2Size    = 1;
   cfg.notch           = true;
   double fundamental  = cfg.fundamental_frequency();
 

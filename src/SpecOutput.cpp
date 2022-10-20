@@ -4,7 +4,7 @@
 
 SpecOutput::SpecOutput (SpecConfig const *config) :
   Nchannels(config->Nchannels), Nfft(config->Nfft),
-  Nradiometer(0), constructed(true) {
+  Ncalib(config->Ncalib), Nradiometer(0), constructed(true) {
   //std::cout << "constructing"<<std::endl;
   Nspec = Nchannels*Nchannels; // think about matrix;
   Nbins = Nfft / 2 + 1;
@@ -14,7 +14,8 @@ SpecOutput::SpecOutput (SpecConfig const *config) :
 
 SpecOutput::SpecOutput (SpecOutput const &S) :
   Nchannels(S.Nchannels), Nfft(S.Nfft), constructed(true),
-  Nspec(S.Nspec), Nbins(S.Nbins), Nbins_zoom(S.Nbins_zoom), Nradiometer(0)
+  Nspec(S.Nspec), Nbins(S.Nbins), Nbins_zoom(S.Nbins_zoom), Nradiometer(S.Nradiometer),
+  Ncalib(S.Ncalib)
 {
   allocate();
 }
@@ -27,6 +28,11 @@ void SpecOutput::allocate() {
       avg_pspec[i] = new float[Nbins];
       if (Nbins_zoom>0) avg_pspec_zoom[i] = new float[Nbins_zoom];
     }
+    if (Ncalib>0) {
+      calib_out = new float*[Nchannels];
+      for (size_t i=0;i<Nchannels;i++) calib_out[i] = new float[Ncalib];
+    }
+    std::cout << Ncalib << " " << Nchannels <<" " <<calib_out[0] << "cc"<<avg_pspec[0] <<std::endl;
 }
 
 void SpecOutput::zero() {
@@ -69,6 +75,9 @@ SpecOutput::~SpecOutput() {
       for (size_t i=0;i<Nspec;i++) delete avg_pspec_zoom[i];
       delete avg_pspec_zoom;
     }
-
+    if (Ncalib>0) {
+      for (size_t i=0;i<Nchannels;i++) delete calib_out[i];
+      delete calib_out;
+    }
   }
 }

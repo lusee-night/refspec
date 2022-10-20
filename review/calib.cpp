@@ -22,25 +22,35 @@ int main() {
   cfg.Nfft            = 4096;
   cfg.Ntaps           = 8;
   cfg.Nchannels       = 1;
-  cfg.AverageSize     = 80;
-  cfg.notch           = false;
+  cfg.Average1Size    = 70;
+  cfg.Average2Size    = 125;
+  cfg.notch           = true;
+  cfg.Ncalib          = 875;
+
+  cfg.sanity_check();
+
   double fundamental  = cfg.fundamental_frequency();
 
   size_t block_size   = cfg.Nfft;
   size_t Nblocks_gen  = 300000;
 
-  WhiteNoise Noise (block_size,cfg.Nchannels,100.0);
+  WhiteNoise Noise (block_size,cfg.Nchannels,1000.0);
   
   CombSource PF(block_size, cfg.Nchannels, 1024,
 		"data/samples/picket_fence_1024.txt", 1, 1.0);
 
   CombSource CalSig(block_size, cfg.Nchannels, 875,
-		    "data/samples/calib_875x16.txt",16, 100.0);
+		    "data/samples/calib_875x16.txt",16, 100.0,0.0,-1.5e-6,0.0);
 
+  //  CombSource CalSig(block_size, cfg.Nchannels, 875,
+  //		    "data/samples/ladder_1024.txt",1, 100.0);
 
+  
+
+  
   std::vector<SignalSource*> slist;
   slist.push_back(&Noise);
-  //slist.push_back(&PF);
+  slist.push_back(&PF);
   slist.push_back(&CalSig);
   SignalCombiner source(slist);
   
@@ -69,9 +79,10 @@ int main() {
   // 		    Nblocks_gen, false, false);
   
   SpecOutput O(&cfg);
+  std::cout << O.calib_out[0] << " CA " << cfg.Ncalib <<std::endl;  
   RefSpectrometer S(&source,&cfg);
-  S.run(&O,1);
-  S.run(&O,50);
+  S.print_info();
+  S.run(&O);
 
   std::ofstream of("powspec.txt");
 
@@ -80,6 +91,12 @@ int main() {
   for (size_t i=1;i<cfg.Nbins();i++) {
     double k = fundamental*i/1e6;
     of << k << " " << O.avg_pspec[0][i] << " "  << std::endl; 
+  }
+  of.close();
+
+  of.open("calib.txt");
+  for (size_t i=1;i<cfg.Ncalib;i++) {
+    of << i << " " << O.calib_out[0][i] << " "  << std::endl; 
   }
   of.close();
   return 0;
