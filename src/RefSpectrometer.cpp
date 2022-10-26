@@ -20,8 +20,6 @@ RefSpectrometer::RefSpectrometer (SignalSource *source, SpecConfig const *config
 
   for (size_t i=0;i<c->Nchannels;i++) buffer[i] = new float*[c->Ntaps];
 
-  //std::cout<< c->AverageSize << " " <<c->Nchannels << " " <<pfb.get_Ncomplex() <<std::endl;
-  //assert(0);
 
   pfb_out = new fftwf_complex**[c->Average1Size];
   for (size_t i=0;i<c->Average1Size;i++) {
@@ -43,6 +41,8 @@ RefSpectrometer::RefSpectrometer (SignalSource *source, SpecConfig const *config
     cal_Nsubopt = 2*c->calib_subint-1;
     cal_Ntot = c->AverageSize()*c->Nfft / c->Ncalib;
     cal_Nsub = cal_Ntot / c->calib_subint;
+    calbuf = Vec3(cal_Nsubopt,Vec2(c->Nchannels, Vec1(c->Ncalib,0.0)));
+    //std::cout<<calbuf.size() <<" " <<calbuf[3].size() << " " << calbuf[3][0].size() <<std::endl;
   }
 
 }
@@ -56,8 +56,10 @@ void RefSpectrometer::print_info() {
   std::cout << " Average 1       : " << c->Average1Size << " ~ " << c->Average1Size*c->Nfft/c->sampling_rate*1e3 <<"ms"<<  " ~ " << (1/(c->Average1Size*c->Nfft/c->sampling_rate*1e3))<<"kHz"<<   std::endl;
   std::cout << " Average 2       : " << c->Average2Size << std::endl;
   std::cout << " Ncalib          : " << c->Ncalib <<std::endl;
-  std::cout << " Calib Average1  : " << cal_Nsub << " ~ " << cal_Nsub*c->Ncalib/c->sampling_rate*1e3<<"ms"<<std::endl;
-  std::cout << " Calib Average2  : " << cal_Ntot/cal_Nsub << std::endl;
+  if (c->Ncalib>0) {
+    std::cout << " Calib Average1  : " << cal_Nsub << " ~ " << cal_Nsub*c->Ncalib/c->sampling_rate*1e3<<"ms"<<std::endl;
+    std::cout << " Calib Average2  : " << cal_Ntot/cal_Nsub << std::endl;
+  }
   std::cout << " Total Average   : " << c->AverageSize() << " ~ "  << c->AverageSize()*c->Nfft/c->sampling_rate*1e3 <<"ms"<<    std::endl;
 }
 
@@ -78,7 +80,6 @@ void RefSpectrometer::run_pfb(float**cdata, SpecOutput *res, SpecOutput *avg1) {
     pfb_counter++;
     if (pfb_counter == c->Average1Size) {
       process_output(avg1);
-      norm += c->AverageSize();
       *res += *avg1;
       pfb_counter = 0;
     }
@@ -90,7 +91,7 @@ int router5 (size_t sub, size_t j) {
   const int res2[9] =  { 0, 0, 1, 2, 2, -2, -2, -1,  0 };
   const int res3[9] =  { 0, 1, 2, 2, 3, -3, -2, -2, -1 };
   const int res4[9] =  { 0, 1, 2, 3, 4, -4, -3, -2, -1 };
-
+  assert ((sub>=0)&(sub<5));
   switch (sub) {
   case 0:
     return 0;
@@ -103,55 +104,75 @@ int router5 (size_t sub, size_t j) {
   case 4:
     return res4[j];
   }
-  return 0;
+  return 0; // never actually executed
+}
+
+void RefSpectrometer::zero_calbuf() {
+    for (size_t i=0;i<cal_Nsubopt;i++) {
+      for (size_t j=0;j<c->Nchannels;j++) {
+	for (size_t k=0;k<c->Ncalib;k++) {
+	  calbuf[i][j][k]=0.0;
+	}
+      }
+    }
 }
 
 void RefSpectrometer::run_calib(float**cdata, SpecOutput *res)
 {
-
-  size_t  csub = cal_c % cal_Nsub;
+  size_t  csub = cal_c / cal_Nsub;
   bool done = false;
+  float w;
   for (size_t i=0; i<c->Nfft; i++) {
 
     for (size_t j=0; j<cal_Nsubopt; j++) {
       size_t t = router5(csub, j);
       t = (cal_ofs+t)%c->Ncalib;
-      for (size_t cc=0; cc<c->Nchannels; cc++) calbuf[j][cc][t] += cdata[cc][i];
+      w=1;
+      if ((c->calib_odd) &(cal_c%2==1)) w=-1;
+      for (size_t cc=0; cc<c->Nchannels; cc++) calbuf[j][cc][t] += w*cdata[cc][i];
     }
-
     cal_ofs++;
     if (cal_ofs == c->Ncalib) {
       cal_ofs = 0;
       cal_c += 1;
+      //std::cout<<cal_c<<" " <<cal_Ntot<<cal_Nsub <<std::endl;
       if (cal_c == cal_Ntot) {
 	done = true;
 	break;
       } 
-      csub = cal_c % cal_Nsub;
+      csub = cal_c / cal_Nsub;
     }
     if (done) break;
   }
 
   if (done) {
     size_t maxvar_i=-1;
+    size_t minvar_i=-1;
     float maxvar = -1;
+    float minvar = 1e100;
     for (size_t j=0;j<cal_Nsubopt;j++) {
       float cvar = 0;
       for (size_t i=0; i<c->Ncalib; i++) 
 	for (size_t cc=0;cc<c->Nchannels;cc++) cvar+=pow(calbuf[j][cc][i],2);
-      std::cout <<j <<" ajja" <<cvar<<std::endl;
+      //      std::cout << j << " " <<cvar<<std::endl;
       if (cvar>maxvar) {
 	maxvar = cvar;
 	maxvar_i = j;
       }
+      if (cvar<minvar) {
+	minvar = cvar;
+	minvar_i = j;
+      }
     }
-    std::cout <<maxvar_i <<" XX" <<std::endl;
+
+    std::cout << "Calib Drift NDX : " << maxvar_i << " " <<"Det:"<<maxvar/minvar<<std::endl;
     for (size_t i=0; i<c->Ncalib; i++) 
       for (size_t cc=0; cc<c->Nchannels; cc++) res->calib_out[cc][i] = calbuf[maxvar_i][cc][i];
     res->calib_drift_count = maxvar_i;
     res->calib_drift_N = cal_Ntot;
+    res->calib_det = maxvar/minvar;
     // reset
-    calbuf = Vec3(cal_Nsubopt,Vec2(c->Nchannels, Vec1(c->Ncalib,0.0)));
+    zero_calbuf(); 
     cal_ofs = 0;
     cal_c = 0;
   }
@@ -165,26 +186,21 @@ void RefSpectrometer::run (SpecOutput *res) {
 
   SpecOutput  avg1(*res);
   res->zero();
-  std::cout << res->calib_out[0] << " AA " <<std::endl;
-  //if (nblocks == 0) nblocks = c->Average2Size;
-  //if (c->Ncalib>0) assert(nblocks == c->Average2Size); // with calibration only this makes sense
-  norm = 0;
   pfb_counter = 0;
-  calbuf = Vec3(cal_Nsubopt,Vec2(c->Nchannels, Vec1(c->Ncalib,0.0)));
+  zero_calbuf();
   cal_c = 0; // this is redundant here
   cal_ofs  = 0;
     
   for (size_t counter=0;counter<c->AverageSize();counter++) {
-    if (!source->data_available()) break;
+    assert (source->data_available());
     // get new block of data
     float* cdata[MAX_CHANNELS];
     source->next_block(cdata);
-    run_pfb(cdata, res,&avg1);
+    run_pfb(cdata, res, &avg1);
     if (c->Ncalib > 0) run_calib(cdata, res);
   }
   
-  if (norm>0) *res/=(float(norm)*c->sampling_rate*sqrt(c->Nfft)/90.5153); //90 is a fudge
-  res->Nradiometer = norm;
+  if (res->Nradiometer>0) *res/=(float(res->Nradiometer)/2/c->Nfft*c->sampling_rate); 
 }
   
 
@@ -300,6 +316,7 @@ void RefSpectrometer::process_output(SpecOutput *res) {
     }
   }
 
+  res->Nradiometer = c->Average1Size - int(c->notch);
   assert (cc == res->Nspec); 
 }
       

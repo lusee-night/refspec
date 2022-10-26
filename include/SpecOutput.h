@@ -12,7 +12,7 @@ struct SpecOutput {
   float **avg_pspec_zoom; //zoom region
 
   float **calib_out;
-  float calib_drift;
+  float calib_drift, calib_det;
   int calib_drift_count, calib_drift_N;
   
   SpecOutput(): constructed (false) {};

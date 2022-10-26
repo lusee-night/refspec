@@ -39,8 +39,9 @@ CombSource::~CombSource() {
 
 
 void CombSource::next_block(float **place) {
+  size_t offset = cc % Nsamples;
   if (simple_copy) {
-    size_t offset = cc % Nsamples;
+    assert(offset==0);
     for (size_t i=0;i<block_size;i++) {
       float A = A0*(1+beta_A * cc);
       buffer[i] = buffer_raw[(offset+i)%Nsamples]*A;
@@ -48,8 +49,10 @@ void CombSource::next_block(float **place) {
     }
   } else {
     for (size_t i=0;i<block_size;i++) {
-      double ti = cc*(1+alpha_t + beta_t * cc);
+      //double ti = cc*(alpha_t + beta_t * cc); // unstable
+      double ti = offset+i+cc*(alpha_t + beta_t * cc);
       ti -= Nsamples*int(ti/Nsamples);
+      while (ti<0) ti+=Nsamples;
       float A = A0*(1+beta_t * cc);
       size_t ndx = int(ti*oversample);
       buffer[i] = buffer_raw[ndx]*A;

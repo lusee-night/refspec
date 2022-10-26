@@ -34,7 +34,6 @@ private:
   PolyphaseFilterBank pfb;
   fftwf_complex ***pfb_out; // BlockSize x Nchannels x Ncomplex
   size_t counter, pfb_counter;
-  int norm;
 
   // calib part
   size_t cal_c, cal_ofs,  cal_Ntot, cal_Nsub, cal_Nsubopt;
@@ -44,7 +43,7 @@ private:
   void run_pfb(float**cdata, SpecOutput *res, SpecOutput *avg1);
   void run_calib(float**cdata, SpecOutput *res);
   void process_output(SpecOutput *res); 
-
+  void zero_calbuf();
 
 
 };

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <fftw3.h>
 #include <random>
+#include <assert.h>
 
 PowerSpecSource::PowerSpecSource(const std::vector<double> &kk,
 		  const std::vector<double> &Pk,
@@ -73,7 +74,15 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
     while (omega>kk[kj]) {ki++; kj++;}
     // now interpolate / extrapolate
     double Phere = Pk[ki]+(Pk[kj]-Pk[ki])/(kk[kj]-kk[ki])*(omega-kk[ki]); // in dvar/Hz
+    //if (i%1000000==0) std::cout << omega << " " <<Phere <<" xx" <<std::endl;
+    if ((omega<1e-2) && (Phere<0)) Phere = 0;
+
     double A = sqrt(Phere/2)*Pnorm; // fix norm factors
+    if (std::isnan(A)) {
+	std::cout << "Fatal, negative power spec <<"<<omega<<" " <<Phere <<std::endl;
+	exit(1);
+      }
+
     if (i<=Nfft) j=i; else j = N-i;
     fourier[j][0]=A*gauss(generator);
     fourier[j][1]=A*gauss(generator);

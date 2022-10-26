@@ -29,7 +29,7 @@ struct  SpecConfig {
   uint32_t Average1Size; // first level averaging with notch (<10ms)
   uint32_t Average2Size; // second level averaging to get to 10s Hz. B
   uint32_t AverageSize() const {return Average1Size * Average2Size;}  // product of the two
-
+  uint32_t MinGenSize() const {return AverageSize() + Ntaps;} 
   
   // zoom-in size
   uint32_t zoomin_st, zoomin_en; // start end end of the zoom in region, C counting

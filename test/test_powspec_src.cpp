@@ -20,45 +20,49 @@ int main() {
   cfg.Ntaps           = 8;
   cfg.Nchannels       = 1;
   cfg.Average1Size     = 64;
-  cfg.Average2Size     = 1;
+  cfg.Average2Size     = 500;
   cfg.sampling_rate   = 1.0e8;
   double fundamental  = cfg.fundamental_frequency();
 
   size_t block_size   = cfg.Nfft;
-  size_t Nblocks_gen  = 300000;
+  size_t Nvar         = 10;
+  size_t Nblocks_gen  = cfg.MinGenSize()+Nvar;
 
   size_t Nk = 10000;
   std::vector<double> kk (Nk), Pk(kk);
   double dk = 70./(Nk-1);
   double variance = 0;
   double measured_var = 0;
+
   for (size_t i=0;i<Nk;i++) {
     kk[i] = i*dk;
     Pk[i] = PkFunc(kk[i]);
     variance += Pk[i]*dk*1e6;
   }
 
-  PowerSpecSource source(kk,Pk, cfg.sampling_rate,block_size, cfg.Nchannels,
-		    Nblocks_gen, false, false);
-  
+  //PowerSpecSource source(kk,Pk, cfg.sampling_rate,block_size, cfg.Nchannels,
+  //		    Nblocks_gen, false, false);
+
+  PowerSpecSource source("data/Pk/Pk_wnoise.txt", cfg.sampling_rate, block_size,
+  		    cfg.Nchannels, Nblocks_gen, false, false);
+
   size_t count=0;
   float **buf;
   buf = new float*[1];
-  while (source.data_available()) {
+  for (size_t i=0;i<Nvar;i++) {
     source.next_block(buf);
     for (size_t i=0;i<block_size;i++) {
       measured_var+=buf[0][i]*buf[0][i];
       count += 1;
     }
-  }
-  
+  };    
+    
   measured_var /= count;
   std::cout << "Variances: "<<variance << "  " <<measured_var <<" " <<sqrt(measured_var/variance)<<std::endl;
   
   SpecOutput O(&cfg);
   RefSpectrometer S(&source,&cfg);
-  S.run(&O,1);
-  S.run(&O,-1);
+  S.run(&O);
 
   std::ofstream of("powspec.txt");
 

@@ -20,7 +20,7 @@ void SpecConfig::sanity_check() const {
   if (Ncalib>0) {
     // numerology of death
     assert(calib_subint == 5);
-    assert( (AverageSize() * Nfft) % (calib_subint * Ncalib) == 0);
+    assert( (AverageSize() * Nfft) % (calib_subint * Ncalib * (1+(calib_odd))) == 0);
   }
 }
 

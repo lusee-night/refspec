@@ -32,7 +32,6 @@ void SpecOutput::allocate() {
       calib_out = new float*[Nchannels];
       for (size_t i=0;i<Nchannels;i++) calib_out[i] = new float[Ncalib];
     }
-    std::cout << Ncalib << " " << Nchannels <<" " <<calib_out[0] << "cc"<<avg_pspec[0] <<std::endl;
 }
 
 void SpecOutput::zero() {
@@ -41,6 +40,7 @@ void SpecOutput::zero() {
       if (Nbins_zoom>0)
 	for (size_t j=0;j<Nbins_zoom;j++) avg_pspec_zoom[i][j] = 0.0; 
     }
+    Nradiometer = 0.0;
 }
 
 
@@ -51,6 +51,7 @@ SpecOutput& SpecOutput::operator+=(SpecOutput& toadd) {
     if (Nbins_zoom>0)
       for (size_t j=0;j<Nbins_zoom;j++) avg_pspec_zoom[i][j] += toadd.avg_pspec_zoom[i][j]; 
   }
+  Nradiometer += toadd.Nradiometer;
   return *this;
 }
 
