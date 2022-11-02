@@ -14,6 +14,7 @@ struct SpecOutput {
   SpecOutput(SpecConfig const *config);
   ~SpecOutput();
 
+  // Helper functions (just in case)
   size_t get_Nfft();
   int get_mode();
 

@@ -12,7 +12,7 @@ g++ -I../include -shared -Wl,-soname,libspecconfig.so -o libspecconfig.so SpecCo
 ### Integrated module
 
 ```bash
-g++ -I../include -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) refspec.cpp  SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp -lfftw3 -lfftw3f -o refspec$(python3.10-config --extension-suffix)
+g++ -I../include -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) refspec.cpp  SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp RefSpectrometer.cpp pfb.cpp -lfftw3 -lfftw3f -o refspec$(python3.10-config --extension-suffix)
 ```
 The FFT libraries are needed for the generator code, if not included in a specific test these can be dropped.
 

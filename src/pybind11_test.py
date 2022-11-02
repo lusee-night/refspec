@@ -3,17 +3,19 @@
 # Testing the refspec Python package obtained using pybind11
 
 
-from refspec import SpecConfig, SpecOutput, SignalGenerator
+from refspec import SpecConfig, SpecOutput, SignalGenerator, RefSpectrometer
 
 cfg =   SpecConfig()
-so  =   SpecOutput(cfg)
+out =   SpecOutput(cfg)
 
-print(so.get_Nfft())
-print(so.get_mode())
 
 print("*** SpecConfig ***")
 print(f'''sampling_rate: {cfg.sampling_rate}, Nfft: {cfg.Nfft}, Ntaps: {cfg.Ntaps}, AverageSize: {cfg.AverageSize}''')
 
+
+print("*** SpecOutput ***")
+print(f'''Testing accessor functions -- get_Nfft(): {out.get_Nfft()}, get_mode(): {out.get_mode()}''')
+print(f'''Nchannels: {out.Nchannels}, NSpec: {out.Nspec}, Nbins: {out.Nbins} ''')
 
 # Further testing taken from "simple_demo"
 
