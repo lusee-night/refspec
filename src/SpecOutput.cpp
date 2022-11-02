@@ -7,8 +7,7 @@
 namespace py = pybind11;
 
 SpecOutput::SpecOutput (SpecConfig const *config) : mode(config->mode),
-    Nchannels(config->Nchannels), Nfft(config->Nfft), constructed(true) {
-  //std::cout << "constructing"<<std::endl;
+    Nchannels(config->Nchannels), Nfft(config->Nfft), constructed(true) { //std::cout << "constructing"<<std::endl;
   Nspec = Nchannels*Nchannels; // think about matrix;
   Nbins = Nfft / 2 + 1;
   switch (mode) {
@@ -25,8 +24,7 @@ SpecOutput::SpecOutput (SpecConfig const *config) : mode(config->mode),
    }
 }
 
-SpecOutput::~SpecOutput() {
-  //std::cout << "deconstructing"<<constructed<<std::endl;
+SpecOutput::~SpecOutput() {  // std::cout << "deconstructing "<<constructed<<" "<<get_mode()<<" "<<mode<<std::endl;
   if (constructed) {
     switch (mode) {
     case idle:
@@ -34,6 +32,7 @@ SpecOutput::~SpecOutput() {
     case production:
       for (size_t i=0;i<Nspec;i++) delete avg_pspec[i];
       delete avg_pspec;
+      break;
     default:
       assert(false); // not implemented        
    }
@@ -48,6 +47,8 @@ int SpecOutput::get_mode() {
   return static_cast<int>(mode);
 }
 
+
+// WARNING -- deprecated, kept for reference. All moved to refspec.cpp
 PYBIND11_MODULE(SpecOutput, m) {
     // optional module docstring
     m.doc() = "pybind11 example plugin";

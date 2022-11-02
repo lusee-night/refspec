@@ -1,5 +1,7 @@
 #include "SpecConfig.h"
 #include "SpecOutput.h"
+#include "SignalGenerator.h"
+
 #include <assert.h>
 #include <iostream>
 
@@ -22,6 +24,15 @@ PYBIND11_MODULE(refspec, m) {
         .def(py::init<>())
         .def("get_Ntaps", &SpecConfig::get_Ntaps)
         .def("Nbins", &SpecConfig::Nbins)
-        .def("fundamental_frequency", &SpecConfig::fundamental_frequency);
+        .def_readwrite("Nchannels",     &SpecConfig::Nchannels)
+        .def_readwrite("sampling_rate", &SpecConfig::sampling_rate)
+        .def_readwrite("Nfft",          &SpecConfig::Nfft)
+        .def_readwrite("Ntaps",         &SpecConfig::Ntaps)
+        .def_readwrite("AverageSize",   &SpecConfig::AverageSize)
+        .def("fundamental_frequency",   &SpecConfig::fundamental_frequency);
+
+    // bindings to SignalGenerator class
+    py::class_<SignalGenerator>(m, "SignalGenerator")
+        .def(py::init<size_t, size_t, size_t, float, float, float, float>());
 
 }

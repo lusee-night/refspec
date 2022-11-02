@@ -18,16 +18,18 @@ size_t SpecConfig::get_Ntaps() {
   return Ntaps;
 }
 
+
+// WARNING -- deprecated, kept for reference. All moved to refspec.cpp
 PYBIND11_MODULE(SpecConfig, m) {
     // optional module docstring
     m.doc() = "pybind11 example plugin";
-
 
     // bindings to class
     py::class_<SpecConfig>(m, "SpecConfig")
         .def(py::init<>())
         .def("get_Ntaps", &SpecConfig::get_Ntaps)
         .def("Nbins", &SpecConfig::Nbins)
+        .def_readwrite("Ntaps", &SpecConfig::Ntaps)
         .def("fundamental_frequency", &SpecConfig::fundamental_frequency);
 //      .def(py::init<spec_mode_t, size_t, double, size_t, size_t, window_t, uint32_t, size_t, bool>());
 }
