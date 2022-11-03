@@ -42,5 +42,13 @@ PYBIND11_MODULE(refspec, m) {
 
     // bindings to RefSpectrometer class
     py::class_<RefSpectrometer>(m, "RefSpectrometer")
-        .def(py::init<SignalSource *, SpecConfig *>());
+        .def(py::init<SignalSource *, SpecConfig const *>())
+        .def("run",                     &RefSpectrometer::run)        
+        .def("blocks_processed",        &RefSpectrometer::blocks_processed);
+
+    // bindings to SignalSource class
+    // NB. Commented out until synced with main branch
+    // py::class_<SignalSource>(m, "SignalSource")
+    //     .def(py::init<size_t, size_t>())
+    //     .def("get_block_size", &SignalSource::get_block_size);
 }

@@ -30,8 +30,9 @@ Ampl                = 10
 noiseA              = 0.0
 
 
-signal = SignalGenerator(cfg.Nfft, cfg.Nchannels, blocks, 10e6, cfg.sampling_rate, Ampl, noiseA)
-
+# signal  = SignalGenerator(cfg.Nfft, cfg.Nchannels, blocks, 10e6, cfg.sampling_rate, Ampl, noiseA)
+# signal_source -- needs to be reconciled with main branch
+# spctr   = RefSpectrometer(signal, cfg)
 
 exit(0)
 
