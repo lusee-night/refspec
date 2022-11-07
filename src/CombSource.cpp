@@ -11,7 +11,7 @@ CombSource::CombSource (size_t block_size, size_t Nchannels,
 			size_t Nsamples,  std::string filename,
 			size_t oversample,
 			float A0, float beta_A,
-			float alpha_t, float beta_t ):
+			float alpha_t, float beta_t, size_t sample_shift ):
   SignalSource(block_size, Nchannels), Nsamples(Nsamples), oversample(oversample),
   A0(A0), beta_A(beta_A), alpha_t(alpha_t), beta_t(beta_t), cc(0),
   simple_copy ((alpha_t==0) && (beta_t==0) && (oversample==1))
@@ -26,7 +26,7 @@ CombSource::CombSource (size_t block_size, size_t Nchannels,
     exit(1);
   }
   for (size_t i=0;i<Nsamples_raw;i++) {
-    inf >> buffer_raw[i];
+    inf >> buffer_raw[(sample_shift+i)%Nsamples_raw];
   }
   inf.close();
 }

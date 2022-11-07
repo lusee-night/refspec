@@ -1,9 +1,10 @@
 CXX = g++
-CXXFLAGS = -Ofast -g -std=c++17
+CXXFLAGS = -Ofast -g -std=c++17 -fopenmp -static
 #CXXFLAGS = -D_GLIBCXX_DEBUG -g -Wall -Wno-sign-compare -Wno-reorder -std=c++17
 
-FFTW_LINK = -lfftw3 -lfftw3f 
-LINKFLAGS = -static 
+FFTW_LINK = -lfftw3 -lfftw3f
+#FFTW_LINK = -lfftw3f_omp  -lfftw3f -lm
+LINKFLAGS = 
 
 SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp \
           src/RefSpectrometer.cpp src/FileStreamSource.cpp src/PowerSpecSource.cpp \
@@ -25,7 +26,7 @@ $(OBJS): %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) -Iinclude  $< -o $@
 
 $(TEST_EXECS): %.exe: %.cpp $(LIBRARY)
-	$(CXX) $(CXXFLAGS) $(LINKFLAGS) -Iinclude   $< $(LIBRARY) $(FFTW_LINK)-o $@ 
+	$(CXX) $(CXXFLAGS) $(LINKFLAGS) -Iinclude   $< $(LIBRARY) $(FFTW_LINK) -o $@ 
 
 
 $(LIBRARY): $(OBJS) Makefile 

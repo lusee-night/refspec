@@ -93,15 +93,15 @@ int router5 (size_t sub, size_t j) {
   const int res4[9] =  { 0, 1, 2, 3, 4, -4, -3, -2, -1 };
   assert ((sub>=0)&(sub<5));
   switch (sub) {
-  case 0:
+  case 4:
     return 0;
-  case 1:
+  case 3:
     return res1[j];
   case 2:
     return res2[j];
-  case 3:
+  case 1:
     return res3[j];
-  case 4:
+  case 0:
     return res4[j];
   }
   return 0; // never actually executed
@@ -166,6 +166,10 @@ void RefSpectrometer::run_calib(float**cdata, SpecOutput *res)
     }
 
     std::cout << "Calib Drift NDX : " << maxvar_i << " " <<"Det:"<<maxvar/minvar<<std::endl;
+    //    if (maxvar_i>0) {
+    //  if (maxvar_i<=4) maxvar_i++; else maxvar_i--;
+    //}
+
     for (size_t i=0; i<c->Ncalib; i++) 
       for (size_t cc=0; cc<c->Nchannels; cc++) res->calib_out[cc][i] = calbuf[maxvar_i][cc][i];
     res->calib_drift_count = maxvar_i;

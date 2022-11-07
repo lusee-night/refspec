@@ -11,6 +11,7 @@
 #include <sstream>
 #include <vector>
 
+#include<fftw3.h>
 #include "lyra.hpp"
 
 
@@ -20,11 +21,17 @@ double PkFunc (double k) {
 
 
 int main(int argc, char *argv[]) {
+  //fftw shit.
+  //fftwf_init_threads();
+  //fftwf_plan_with_nthreads(8);
+  
   SpecConfig cfg;
   bool sky_signal, pf_signal, cal_signal;
-  double cal_A=1.0;
+  double cal_A = 1.0;
+  double drift = 0.0;
 
   size_t Ngo          = 120;
+  size_t cal_shift    = 0;
 
   cfg.Nfft            = 4096;
   cfg.Ntaps           = 6;
@@ -35,9 +42,8 @@ int main(int argc, char *argv[]) {
   cfg.Ncalib          = 1024;
   cfg.calib_odd       = true;
 
-
-
-
+  std::string pk_fname="data/Pk/Pk_wnoise.txt";
+  std::string cal_fname="data/samples/calib_filt.txt";
 
   bool help;
   auto cli = lyra::cli()
@@ -50,9 +56,17 @@ int main(int argc, char *argv[]) {
     | lyra::opt (cfg.notch)
     ["-n"]["--notch"]("spectral Notch")
     | lyra::opt (cal_A, "calibratot rescaling")
-    ["-a"]["--ampl"]("Calibration amplitude rescaling")
+    ["-A"]["--ampl"]("Calibration amplitude rescaling")
     | lyra::opt (Ngo, "N_go")
     ["-N"]["--Ngo"]("Number of big samples")
+    | lyra::opt (drift, "drift_ppm")
+    ["-d"]["--drift"]("clock drift in ppm")
+    | lyra::opt (pk_fname, "pk_fname")
+    ["--pkfn"]("filename for power spectrum")
+    | lyra::opt (cal_fname, "cal_fname")
+    ["--calfn"]("filename for calibrator")
+    | lyra::opt (cal_shift, "cal_shift")
+    ["--calshift"]("number of records to shift calibrator by")
     | lyra::help(help)
     ;
 
@@ -84,7 +98,7 @@ int main(int argc, char *argv[]) {
 
   PowerSpecSource* SigNoise;
   if (sky_signal){
-  SigNoise = new PowerSpecSource ("data/Pk/Pk_wnoise.txt", cfg.sampling_rate,
+  SigNoise = new PowerSpecSource (pk_fname, cfg.sampling_rate,
 	   block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps);
   slist.push_back(SigNoise);
   }
@@ -99,7 +113,7 @@ int main(int argc, char *argv[]) {
   CombSource* CalSig;
   if (cal_signal) {
   CalSig = new CombSource(block_size, cfg.Nchannels, 2048,
-		    "data/samples/calib_1024x16_odd.txt",16, 1800*cal_A,0.0,0.0e-6,0.0);
+			  cal_fname,16, 1800*cal_A,0.0,drift*1e-6,0.0, cal_shift);
   slist.push_back(CalSig);
   }
 
@@ -130,7 +144,7 @@ int main(int argc, char *argv[]) {
     }
     of << std::endl; 
 
-    for (size_t i=1;i<cfg.Ncalib;i++) {
+    for (size_t i=0;i<cfg.Ncalib;i++) {
       ofc <<  O.calib_out[0][i] << " ";
 	}
     ofc << std::endl;
