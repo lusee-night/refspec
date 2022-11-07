@@ -18,35 +18,41 @@ def shift_vec(v,i):
 class CalRun:
     def __init__(self, A=1.0, sky=True, pf=True, cal=True, notch=True, N=120, drift = 0, 
                  pkfile = "data/Pk/Pk_wnoise.txt", calfile = "data/samples/calib_filt.txt", 
-                 cal_shift = 0, verbose=False
-                ):
+                 cal_shift = 0, seed=123, verbose=False):
         drift= float(drift)
         
         self.N=N
         self.A=A
         self.input_drift = drift
-        opt = f"-A {A} -N {N} -d {drift} --pkfn {pkfile} --calfn {calfile} --calshift {cal_shift}"
+        opt = f"-A {A} -N {N} -d {drift} --pkfn {pkfile} --calfn {calfile} --calshift {cal_shift} --seed {seed} "
         if sky: opt+=" -s"
         if pf: opt+=" -p"
         if cal: opt+=" -c"
         if notch: opt+=" -n"
-        runstr = "rm powspec.txt calib.txt calib_meta.txt; ./calib.exe "+opt
+        runstr = "./calib.exe "+opt
         self.hash = hashlib.md5(runstr.encode("utf-8")).hexdigest()
         cfname = f"cache/{self.hash}.pickle"
         #print (cfname)
         if os.path.isfile(cfname):
-            loaded=pickle.load(open(cfname,"rb"))
-            self.__dict__.update(loaded.__dict__)
-            return
+            try:
+                loaded=pickle.load(open(cfname,"rb"))
+                self.__dict__.update(loaded.__dict__)
+                return
+            except:
+                print ("Ignoring broken file.")
 
+        runstr += f" --outroot {self.hash}"
         if verbose: 
             print ("Running: ",runstr)
         else:
             runstr += " >/dev/null"
         os.system(runstr)
-        self.Pk = np.loadtxt('powspec.txt')
-        self.cal = np.loadtxt('calib.txt')
-        self.idrift, self.cal_snr = np.loadtxt('calib_meta.txt').T  #internal drift
+        self.Pk = np.loadtxt(self.hash+'powspec.txt')
+        self.cal = np.loadtxt(self.hash+'calib.txt')
+        self.idrift, self.cal_snr = np.loadtxt(self.hash+'calib_meta.txt').T  #internal drift
+        os.remove(self.hash+'powspec.txt')
+        os.remove(self.hash+'calib.txt')
+        os.remove(self.hash+'calib_meta.txt')
         self.idrift[self.idrift>4] = -(9-self.idrift[self.idrift>4])
         self.idrift= -self.idrift.astype(int)
         self.k = np.arange(1,2049)*0.025
@@ -186,7 +192,7 @@ class CalRun:
         Ntr = 2048*16
         tphase=np.arange(Ntr)/Ntr*2*np.pi
         ndx = np.arange(1025)[1::2] #2048/2
-        print (len(ndx), len(mvecf))
+        #rint (len(ndx), len(mvecf))
         
         #xcor = np.array([np.sum(np.imag(mvecf*np.exp(1j*ndx*phase)*tvecfc)) for phase in tphase])
         ##plt.plot(xcor)
@@ -195,9 +201,9 @@ class CalRun:
         xcor = np.array([np.sum(np.real(mvecf*np.exp(1j*ndx*phase)*tvecfc/self.tpwr)) for phase in tphase])
         #plt.plot(xcor)
         #for i in [0]:#range(-5,+5):
-        self.calshift = xcor.argmax()
+        self.cal_shift = xcor.argmax()
         phase = tphase[xcor.argmax()]
-        print(xcor.argmax(),len(xcor))
+        #print(xcor.argmax(),len(xcor))
         self.tcor = (mvecf*np.exp(1j*ndx*phase)*tvecfc)
         self.rbeam = self.tcor/self.tpwr
         self.cf = ndx*0.05

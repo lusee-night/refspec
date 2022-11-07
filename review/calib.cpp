@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
 
   size_t Ngo          = 120;
   size_t cal_shift    = 0;
+  int seed            = 123;
 
   cfg.Nfft            = 4096;
   cfg.Ntaps           = 6;
@@ -44,7 +45,7 @@ int main(int argc, char *argv[]) {
 
   std::string pk_fname="data/Pk/Pk_wnoise.txt";
   std::string cal_fname="data/samples/calib_filt.txt";
-
+  std::string out_root="";
   bool help;
   auto cli = lyra::cli()
     | lyra::opt(sky_signal)
@@ -67,7 +68,12 @@ int main(int argc, char *argv[]) {
     ["--calfn"]("filename for calibrator")
     | lyra::opt (cal_shift, "cal_shift")
     ["--calshift"]("number of records to shift calibrator by")
+    | lyra::opt (out_root, "out_root")
+    ["--outroot"]("output_root")
+    | lyra::opt (seed, "seed")
+     ["--seed"]("random seed")
     | lyra::help(help)
+
     ;
 
   auto result = cli.parse( { argc, argv } );
@@ -99,7 +105,7 @@ int main(int argc, char *argv[]) {
   PowerSpecSource* SigNoise;
   if (sky_signal){
   SigNoise = new PowerSpecSource (pk_fname, cfg.sampling_rate,
-	   block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps);
+	  block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps, seed=seed);
   slist.push_back(SigNoise);
   }
 
@@ -125,9 +131,9 @@ int main(int argc, char *argv[]) {
   RefSpectrometer S(&source,&cfg);
   S.print_info();
 
-  std::ofstream of("powspec.txt");
-  std::ofstream ofc("calib.txt");
-  std::ofstream ofc2("calib_meta.txt");
+  std::ofstream of(out_root+"powspec.txt");
+  std::ofstream ofc(out_root+"calib.txt");
+  std::ofstream ofc2(out_root+"calib_meta.txt");
 
   for (size_t i=0;i<Ngo;i++) {
     
