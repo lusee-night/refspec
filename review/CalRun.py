@@ -2,6 +2,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import pickle
+import hashlib
 
 def shift_vec(v,i):
     if i==0:
@@ -27,8 +28,9 @@ class CalRun:
         if cal: opt+=" -c"
         if notch: opt+=" -n"
         runstr = "rm powspec.txt calib.txt calib_meta.txt; ./calib.exe "+opt
-        self.hash = hash(runstr)
-        cfname = f"cache/c{self.hash}.pickle"
+        self.hash = hashlib.md5(runstr.encode("utf-8")).hexdigest()
+        cfname = f"cache/{self.hash}.pickle"
+        #print (cfname)
         if os.path.isfile(cfname):
             loaded=pickle.load(open(cfname,"rb"))
             self.__dict__.update(loaded.__dict__)
@@ -176,24 +178,27 @@ class CalRun:
         
         
     def get_sig(self,highsnr):
-        mvecf = np.fft.rfft(np.hstack((self.cal_vec, -self.cal_vec)))
-        tvecfc= np.conj(np.fft.rfft(np.hstack((highsnr.cal_vec, -highsnr.cal_vec))))
-        Ntr = 2048*64
-        tphase=np.arange(Ntr)/Ntr*np.pi
-        ndx = np.arange(1025)
-        print (ndx)
+        mvecf = np.fft.rfft(np.hstack((self.cal_vec, -self.cal_vec)))[1::2]
+        tvecfc= np.conj(np.fft.rfft(np.hstack((highsnr.cal_vec, -highsnr.cal_vec))))[1::2]
+        Ntr = 2048*16
+        tphase=np.arange(Ntr)/Ntr*2*np.pi
+        ndx = np.arange(1025)[1::2] #2048/2
+        print (len(ndx), len(mvecf))
         
-        xcor = np.array([np.sum(np.imag(mvecf*np.exp(1j*ndx*phase)*tvecfc)) for phase in tphase])
-        plt.plot(xcor)
-        xcor = np.array([np.sum(np.real(mvecf*np.exp(1j*ndx*phase)*tvecfc)) for phase in tphase])
-        plt.plot(xcor)
+        #xcor = np.array([np.sum(np.imag(mvecf*np.exp(1j*ndx*phase)*tvecfc)) for phase in tphase])
+        ##plt.plot(xcor)
+        self.tpwr = np.abs(tvecfc**2)
+        self.mpwr = np.abs(mvecf**2)
+        xcor = np.array([np.sum(np.real(mvecf*np.exp(1j*ndx*phase)*tvecfc/self.tpwr)) for phase in tphase])
+        #plt.plot(xcor)
+        #for i in [0]:#range(-5,+5):
+        self.calshift = xcor.argmax()
         phase = tphase[xcor.argmax()]
-        print(phase)
-        self.tcor = (mvecf*np.exp(1j*ndx*phase)*tvecfc)[1::2]
-        self.tpwr = np.abs(tvecfc**2)[1::2]
-        self.mpwr = np.abs(mvecf**2)[1::2]
+        print(xcor.argmax(),len(xcor))
+        self.tcor = (mvecf*np.exp(1j*ndx*phase)*tvecfc)
         self.rbeam = self.tcor/self.tpwr
-        self.cf = (np.arange(1024)*0.05)[1::2]
+        self.cf = ndx*0.05
+        #plt.plot(self.cf,self.rbeam)
         
                             
             
