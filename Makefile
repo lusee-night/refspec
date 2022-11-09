@@ -14,7 +14,7 @@ OBJS = $(SOURCES:.cpp=.o)
 
 TEST_SOURCES = test/test_pfb.cpp test/test_timing.cpp test/test_response.cpp \
 	test/simple_demo.cpp test/response_leak_detector.cpp test/psp_run.cpp \
-	test/test_powspec_src.cpp review/calib.cpp
+	test/test_powspec_src.cpp review/calib.cpp review/drift_pred.cpp
 
 TEST_EXECS = $(TEST_SOURCES:.cpp=.exe)
 

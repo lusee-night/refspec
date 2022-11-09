@@ -12,16 +12,16 @@ PowerSpecSource::PowerSpecSource(const std::vector<double> &kk,
 		  float sampling_rate,
 		  size_t block_size, size_t Nchannels,
 				 size_t Nblocks_gen, bool repeat, bool second_fourier, int seed):
-  SignalSource(block_size, Nchannels), sampling_rate(sampling_rate), cur_block(0), Nblocks(Nblocks_gen), repeat(repeat),
-  second_fourier(second_fourier) {
+  SignalSource(block_size, Nchannels), sampling_rate(sampling_rate), cur_block(0), Nblocks(Nblocks_gen),
+  repeat(repeat), second_fourier(second_fourier) {
   generate_data(kk,Pk,seed);
 };
 
 PowerSpecSource::PowerSpecSource(std::string filename, float sampling_rate,
 				 size_t block_size, size_t Nchannels,
 				 size_t Nblocks_gen, bool repeat, bool second_fourier, int seed) :
-  SignalSource(block_size, Nchannels),  sampling_rate(sampling_rate),  cur_block(0), Nblocks(Nblocks_gen), repeat(repeat),
-  second_fourier(second_fourier) 
+  SignalSource(block_size, Nchannels),  sampling_rate(sampling_rate),  cur_block(0), Nblocks(Nblocks_gen),
+  repeat(repeat), second_fourier(second_fourier) 
 {
   std::ifstream inf(filename, std::ios::in);
   if (!inf.is_open()) {
@@ -73,6 +73,7 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
 
   std::default_random_engine generator;
   generator.seed(seed);
+  std::cout <<seed << "= seed" <<std::endl;
   std::normal_distribution<double> gauss(0.0,1.0);
   
   size_t NUp = N/2 + (second_fourier*N/2);

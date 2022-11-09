@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <iomanip>
 
 #include<fftw3.h>
 #include "lyra.hpp"
@@ -32,7 +33,7 @@ int main(int argc, char *argv[]) {
 
   size_t Ngo          = 120;
   size_t cal_shift    = 0;
-  int seed            = 123;
+  int seed            = 100;
 
   cfg.Nfft            = 4096;
   cfg.Ntaps           = 6;
@@ -105,7 +106,8 @@ int main(int argc, char *argv[]) {
   PowerSpecSource* SigNoise;
   if (sky_signal){
   SigNoise = new PowerSpecSource (pk_fname, cfg.sampling_rate,
-	  block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps, seed=seed);
+				  block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps,
+				  false, false, seed);
   slist.push_back(SigNoise);
   }
 
@@ -119,7 +121,7 @@ int main(int argc, char *argv[]) {
   CombSource* CalSig;
   if (cal_signal) {
   CalSig = new CombSource(block_size, cfg.Nchannels, 2048,
-			  cal_fname,16, 1800*cal_A,0.0,drift*1e-6,0.0, cal_shift);
+			  cal_fname,16, cal_A,0.0,drift*1e-6,0.0, cal_shift);
   slist.push_back(CalSig);
   }
 
@@ -134,7 +136,12 @@ int main(int argc, char *argv[]) {
   std::ofstream of(out_root+"powspec.txt");
   std::ofstream ofc(out_root+"calib.txt");
   std::ofstream ofc2(out_root+"calib_meta.txt");
+  of<<std::setprecision(16);
+  ofc<<std::setprecision(16);
+  ofc2<<std::setprecision(16);
 
+
+  
   for (size_t i=0;i<Ngo;i++) {
     
     S.run(&O);
