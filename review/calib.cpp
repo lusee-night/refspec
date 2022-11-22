@@ -61,6 +61,8 @@ int main(int argc, char *argv[]) {
     ["-A"]["--ampl"]("Calibration amplitude rescaling")
     | lyra::opt (Ngo, "N_go")
     ["-N"]["--Ngo"]("Number of big samples")
+    | lyra::opt (cfg.Average2Size, "Average 2")
+    ["--a2"]("Average 2 size")
     | lyra::opt (drift, "drift_ppm")
     ["-d"]["--drift"]("clock drift in ppm")
     | lyra::opt (pk_fname, "pk_fname")

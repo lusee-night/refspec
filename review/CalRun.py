@@ -6,6 +6,7 @@ except:
     pass
 import pickle
 import hashlib
+from functools import cache
 
 def shift_vec(v,i):
     if i==0:
@@ -16,7 +17,7 @@ def shift_vec(v,i):
 
 
 class CalRun:
-    def __init__(self, A=1.0, sky=True, pf=True, cal=True, notch=True, N=120, drift = 0, 
+    def __init__(self, A=1.0, sky=True, pf=True, cal=True, notch=True, N=120, A2=20, drift = 0, 
                  pkfile = "data/Pk/Pk_wnoise.txt", calfile = "data/samples/calib_filt.txt", 
                  cal_shift = 0, seed=123, verbose=False, force=False):
         drift= float(drift)
@@ -24,7 +25,7 @@ class CalRun:
         self.N=N
         self.A=A
         self.input_drift = drift
-        opt = f"-A {A} -N {N} -d {drift} --pkfn {pkfile} --calfn {calfile} --calshift {cal_shift} --seed {seed} "
+        opt = f"-A {A} -N {N} --a2 {A2} -d {drift} --pkfn {pkfile} --calfn {calfile} --calshift {cal_shift} --seed {seed} "
         if sky: opt+=" -s"
         if pf: opt+=" -p"
         if cal: opt+=" -c"
@@ -205,7 +206,7 @@ class CalRun:
         #print('var=',vb.var()/1e5)      
         self.cal_vec = vb
         self.cumdrift = np.array(fdrift[::-1])
-        self.drift_ppm = (self.cumdrift[0])/((self.N*5)*800*1024)/1e-6
+        self.drift_ppm = (self.cumdrift[0])/((self.N*5-1)*800*1024)/1e-6
         
         
         
@@ -235,7 +236,7 @@ class CalRun:
                             
     def get_sig2(self,offset, drift, template):
         mvecf = np.fft.rfft(np.hstack((self.cal_vec, -self.cal_vec)))[1::2]
-        tvec = CalPredictor(offset,drift,self.cumdrift,template)
+        tvec = CalPredictor(offset,drift,self.cumdrift.tobytes(),template)
         self.tvec=tvec
         tvecfc= np.conj(np.fft.rfft(np.hstack((tvec, -tvec))))[1::2]
         Ntr = 2048*16
@@ -244,14 +245,17 @@ class CalRun:
         self.tpwr = np.abs(tvecfc**2)
         self.mpwr = np.abs(mvecf**2)
         xcor = np.array([np.sum(np.real(mvecf*np.exp(1j*ndx*phase)*tvecfc/self.tpwr)) for phase in tphase])
+        print ("max cor:", xcor.max())
         self.cal_shift = xcor.argmax()
         phase = tphase[xcor.argmax()]
         self.tcor = (mvecf*np.exp(1j*ndx*phase)*tvecfc)
         self.rbeam = self.tcor/self.tpwr
         self.cf = ndx*0.05
         
-
+@cache
 def CalPredictor(offset, drift, cumdrift, template):
+    if type(cumdrift)==bytes:
+        cumdrift = np.frombuffer(cumdrift,int)
     ddrift = cumdrift[:-1]-cumdrift[1:]
     #print (cumdrift[0])
     #ddrift*=-1
@@ -270,7 +274,6 @@ def CalPredictor(offset, drift, cumdrift, template):
     os.system(torun)
     vec = np.loadtxt("driftpred.txt")
     os.remove("driftpred.txt")
-    print(vec)
     return vec
               
               
