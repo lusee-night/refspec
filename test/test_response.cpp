@@ -93,12 +93,13 @@ int main(int argc, char *argv[]) {
 
   cfg.Ntaps       = 7;
   cfg.Nchannels   = 1;
-  cfg.AverageSize = 64;
+  cfg.Average1Size = 64;
+  cfg.Average2Size = 1;
 
   double fundamental = cfg.fundamental_frequency();
 
   // Let's do 1 second worth of data
-  size_t blocks   = cfg.AverageSize+2*cfg.Ntaps;
+  size_t blocks   = cfg.AverageSize()+2*cfg.Ntaps;
   float Ampl      = 10;
   float noiseA    = 0.0;
   double central  = 10; // doesn't really matter
@@ -134,8 +135,7 @@ int main(int argc, char *argv[]) {
 	    RefSpectrometer S(&signal,&cfg);
 	      
         SpecOutput O(&cfg);
-	S.run(&O,1);
-	S.run(&O,1);
+	S.run(&O);
 	outfile <<freq-central << " " << O.avg_pspec[0][central_bin] ;
 	for (size_t i=0; i<zoom_in*3 ;i++) outfile << " " << O.avg_pspec_zoom[0][i];
 	outfile << std::endl;

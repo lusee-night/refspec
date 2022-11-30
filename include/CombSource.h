@@ -12,7 +12,8 @@ public:
 	     size_t Nsamples,  std::string filename,
 	     size_t oversample = 1,
 	     float A0 = 1.0, float beta_A = 0,
-	     float alpha_t = 0.0, float beta_t = 0.0 );
+	     float alpha_t = 0.0, float beta_t = 0.0,
+	     size_t sample_shift = 0);
 
   ~CombSource();
   

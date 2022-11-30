@@ -11,7 +11,7 @@ CombSource::CombSource (size_t block_size, size_t Nchannels,
 			size_t Nsamples,  std::string filename,
 			size_t oversample,
 			float A0, float beta_A,
-			float alpha_t, float beta_t ):
+			float alpha_t, float beta_t, size_t sample_shift ):
   SignalSource(block_size, Nchannels), Nsamples(Nsamples), oversample(oversample),
   A0(A0), beta_A(beta_A), alpha_t(alpha_t), beta_t(beta_t), cc(0),
   simple_copy ((alpha_t==0) && (beta_t==0) && (oversample==1))
@@ -26,7 +26,7 @@ CombSource::CombSource (size_t block_size, size_t Nchannels,
     exit(1);
   }
   for (size_t i=0;i<Nsamples_raw;i++) {
-    inf >> buffer_raw[i];
+    inf >> buffer_raw[(sample_shift+i)%Nsamples_raw];
   }
   inf.close();
 }
@@ -39,8 +39,9 @@ CombSource::~CombSource() {
 
 
 void CombSource::next_block(float **place) {
+  size_t offset = cc % Nsamples;
   if (simple_copy) {
-    size_t offset = cc % Nsamples;
+    assert(offset==0);
     for (size_t i=0;i<block_size;i++) {
       float A = A0*(1+beta_A * cc);
       buffer[i] = buffer_raw[(offset+i)%Nsamples]*A;
@@ -48,8 +49,10 @@ void CombSource::next_block(float **place) {
     }
   } else {
     for (size_t i=0;i<block_size;i++) {
-      double ti = cc*(1+alpha_t + beta_t * cc);
+      //double ti = cc*(alpha_t + beta_t * cc); // unstable
+      double ti = offset+i+cc*(alpha_t + beta_t * cc);
       ti -= Nsamples*int(ti/Nsamples);
+      while (ti<0) ti+=Nsamples;
       float A = A0*(1+beta_t * cc);
       size_t ndx = int(ti*oversample);
       buffer[i] = buffer_raw[ndx]*A;

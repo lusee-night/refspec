@@ -13,10 +13,11 @@ int main() {
 
   cfg.Ntaps           = 8;
   cfg.Nchannels       = 1;
-  cfg.AverageSize     = 64;
+  cfg.Average1Size     = 64;
+  cfg.Average2Size     = 1;
   double fundamental  = cfg.fundamental_frequency();
   
-  size_t blocks       = cfg.AverageSize+2*cfg.Ntaps;
+  size_t blocks       = cfg.AverageSize()+2*cfg.Ntaps;
   float Ampl          = 10;
   float noiseA        = 0.0;
   

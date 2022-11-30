@@ -15,11 +15,12 @@ public:
 		  const std::vector<double> &Pk,
 		  float sampling_rate,
 		  size_t block_size, size_t Nchannels,
-		  size_t Nblocks_gen, bool repeat = false, bool second_fourier=false);
+		  size_t Nblocks_gen, bool repeat = false, bool second_fourier=false,
+		  int seed=123);
 
   PowerSpecSource(std::string filename, float sampling_rate, size_t block_size,
 		  size_t Nchannels, size_t Nblocks_gen, bool repeat = false,
-		  bool second_fourier=false);
+		  bool second_fourier=false, int seed=123);
 
   ~PowerSpecSource();
   
@@ -28,7 +29,7 @@ public:
 
 private:
 
-  void generate_data(const std::vector<double> &kk, const std::vector<double> &Pk);
+  void generate_data(const std::vector<double> &kk, const std::vector<double> &Pk, int seed);
   
   float *buffer;
   float sampling_rate;
