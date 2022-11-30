@@ -135,8 +135,7 @@ int main(int argc, char *argv[]) {
 	    RefSpectrometer S(&signal,&cfg);
 	      
         SpecOutput O(&cfg);
-	S.run(&O,1);
-	S.run(&O,1);
+	S.run(&O);
 	outfile <<freq-central << " " << O.avg_pspec[0][central_bin] ;
 	for (size_t i=0; i<zoom_in*3 ;i++) outfile << " " << O.avg_pspec_zoom[0][i];
 	outfile << std::endl;

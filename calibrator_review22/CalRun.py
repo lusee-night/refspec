@@ -62,88 +62,6 @@ class CalRun:
         self.get_cal()
         pickle.dump(self,open(cfname,"wb"))
             
-
-        
-    def get_cal_old(self):
-        acal = np.copy(self.cal)
-        driftl = []
-        
-        while len(acal)>1:
-            cdrift = []
-            N = len (acal)
-            nacal = []
-            for i in range(0,N,2):
-                if (i+1==N):
-                    nacal.append(self.cal[i]) ## last one, nothing to add
-                else:
-                    v1 = acal[i]
-                    v2 = acal[i+1] 
-                    v20 = v2+v1
-                    v2m = v2+np.hstack((v1[1:],v1[0]))     
-                    v2p = v2+np.hstack((v1[-1],v1[:-1]))  ## follow convention
-                    var0 = np.dot(v20,v20)
-                    varp = np.dot(v2p,v2p)
-                    varm = np.dot(v2m,v2m)
-                    vars = np.array([var0,varp,varm])
-                    
-                    det = vars.max()/vars.min()
-                    ivars = vars.argmax()
-                    nacal.append([v20,v2p,v2m][ivars])
-                    if ivars==2: ivars = -1
-                    cdrift.append(ivars)
-            acal = nacal
-            driftl.append(cdrift)
-        ## now reverse add cdrift
-        drift = driftl.pop()
-        while len(driftl)>0:
-            line = driftl.pop()
-            # instert the last one at odd places
-            outline = np.zeros(len(drift)+len(line))
-            outline[::2] = np.array(line)
-            outline[1::2] = drift
-            drift = outline
-
-        self.drift = drift
-        cumdrift = []
-        t=0
-        for d1,d2 in zip(self.idrift, self.drift):
-            for j in range(4):
-                t+=d1/4
-                cumdrift.append(t)
-            t+=d2
-            cumdrift.append(t)
-        for j in range(4):
-            t+=self.idrift[-1]/4
-            cumdrift.append(t)
-        cumdrift.append(t)
-        self.cumdrift=cumdrift
-        self.drift_ppm = self.cumdrift[-1]/2/(self.N*50*20*4096)/1e-6
-        
-    def get_cal_old2(self):
-        maxvar=0
-        cumidrifts = np.cumsum(self.idrift[::-1]).astype(int)[::-1]
-        print (len(cumidrifts), cumidrifts)
-        for trial in np.linspace(-self.N+1, self.N-1,self.N*2-1):
-            
-            ndx = -cumidrifts
-            ndx += np.floor(np.linspace(trial,0,self.N)+0.5).astype(int)
-            #ndx = 
-            print (trial, ndx)
-            ctry = np.array([shift_vec(self.cal[k],i) for k,i in enumerate(ndx)]).sum(axis=0)
-            #print (ctry)
-            var=(ctry**2).sum()
-            #print(ndx[0]/(self.N*50*20*4096)/1e-6, var, maxvar)
-            if var>maxvar:
-                maxvar=var
-                drift=trial
-                best_vec = ctry
-                best_ndx = ndx
-        
-        self.cumdrift=best_ndx
-        self.ldrift = drift
-        self.cal_vec = best_vec
-        self.drift_ppm = (self.cumdrift[0])/((self.N*5-1)*800*1024)/1e-6
-
     def get_cal(self):
         maxvar=0
         addshift = []
@@ -206,35 +124,9 @@ class CalRun:
         #print('var=',vb.var()/1e5)      
         self.cal_vec = vb
         self.cumdrift = np.array(fdrift[::-1])
-        self.drift_ppm = (self.cumdrift[0])/((self.N*5-1)*800*1024)/1e-6
+        self.drift_ppm = (self.cumdrift[0])/((self.N*5)*800*1024)/1e-6
         
-        
-        
-    def get_sig(self,highsnr):
-        mvecf = np.fft.rfft(np.hstack((self.cal_vec, -self.cal_vec)))[1::2]
-        tvecfc= np.conj(np.fft.rfft(np.hstack((highsnr.cal_vec, -highsnr.cal_vec))))[1::2]
-        Ntr = 2048*16
-        tphase=np.arange(Ntr)/Ntr*2*np.pi
-        ndx = np.arange(1025)[1::2] #2048/2
-        #rint (len(ndx), len(mvecf))
-        
-        #xcor = np.array([np.sum(np.imag(mvecf*np.exp(1j*ndx*phase)*tvecfc)) for phase in tphase])
-        ##plt.plot(xcor)
-        self.tpwr = np.abs(tvecfc**2)
-        self.mpwr = np.abs(mvecf**2)
-        xcor = np.array([np.sum(np.real(mvecf*np.exp(1j*ndx*phase)*tvecfc/self.tpwr)) for phase in tphase])
-        #plt.plot(xcor)
-        #for i in [0]:#range(-5,+5):
-        self.cal_shift = xcor.argmax()
-        phase = tphase[xcor.argmax()]
-        #print(xcor.argmax(),len(xcor))
-        self.tcor = (mvecf*np.exp(1j*ndx*phase)*tvecfc)
-        self.rbeam = self.tcor/self.tpwr
-        self.cf = ndx*0.05
-        #plt.plot(self.cf,self.rbeam)
-        
-                            
-    def get_sig2(self,offset, drift, template):
+    def get_sig(self,offset, drift, template):
         mvecf = np.fft.rfft(np.hstack((self.cal_vec, -self.cal_vec)))[1::2]
         tvec = CalPredictor(offset,drift,self.cumdrift.tobytes(),template)
         self.tvec=tvec
@@ -276,37 +168,3 @@ def CalPredictor(offset, drift, cumdrift, template):
     os.remove("driftpred.txt")
     return vec
               
-              
-            
-              
-#def CalPredictor(offset, drift, cumdrift, template):
-#    template = np.loadtxt(template)
-#    assert(len(template)==16*2048)
-#    alpha = +drift*1e-6
-#    N1=400
-#    Nb = len(cumdrift)
-#    vec=np.zeros(2048)
-#    cumdrift-=cumdrift[-1]
-#    for i,d in enumerate(cumdrift):
-#        t0=2048+(alpha)*(N1*2048)*i
-#        t = t0+d-offset/16+np.arange(N1*2048)*(1+alpha)
-#        ndx = ((t*16).astype(int))%(2048*16)
-#        toadd=template[ndx].reshape((N1,2048)).sum(axis=0)
-#        vec+=toadd
-#    return vec*3000
-
-    
-    
-    
-                
-                        
-                    
-                    
-              
-                
-    
-        
-    
-        
-        
-        
