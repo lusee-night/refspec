@@ -323,5 +323,6 @@ void RefSpectrometer::process_output(SpecOutput *res) {
   res->Nradiometer = c->Average1Size - int(c->notch);
   assert (cc == res->Nspec); 
 }
-      
+
+
   
