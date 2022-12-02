@@ -86,7 +86,7 @@ void RefSpectrometer::run_pfb(float**cdata, SpecOutput *res, SpecOutput *avg1) {
 }
 
 int router5 (size_t sub, size_t j) {
-  size_t pm =0;
+
   const int res1[9] =  { 0, 0, 1, 1, 1, -1, -1, -1,  0 };
   const int res2[9] =  { 0, 0, 1, 2, 2, -2, -2, -1,  0 };
   const int res3[9] =  { 0, 1, 2, 2, 3, -3, -2, -2, -1 };
@@ -117,13 +117,12 @@ void RefSpectrometer::zero_calbuf() {
     }
 }
 
-void RefSpectrometer::run_calib(float**cdata, SpecOutput *res)
-{
+void RefSpectrometer::run_calib(float**cdata, SpecOutput *res) {
   size_t  csub = cal_c / cal_Nsub;
   bool done = false;
   float w;
-  for (size_t i=0; i<c->Nfft; i++) {
 
+  for (size_t i=0; i<c->Nfft; i++) {
     for (size_t j=0; j<cal_Nsubopt; j++) {
       size_t t = router5(csub, j);
       t = (cal_ofs+t)%c->Ncalib;
@@ -137,8 +136,8 @@ void RefSpectrometer::run_calib(float**cdata, SpecOutput *res)
       cal_c += 1;
       //std::cout<<cal_c<<" " <<cal_Ntot<<cal_Nsub <<std::endl;
       if (cal_c == cal_Ntot) {
-	done = true;
-	break;
+	      done = true;
+	      break;
       } 
       csub = cal_c / cal_Nsub;
     }
@@ -148,27 +147,28 @@ void RefSpectrometer::run_calib(float**cdata, SpecOutput *res)
   if (done) {
     size_t maxvar_i=-1;
     size_t minvar_i=-1;
+  
     float maxvar = -1;
     float minvar = 1e100;
+  
     for (size_t j=0;j<cal_Nsubopt;j++) {
       float cvar = 0;
       for (size_t i=0; i<c->Ncalib; i++) 
-	for (size_t cc=0;cc<c->Nchannels;cc++) cvar+=pow(calbuf[j][cc][i],2);
-      //      std::cout << j << " " <<cvar<<std::endl;
-      if (cvar>maxvar) {
-	maxvar = cvar;
-	maxvar_i = j;
-      }
-      if (cvar<minvar) {
-	minvar = cvar;
-	minvar_i = j;
-      }
+	      for (size_t cc=0;cc<c->Nchannels;cc++) cvar+=pow(calbuf[j][cc][i],2);
+          //      std::cout << j << " " <<cvar<<std::endl;
+        if (cvar>maxvar) {
+	        maxvar = cvar;
+	        maxvar_i = j;
+        }
+
+        if (cvar<minvar) {
+	        minvar = cvar;
+	        minvar_i = j;
+        }
     }
 
     std::cout << "Calib Drift NDX : " << maxvar_i << " " <<"Det:"<<maxvar/minvar<<std::endl;
-    //    if (maxvar_i>0) {
-    //  if (maxvar_i<=4) maxvar_i++; else maxvar_i--;
-    //}
+    
 
     for (size_t i=0; i<c->Ncalib; i++) 
       for (size_t cc=0; cc<c->Nchannels; cc++) res->calib_out[cc][i] = calbuf[maxvar_i][cc][i];
@@ -231,14 +231,14 @@ void RefSpectrometer::process_output(SpecOutput *res) {
 
     if (c->zoomin_fact>0) {
       int N = c->zoomin_fact;
-      for (size_t i=0;i<N;i++) {
-	for (size_t j=0;j<N;j++) {
-	  for (size_t k=0;k<2;k++) {
-	    if (N==3) zoom_weights[i][j][k] = sqrt(N)*zoom_weights3[i][j][k];
-	    if (N==4) zoom_weights[i][j][k] = sqrt(N)*zoom_weights4[i][j][k];
-	    if (N==5) zoom_weights[i][j][k] = sqrt(N)*zoom_weights5[i][j][k];
-	  }
-	}
+      for (int i=0;i<N;i++) {
+	      for (int j=0;j<N;j++) {
+	        for (int k=0;k<2;k++) {
+	          if (N==3) zoom_weights[i][j][k] = sqrt(N)*zoom_weights3[i][j][k];
+	          if (N==4) zoom_weights[i][j][k] = sqrt(N)*zoom_weights4[i][j][k];
+	          if (N==5) zoom_weights[i][j][k] = sqrt(N)*zoom_weights5[i][j][k];
+	        }
+	      }
       }
     }
 
@@ -247,17 +247,17 @@ void RefSpectrometer::process_output(SpecOutput *res) {
   if (c->notch) {
     for (size_t i=0;i<c->Nchannels;i++) {
       for (size_t k=0;k<res->Nbins;k++) {
-	fftwf_complex mean = {0.0 , 0.0};
-	for (size_t j=0;j<c->Average1Size;j++) {
-	  mean[0] += pfb_out[j][i][k][0];
-	  mean[1] += pfb_out[j][i][k][1];
-	}
-	mean[0] /= c->Average1Size;
-	mean[1] /= c->Average1Size;
-	for (size_t j=0;j<c->Average1Size;j++) {
-	  pfb_out[j][i][k][0] -= mean[0];
-	  pfb_out[j][i][k][1] -= mean[1];
-	}
+	      fftwf_complex mean = {0.0 , 0.0};
+	      for (size_t j=0;j<c->Average1Size;j++) {
+	        mean[0] += pfb_out[j][i][k][0];
+	        mean[1] += pfb_out[j][i][k][1];
+	      }
+	      mean[0] /= c->Average1Size;
+	      mean[1] /= c->Average1Size;
+	      for (size_t j=0;j<c->Average1Size;j++) {
+	        pfb_out[j][i][k][0] -= mean[0];
+	        pfb_out[j][i][k][1] -= mean[1];
+	      }
       }
     }
   }
@@ -285,7 +285,7 @@ void RefSpectrometer::process_output(SpecOutput *res) {
 	  int bb = k/zif+c->zoomin_st;
 	  float pfb_sample_re = 0;
 	  float pfb_sample_im = 0;
-	  for (size_t a=0;a<zif;a++) {
+	  for (int a=0;a<zif;a++) {
 	    pfb_sample_re += pfb_out[j*zif+a][i][bb][0]*zoom_weights[sb][a][0] - pfb_out[j*zif+a][i][bb][1]*zoom_weights[sb][a][1];
 	    pfb_sample_im += pfb_out[j*zif+a][i][bb][0]*zoom_weights[sb][a][1] + pfb_out[j*zif+a][i][bb][1]*zoom_weights[sb][a][0];
 	  }

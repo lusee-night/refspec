@@ -4,9 +4,8 @@
 
 struct SpecOutput {
 
-  size_t Nchannels, Nspec, Nbins, Nbins_zoom, Ncalib;
-  size_t Nfft;
-  size_t Nradiometer;
+  size_t Nchannels, Nfft, Ncalib, Nradiometer, Nspec, Nbins, Nbins_zoom;
+
 
   float **avg_pspec;
   float **avg_pspec_zoom; //zoom region

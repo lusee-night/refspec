@@ -43,7 +43,7 @@ $(OBJS): %.o: %.cpp
 
 # -mxp-
 $(PB11_OBJS): %.o: %.cpp
-	$(CXX) -c $(PB11_CXXFLAGS) -Iinclude  -I/usr/local/include/python3.10 $< -o $@
+	$(CXX) -c $(PB11_CXXFLAGS) -Iinclude -Iextern -I/usr/local/include/python3.10 $< -o $@
 
 $(TEST_EXECS): %.exe: %.cpp $(LIBRARY)
 	$(CXX) $(CXXFLAGS) $(LINKFLAGS) -Iinclude   $< $(LIBRARY) $(FFTW_LINK) -o $@ 
@@ -61,7 +61,7 @@ $(PB11_LIBRARY): $(PB11_OBJS) Makefile
 
 
 pb11_clean:
-	rm $(PB11_LIBRARY) $(PB11_OBJS)
+	rm -f $(PB11_LIBRARY) $(PB11_OBJS)
 
 clean:
 	rm -f $(LIBRARY) $(OBJS)
