@@ -30,6 +30,8 @@ signal = refspec.SignalGenerator(cfg.Nfft, cfg.Nchannels, blocks, 10e6, cfg.samp
 
 output = refspec.SpecOutput(cfg)
 
+# spectrometer = refspec.RefSpectrometer(signal, cfg)
+
 # print(output.Nchannels, output.Nspec, output.Nbins)
 
 
