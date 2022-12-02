@@ -15,6 +15,20 @@ namespace py = pybind11;
 PYBIND11_MODULE(refspec, m) {
     // optional module docstring
     m.doc() = "pybind11 plugin for refspec";
+
+    // bindings to SpecConfig class
+    py::class_<SpecConfig>(m, "SpecConfig")
+        .def(py::init<>())
+        .def_readwrite("Ntaps",         &SpecConfig::Ntaps)
+        .def_readwrite("Average1Size",  &SpecConfig::Average1Size)
+        .def_readwrite("Average2Size",  &SpecConfig::Average2Size)
+        .def("AverageSize",             &SpecConfig::AverageSize);
+        // .def_readwrite("Nchannels",     &SpecConfig::Nchannels)
+        // .def_readwrite("sampling_rate", &SpecConfig::sampling_rate)
+        // .def_readwrite("Nfft",          &SpecConfig::Nfft)
+        // .def_readwrite("Ntaps",         &SpecConfig::Ntaps)
+        // .def_readwrite("AverageSize",   &SpecConfig::AverageSize)
+        // .def("fundamental_frequency",   &SpecConfig::fundamental_frequency);
 }
 
 // PYBIND11_MODULE(refspec, m) {
@@ -30,17 +44,7 @@ PYBIND11_MODULE(refspec, m) {
 //         .def("get_Nfft",                &SpecOutput::get_Nfft)
 //         .def("get_mode",                &SpecOutput::get_mode);
 
-//     // bindings to SpecConfig class
-//     py::class_<SpecConfig>(m, "SpecConfig")
-//         .def(py::init<>())
-//         .def("get_Ntaps",               &SpecConfig::get_Ntaps)
-//         .def("Nbins",                   &SpecConfig::Nbins)
-//         .def_readwrite("Nchannels",     &SpecConfig::Nchannels)
-//         .def_readwrite("sampling_rate", &SpecConfig::sampling_rate)
-//         .def_readwrite("Nfft",          &SpecConfig::Nfft)
-//         .def_readwrite("Ntaps",         &SpecConfig::Ntaps)
-//         .def_readwrite("AverageSize",   &SpecConfig::AverageSize)
-//         .def("fundamental_frequency",   &SpecConfig::fundamental_frequency);
+
 
 //     // bindings to SignalGenerator class
 //     py::class_<SignalGenerator>(m, "SignalGenerator")
