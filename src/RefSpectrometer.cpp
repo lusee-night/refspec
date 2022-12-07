@@ -191,7 +191,7 @@ void RefSpectrometer::run (SpecOutput *res) {
   SpecOutput  avg1(*res);
   res->zero();
   pfb_counter = 0;
-  zero_calbuf();
+  if (c->Ncalib > 0) zero_calbuf();
   cal_c = 0; // this is redundant here
   cal_ofs  = 0;
     
