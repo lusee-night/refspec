@@ -18,6 +18,7 @@ struct SpecOutput {
   SpecOutput(SpecConfig const *config);
   SpecOutput (SpecOutput const &S);
 
+  float get_avg_pspec(size_t i, size_t j) {return avg_pspec[i][j];};
 
   void zero();
   SpecOutput& operator+=(SpecOutput& toadd);

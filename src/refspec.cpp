@@ -20,6 +20,7 @@ PYBIND11_MODULE(refspec, m) {
     py::class_<SpecConfig>(m, "SpecConfig")
         .def(py::init<>())
         .def_readwrite("Ntaps",         &SpecConfig::Ntaps)
+        .def("Nbins",                   &SpecConfig::Nbins)
         .def_readwrite("Nchannels",     &SpecConfig::Nchannels)
         .def_readwrite("sampling_rate", &SpecConfig::sampling_rate)        
         .def_readwrite("Average1Size",  &SpecConfig::Average1Size)
@@ -33,13 +34,17 @@ PYBIND11_MODULE(refspec, m) {
         .def_readwrite("notch",         &SpecConfig::notch);
 
     // bindings to SignalGenerator class
-    py::class_<SignalGenerator>(m, "SignalGenerator")
+    py::class_<SignalSource>(m, "SignalSource");
+
+    // bindings to SignalGenerator class
+    py::class_<SignalGenerator, SignalSource>(m, "SignalGenerator")
         .def(py::init<size_t, size_t, size_t, float, float, float, float>());
 
 
     // bindings to SpecOutput class
     py::class_<SpecOutput>(m, "SpecOutput")
         .def(py::init<SpecConfig const *>())
+        .def("get_avg_pspec",           &SpecOutput::get_avg_pspec)
         .def_readwrite("Nchannels",     &SpecOutput::Nchannels)
         .def_readwrite("Nspec",         &SpecOutput::Nspec)
         .def_readwrite("Nbins",         &SpecOutput::Nbins);

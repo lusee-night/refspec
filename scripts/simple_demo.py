@@ -11,7 +11,7 @@ try:
 except:
     print("Error importing main refspec module")
 
-print("refspec docstring:", refspec.__doc__)
+print("Module 'refspec' docstring:", refspec.__doc__)
 
 cfg = refspec.SpecConfig()
 
@@ -30,8 +30,9 @@ signal = refspec.SignalGenerator(cfg.Nfft, cfg.Nchannels, blocks, 10e6, cfg.samp
 
 output = refspec.SpecOutput(cfg)
 
-# spectrometer = refspec.RefSpectrometer(signal, cfg)
+spectrometer = refspec.RefSpectrometer(signal, cfg)
+spectrometer.run(output)
 
-# print(output.Nchannels, output.Nspec, output.Nbins)
+for i in range(1, cfg.Nbins()): print(fundamental*i/1e6, output.get_avg_pspec(0, i))
 
 
