@@ -27,7 +27,7 @@ make install
 
 ### pybind11
 
-The `bybind11` is a header-only library which is one of popular methods
+The `pybind11` is a header-only library which is one of popular methods
 to create Python bindings for C++ code (and one of the most powerful).
 There are a ![few ways to install pybind11](https://pybind11.readthedocs.io/en/stable/installing.html)
 

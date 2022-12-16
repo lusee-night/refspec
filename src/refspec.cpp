@@ -56,30 +56,5 @@ PYBIND11_MODULE(refspec, m) {
         .def("run",                     &RefSpectrometer::run)        
         .def("blocks_processed",        &RefSpectrometer::blocks_processed);
 
-    // NB. VIRTUAL, can't do bindings to SignalSource class
-    // py::class_<SignalSource>(m, "SignalSource")
-    //     .def(py::init<size_t, size_t>())
-    //     .def("get_block_size", &SignalSource::get_block_size);
-
 }
 
-// PYBIND11_MODULE(refspec, m) {
-//     // optional module docstring
-//     m.doc() = "pybind11 plugin for refspec";
-
-//     // bindings to SpecOutput class
-//     py::class_<SpecOutput>(m, "SpecOutput")
-//         .def(py::init<SpecConfig const *>())
-//         .def_readwrite("Nchannels",     &SpecOutput::Nchannels)
-//         .def_readwrite("Nspec",         &SpecOutput::Nspec)
-//         .def_readwrite("Nbins",         &SpecOutput::Nbins)        
-//         .def("get_Nfft",                &SpecOutput::get_Nfft)
-//         .def("get_mode",                &SpecOutput::get_mode);
-
-
-
-
-
-
-
-// }
