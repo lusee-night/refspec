@@ -4,17 +4,18 @@
 ![example workflow](https://github.com/lusee-night/refspec/actions/workflows/refspec-test.yml/badge.svg)
 
 
-## Installation of the components
+## Prerequisites 
 
-### Installing the FFTW package locally
+### FFTW
+
+Installing the FFTW package locally
 
 ```bash
 wget http://www.fftw.org/fftw-3.3.10.tar.gz
 tar xfvz fftw-3.3.10.tar.gz
 cd fftw-3.3.10
 
-# Build two versions of the library, with
-# and w/o float option enabled:
+# Build two versions of the library, with and w/o the float option:
 
 ./configure --enable-float
 make -j4 # if you have at least 4 cores that helps speed
@@ -49,9 +50,11 @@ git submodule update --init
 ```
 
 
+
 ## Building for pybind11
 
-An example of a command line (will be included in the Makefile soon):
+An example of a command line (for demonstration only). Note using the automatic generation of relevant include file names by python3,
+and automatic naming of the shared library which will be loaded as a Python module.
 ```bash
 g++ -I../include -I../extern -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp RefSpectrometer.cpp pfb.cpp -lfftw3 -lfftw3f -o refspec$(python3.10-config --extension-suffix)
 ```
