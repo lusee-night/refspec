@@ -2,6 +2,9 @@ CXX = g++
 CXXFLAGS = -Ofast -g -std=c++17 -fopenmp -static
 #CXXFLAGS = -D_GLIBCXX_DEBUG -g -Wall -Wno-sign-compare -Wno-reorder -std=c++17
 
+
+lib_ext := $(shell python3.10-config --extension-suffix)
+
 # -mxp-
 PB11_CXXFLAGS = -fPIC -g
 
@@ -32,7 +35,7 @@ LIBRARY = refspec.a
 
 # -mxp-
 
-PB11_LIBRARY = refspec.so
+PB11_LIBRARY = refspec$(lib_ext).so
 
 all: $(LIBRARY) $(TEST_EXECS)
 
