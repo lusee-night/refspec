@@ -46,6 +46,7 @@ $(OBJS): %.o: %.cpp
 
 # -mxp-
 $(PB11_OBJS): %.o: %.cpp
+	@[ -d "extern/pybind11/pybind11" ] || (echo "---\nInstallation of pybind11 appears to be missing\nPlease consult README.md for instructions\nExiting...\n---"; exit 1;)
 	$(CXX) -c $(PB11_CXXFLAGS) -Iinclude -Iextern ${python_includes} $< -o $@
 
 #

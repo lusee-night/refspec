@@ -1,8 +1,15 @@
+// General stuff needed for Ref Spectrometer
+
 #include "SpecConfig.h"
 #include "SpecOutput.h"
 #include "SignalGenerator.h"
 #include "SignalSource.h"
 #include "RefSpectrometer.h"
+
+// More classes for Calibrator Review
+#include "PowerSpecSource.h"
+
+
 
 #include <assert.h>
 #include <iostream>
@@ -33,7 +40,7 @@ PYBIND11_MODULE(refspec, m) {
         .def_readwrite("Nfft",          &SpecConfig::Nfft)
         .def_readwrite("notch",         &SpecConfig::notch);
 
-    // bindings to SignalGenerator class
+    // Declare the base class SignalSource (abstract)
     py::class_<SignalSource>(m, "SignalSource");
 
     // bindings to SignalGenerator class
@@ -55,6 +62,11 @@ PYBIND11_MODULE(refspec, m) {
         .def(py::init<SignalSource *, SpecConfig const *>())
         .def("run",                     &RefSpectrometer::run)        
         .def("blocks_processed",        &RefSpectrometer::blocks_processed);
+
+    // bindings to PowerSpecSource class
+    py::class_<PowerSpecSource, SignalSource>(m, "PowerSpecSource")
+        .def(py::init<const std::vector<double>&, const std::vector<double>&, float, size_t, size_t, size_t, bool, bool, int>());
+    
 
 }
 
