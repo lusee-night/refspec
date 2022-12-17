@@ -2,23 +2,23 @@ CXX = g++
 CXXFLAGS = -Ofast -g -std=c++17 -fopenmp -static
 #CXXFLAGS = -D_GLIBCXX_DEBUG -g -Wall -Wno-sign-compare -Wno-reorder -std=c++17
 
-
+# Define convenience variables for use in the pb11 build
 lib_ext := $(shell python3.10-config --extension-suffix)
+python_includes := $(shell python3.10 -m pybind11 --includes)
 
 # -mxp-
-PB11_CXXFLAGS = -fPIC -g
+PB11_CXXFLAGS = -fPIC -g -std=c++17
 
-FFTW_LINK = -lfftw3 -lfftw3f
-#FFTW_LINK = -lfftw3f_omp  -lfftw3f -lm
+FFTW_LINK = -lfftw3 -lfftw3f  # older version: FFTW_LINK = -lfftw3f_omp  -lfftw3f -lm
+
 LINKFLAGS = 
 
 SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp \
           src/RefSpectrometer.cpp src/FileStreamSource.cpp src/PowerSpecSource.cpp \
-	  src/SignalCombiner.cpp src/CombSource.cpp src/WhiteNoise.cpp
+	  	  src/SignalCombiner.cpp src/CombSource.cpp src/WhiteNoise.cpp
 
 # -mxp-
-PB11_SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp \
-          src/RefSpectrometer.cpp
+PB11_SOURCES = src/refspec.cpp src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp src/RefSpectrometer.cpp
 
 OBJS = $(SOURCES:.cpp=.o)
 
@@ -46,17 +46,15 @@ $(OBJS): %.o: %.cpp
 
 # -mxp-
 $(PB11_OBJS): %.o: %.cpp
-	$(CXX) -c $(PB11_CXXFLAGS) -Iinclude -Iextern -I/usr/local/include/python3.10 $< -o $@
+	$(CXX) -c $(PB11_CXXFLAGS) -Iinclude -Iextern ${python_includes} $< -o $@
 
 #
 $(TEST_EXECS): %.exe: %.cpp $(LIBRARY)
 	$(CXX) $(CXXFLAGS) $(LINKFLAGS) -Iinclude   $< $(LIBRARY) $(FFTW_LINK) -o $@ 
 
-
 $(LIBRARY): $(OBJS) Makefile 
 	rm -f $(LIBRARY)
 	ar rcs $(LIBRARY) $(OBJS)
-
 
 # -mxp-
 $(PB11_LIBRARY): $(PB11_OBJS) Makefile
