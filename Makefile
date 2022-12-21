@@ -9,6 +9,8 @@ python_includes := $(shell python3.10 -m pybind11 --includes)
 # -mxp-
 PB11_CXXFLAGS = -fPIC -g -std=c++17
 
+PB11_BUILD = ./pb11_build
+
 FFTW_LINK = -lfftw3 -lfftw3f  # older version: FFTW_LINK = -lfftw3f_omp  -lfftw3f -lm
 
 LINKFLAGS = 
@@ -19,6 +21,10 @@ SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.
 
 # -mxp-
 PB11_SOURCES = src/refspec.cpp src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp src/RefSpectrometer.cpp
+
+# -mxp- experiment
+PB11_SRCS = refspec.cpp pfb.cpp SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp RefSpectrometer.cpp
+OBJ_FILES := $(patsubst %.cpp, $(PB11_BUILD)/%.o, $(PB11_SRCS) )
 
 OBJS = $(SOURCES:.cpp=.o)
 
@@ -39,15 +45,16 @@ PB11_LIBRARY = refspec$(lib_ext).so
 
 all: $(LIBRARY) $(TEST_EXECS)
 
-pb11: $(PB11_LIBRARY)
-
 $(OBJS): %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) -Iinclude  $< -o $@
 
 # -mxp-
-$(PB11_OBJS): %.o: %.cpp
-	@[ -d "extern/pybind11/pybind11" ] || (echo "---\nInstallation of pybind11 appears to be missing\nPlease consult README.md for instructions\nExiting...\n---"; exit 1;)
-	$(CXX) -c $(PB11_CXXFLAGS) -Iinclude -Iextern ${python_includes} $< -o $@
+$(PB11_BUILD):
+	$(shell mkdir -p $(PB11_BUILD))
+
+#$(PB11_OBJS):  %.o: %.cpp
+#	@[ -d "extern/pybind11/pybind11" ] || (echo "---\nInstallation of pybind11 appears to be missing\nPlease consult README.md for instructions\nExiting...\n---"; exit 1;)
+#	$(CXX) -c $(PB11_CXXFLAGS) -Iinclude -Iextern ${python_includes} $< -o $@
 
 #
 $(TEST_EXECS): %.exe: %.cpp $(LIBRARY)
@@ -57,15 +64,28 @@ $(LIBRARY): $(OBJS) Makefile
 	rm -f $(LIBRARY)
 	ar rcs $(LIBRARY) $(OBJS)
 
-# -mxp-
-$(PB11_LIBRARY): $(PB11_OBJS) Makefile
-	rm -f $(PB11_LIBRARY)
-	ar rcs $(PB11_LIBRARY) $(PB11_OBJS)
-
-
-pb11_clean:
-	rm -f $(PB11_LIBRARY) $(PB11_OBJS)
+# -mxp- Original code, in a slight conflict with previous rule, so comment out for now
+#$(PB11_LIBRARY):  $(PB11_OBJS) Makefile
+#	rm -f $(PB11_LIBRARY)
+#	ar rcs $(PB11_LIBRARY) $(PB11_OBJS)
+#pb11_clean:
+#	rm -f $(PB11_LIBRARY) $(PB11_OBJS)
 
 clean:
-	rm -f $(LIBRARY) $(OBJS)
+	rm -f $(LIBRARY) $(OBJS) $(PB11_LIBRARY) $(PB11_OBJS)
+	rm -fr $(PB11_BUILD)
+
+pb11: $(PB11_BUILD) $(OBJ_FILES) Makefile
+	@echo Building the shared library for PYBIND11
+	ar rcs $(PB11_LIBRARY) $(OBJ_FILES)
+	rm -fr $(PB11_BUILD)
+
+$(OBJ_FILES): $(PB11_BUILD)/%.o: src/%.cpp Makefile
+	@echo Building object files for PYBIND11
+	@[ -d "extern/pybind11/pybind11" ] || (echo "---\nInstallation of pybind11 appears to be missing\nPlease consult README.md for instructions\nExiting...\n---"; exit 1;)	
+	$(CXX) -c $(PB11_CXXFLAGS) -Iinclude -Iextern ${python_includes} $< -o $@
+
+
+# $(shell mkdir -p $(PB11_BUILD) )
+
 
