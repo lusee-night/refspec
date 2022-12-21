@@ -22,14 +22,14 @@ SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.
 # -mxp-
 PB11_SOURCES = src/refspec.cpp src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp src/RefSpectrometer.cpp
 
-# -mxp- experiment
+# -mxp- some definitions for pb11
 PB11_SRCS = refspec.cpp pfb.cpp SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp RefSpectrometer.cpp
 OBJ_FILES := $(patsubst %.cpp, $(PB11_BUILD)/%.o, $(PB11_SRCS) )
 
 OBJS = $(SOURCES:.cpp=.o)
 
-# -mxp-
-PB11_OBJS = $(PB11_SOURCES:.cpp=.o)
+# -mxp- keep as reference, use deprecated
+# PB11_OBJS = $(PB11_SOURCES:.cpp=.o)
 
 TEST_SOURCES = test/test_pfb.cpp test/test_timing.cpp test/test_response.cpp \
 	test/simple_demo.cpp test/response_leak_detector.cpp test/psp_run.cpp \
@@ -37,13 +37,11 @@ TEST_SOURCES = test/test_pfb.cpp test/test_timing.cpp test/test_response.cpp \
 
 TEST_EXECS = $(TEST_SOURCES:.cpp=.exe)
 
+# Main targets
 LIBRARY = refspec.a
-
-# -mxp-
-
 PB11_LIBRARY = refspec$(lib_ext).so
 
-all: $(LIBRARY) $(TEST_EXECS)
+all: $(LIBRARY) $(TEST_EXECS) pb11
 
 $(OBJS): %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) -Iinclude  $< -o $@
@@ -72,7 +70,7 @@ $(LIBRARY): $(OBJS) Makefile
 #	rm -f $(PB11_LIBRARY) $(PB11_OBJS)
 
 clean:
-	rm -f $(LIBRARY) $(OBJS) $(PB11_LIBRARY) $(PB11_OBJS)
+	rm -f $(LIBRARY) $(OBJS) $(PB11_LIBRARY)
 	rm -fr $(PB11_BUILD)
 
 pb11: $(PB11_BUILD) $(OBJ_FILES) Makefile
@@ -85,7 +83,5 @@ $(OBJ_FILES): $(PB11_BUILD)/%.o: src/%.cpp Makefile
 	@[ -d "extern/pybind11/pybind11" ] || (echo "---\nInstallation of pybind11 appears to be missing\nPlease consult README.md for instructions\nExiting...\n---"; exit 1;)	
 	$(CXX) -c $(PB11_CXXFLAGS) -Iinclude -Iextern ${python_includes} $< -o $@
 
-
-# $(shell mkdir -p $(PB11_BUILD) )
 
 
