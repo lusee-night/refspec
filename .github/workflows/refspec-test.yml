@@ -18,6 +18,7 @@ jobs:
         # -mxp- Check later why this doesn't work anymore: - run: ls ${{ github.workspace }}
       # -mxp- pull pybind11
       - run: git submodule update --init
+      - run: python3.10 -m pip install pybind11
       - run: make
       - run: ./test/test_pfb.exe > ./pfb_test.dat
 
