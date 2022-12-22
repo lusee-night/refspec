@@ -3,8 +3,8 @@
 
 import sys
  
-# appending a path
 sys.path.append('../')
+sys.path.append('./')
 
 try:
     import refspec
