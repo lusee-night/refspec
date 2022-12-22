@@ -61,7 +61,7 @@ clean:
 
 pb11: $(PB11_BUILD) $(OBJ_FILES) Makefile
 	@echo Building the shared library for PYBIND11
-	g++ $(OBJ_FILES) -lfftw3 -lfftw3f -shared -o $(PB11_LIBRARY) 
+	g++ $(OBJ_FILES) -shared -lfftw3 -lfftw3f -o $(PB11_LIBRARY) 
 	rm -fr $(PB11_BUILD)
 
 $(OBJ_FILES): $(PB11_BUILD)/%.o: src/%.cpp Makefile
