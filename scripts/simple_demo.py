@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.10
 
 
 import sys
  
-# The following line is no longer used, we are running from
-# the "refspec" proper directory
-# sys.path.append('../src')
+sys.path.append('./')
 
 try:
     import refspec

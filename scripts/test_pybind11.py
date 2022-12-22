@@ -4,7 +4,7 @@
 import sys
  
 # appending a path
-sys.path.append('../src')
+sys.path.append('./')
 
 try:
     import refspec
