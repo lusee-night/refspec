@@ -19,6 +19,7 @@ jobs:
       # -mxp- pull pybind11
       - run: git submodule update --init
       - run: python3.10 -m pip install pybind11
+      - run: ./fft.sh
       - run: make
       - run: ./test/test_pfb.exe > ./pfb_test.dat
       - run: ./scripts/test_pybind11.py
