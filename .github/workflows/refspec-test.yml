@@ -20,12 +20,12 @@ jobs:
       - run: git submodule update --init
       - run: python3.10 -m pip install pybind11
       - run: ./fft.sh
-      - run: ls -l /usr/local/lib/*fft*
-      - run: pwd
       - run: make
       - run: ls -l
-      - run: ./test/test_pfb.exe > ./pfb_test.dat
-      - run: ls -l
+      - run: pwd
+#      - run: ./test/test_pfb.exe > ./pfb_test.dat
+      - run: ls -l /usr/local/lib/*fft*
+      - run: echo $LD_LIBRARY_PATH
       - run: python3.10 -c 'import refspec'
       - name: 'pfb_test Artifact'
         uses: actions/upload-artifact@v3
@@ -35,8 +35,7 @@ jobs:
           retention-days: 5
     # -mxp-   temporarily remove, until we come up with a better way to compare        
     #  - run: diff ./pfb_test.dat ./testdata/pfb_test.dat
-
-      - run: ./test/test_response.exe -c
+#      - run: ./test/test_response.exe -c
 
       - name: 'response_test Artifact'
         uses: actions/upload-artifact@v3
