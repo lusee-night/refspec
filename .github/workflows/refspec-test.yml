@@ -25,8 +25,8 @@ jobs:
       - run: make
       - run: ls -l
       - run: ./test/test_pfb.exe > ./pfb_test.dat
-      - run: ./scripts/test_pybind11.py
-      - run: ./scripts/simple_demo.py
+      - run: ls -l
+      - run: python3.10 -c 'import refspec'
       - name: 'pfb_test Artifact'
         uses: actions/upload-artifact@v3
         with:
