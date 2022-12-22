@@ -20,7 +20,10 @@ jobs:
       - run: git submodule update --init
       - run: python3.10 -m pip install pybind11
       - run: ./fft.sh
+      - run: ls -l /usr/local/lib/*fft*
+      - run: pwd
       - run: make
+      - run: ls -l
       - run: ./test/test_pfb.exe > ./pfb_test.dat
       - run: ./scripts/test_pybind11.py
       - run: ./scripts/simple_demo.py
