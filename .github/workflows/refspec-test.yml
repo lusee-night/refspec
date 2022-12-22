@@ -21,7 +21,8 @@ jobs:
       - run: python3.10 -m pip install pybind11
       - run: make
       - run: ./test/test_pfb.exe > ./pfb_test.dat
-
+      - run: ./scripts/test_pybind11.py
+      - run: ./scripts/simple_demo.py
       - name: 'pfb_test Artifact'
         uses: actions/upload-artifact@v3
         with:

@@ -3,8 +3,9 @@
 
 import sys
  
-# appending a path
-sys.path.append('../src')
+# The following line is no longer used, we are running from
+# the "refspec" proper directory
+# sys.path.append('../src')
 
 try:
     import refspec
