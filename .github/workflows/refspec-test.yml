@@ -29,6 +29,7 @@ jobs:
       - run: cp /usr/local/lib/*fft* /usr/lib/x86_64-linux-gnu/
       - run: python3.10 -c 'import refspec'
       - run: ./scripts/test_pybind11.py
+      - run: ./scripts/simple_demo.py
       - name: 'pfb_test Artifact'
         uses: actions/upload-artifact@v3
         with:
