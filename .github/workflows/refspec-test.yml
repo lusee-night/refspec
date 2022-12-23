@@ -25,6 +25,8 @@ jobs:
       - run: pwd
 #      - run: ./test/test_pfb.exe > ./pfb_test.dat
       - run: ls -l /usr/local/lib/*fft*
+      - run: mkdir -p /usr/lib/x86_64-linux-gnu/
+      - run: cp /usr/local/lib/*fft* /usr/lib/x86_64-linux-gnu/
       - run: echo $LD_LIBRARY_PATH
       - run: python3.10 -c 'import refspec'
       - name: 'pfb_test Artifact'
