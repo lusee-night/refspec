@@ -53,12 +53,16 @@ git submodule update --init
 
 ## Building for pybind11
 
-An example of a command line (for demonstration only). Note using the automatic generation of relevant include file names by python3,
-and automatic naming of the shared library which will be loaded as a Python module.
+An example of a command line (for demonstration only). Note using the automatic generation of relevant
+include file names by python3, and automatic naming of the shared library which will be loaded as a
+Python module.
 ```bash
 g++ -I../include -I../extern -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp RefSpectrometer.cpp pfb.cpp -lfftw3 -lfftw3f -o refspec$(python3.10-config --extension-suffix)
 ```
 
+## CI
+
+The Python interface is now a part of the CI Action sequence on GitHub.
 
 ## Docker
 
