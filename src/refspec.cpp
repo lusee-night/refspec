@@ -2,8 +2,9 @@
 
 #include "SpecConfig.h"
 #include "SpecOutput.h"
-#include "SignalGenerator.h"
 #include "SignalSource.h"
+#include "SignalGenerator.h"
+#include "CombSource.h"
 #include "RefSpectrometer.h"
 
 // More classes for Calibrator Review
@@ -40,13 +41,17 @@ PYBIND11_MODULE(refspec, m) {
         .def_readwrite("Nfft",          &SpecConfig::Nfft)
         .def_readwrite("notch",         &SpecConfig::notch);
 
-    // Declare the base class SignalSource (abstract)
+    // Declare the base class SignalSource (abstract, hence no ctor)
     py::class_<SignalSource>(m, "SignalSource");
 
     // bindings to SignalGenerator class
     py::class_<SignalGenerator, SignalSource>(m, "SignalGenerator")
         .def(py::init<size_t, size_t, size_t, float, float, float, float>());
 
+    // bindings to CombSource class
+    py::class_<CombSource, SignalSource>(m, "CombSource")
+        .def(py::init<size_t, size_t, size_t, std::string, size_t, float, float, float, float, size_t>());
+//        .def("next_block",              &CombSource::next_block);
 
     // bindings to SpecOutput class
     py::class_<SpecOutput>(m, "SpecOutput")

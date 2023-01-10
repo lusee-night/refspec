@@ -23,7 +23,7 @@ SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.
 # Deprecated: PB11_SOURCES = src/refspec.cpp src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp src/RefSpectrometer.cpp
 
 # -mxp- some definitions for pb11
-PB11_SRCS = refspec.cpp pfb.cpp SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp RefSpectrometer.cpp PowerSpecSource.cpp
+PB11_SRCS = refspec.cpp pfb.cpp SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp RefSpectrometer.cpp PowerSpecSource.cpp CombSource.cpp
 OBJ_FILES := $(patsubst %.cpp, $(PB11_BUILD)/%.o, $(PB11_SRCS) )
 
 OBJS = $(SOURCES:.cpp=.o)
