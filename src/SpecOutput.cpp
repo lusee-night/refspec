@@ -6,6 +6,7 @@ SpecOutput::SpecOutput (SpecConfig const *config) :
   Nchannels(config->Nchannels), Nfft(config->Nfft),
   Ncalib(config->Ncalib), Nradiometer(0), constructed(true) {
   //std::cout << "constructing"<<std::endl;
+
   Nspec = Nchannels*Nchannels; // think about matrix;
   Nbins = Nfft / 2 + 1;
   Nbins_zoom = (config->zoomin_en-config->zoomin_st) * config->zoomin_fact;
@@ -13,9 +14,9 @@ SpecOutput::SpecOutput (SpecConfig const *config) :
 }
 
 SpecOutput::SpecOutput (SpecOutput const &S) :
-  Nchannels(S.Nchannels), Nfft(S.Nfft), constructed(true),
-  Nspec(S.Nspec), Nbins(S.Nbins), Nbins_zoom(S.Nbins_zoom), Nradiometer(S.Nradiometer),
-  Ncalib(S.Ncalib)
+  Nchannels(S.Nchannels), Nfft(S.Nfft), Ncalib(S.Ncalib), Nradiometer(S.Nradiometer),
+  Nspec(S.Nspec), Nbins(S.Nbins), Nbins_zoom(S.Nbins_zoom),
+  constructed(true)
 {
   allocate();
 }

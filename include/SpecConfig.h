@@ -31,18 +31,18 @@ struct  SpecConfig {
   uint32_t AverageSize() const {return Average1Size * Average2Size;}  // product of the two
   uint32_t MinGenSize() const {return AverageSize() + Ntaps;} 
   
-  // zoom-in size
-  uint32_t zoomin_st, zoomin_en; // start end end of the zoom in region, C counting
-  uint32_t zoomin_fact; // zoom in factor
-  
   // calibrator detector_setup
   size_t Ncalib;
   bool   calib_odd; // use calibrator 
   size_t calib_subint; // sub integration for clock tracking
-
-
+  
   // notch filter for picket fence
   bool notch;
+
+  // zoom-in size
+  uint32_t zoomin_st, zoomin_en; // start end end of the zoom in region, C counting
+  uint32_t zoomin_fact; // zoom in factor
+  
 
  public:
   // default constructor with some same defaults

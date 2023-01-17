@@ -4,9 +4,8 @@
 
 struct SpecOutput {
 
-  size_t Nchannels, Nspec, Nbins, Nbins_zoom, Ncalib;
-  size_t Nfft;
-  size_t Nradiometer;
+  size_t Nchannels, Nfft, Ncalib, Nradiometer, Nspec, Nbins, Nbins_zoom;
+
 
   float **avg_pspec;
   float **avg_pspec_zoom; //zoom region
@@ -19,6 +18,7 @@ struct SpecOutput {
   SpecOutput(SpecConfig const *config);
   SpecOutput (SpecOutput const &S);
 
+  float get_avg_pspec(size_t i, size_t j) {return avg_pspec[i][j];};
 
   void zero();
   SpecOutput& operator+=(SpecOutput& toadd);
