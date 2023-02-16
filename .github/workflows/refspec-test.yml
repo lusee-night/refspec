@@ -19,9 +19,9 @@ jobs:
       # -mxp- pull pybind11
       - run: git submodule update --init
       - run: python3.10 -m pip install pybind11
-      - run: ./fft.sh
-      - run: make
-      - run: ls -l
+      #- run: ./fft.sh
+      #- run: make
+      - run: ls -l /usr/local/lib
       - run: pwd
       - run: ./test/test_pfb.exe > ./pfb_test.dat
       - run: ls -l /usr/local/lib/*fft*
