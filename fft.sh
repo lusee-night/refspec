@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# NB. Deprected as of Feb 16 2023, as the refspec image has been corrected
+
 wget http://www.fftw.org/fftw-3.3.10.tar.gz
 tar xfvz fftw-3.3.10.tar.gz
 cd fftw-3.3.10

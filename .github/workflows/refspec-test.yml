@@ -15,18 +15,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        # -mxp- Check later why this doesn't work anymore: - run: ls ${{ github.workspace }}
-      # -mxp- pull pybind11
+      # Submodule activation here is to pull pybind11
       - run: git submodule update --init
       - run: python3.10 -m pip install pybind11
-      #- run: ./fft.sh
       - run: ls -l /usr/local/lib      
       # Build local binaries:
       - run: make
       - run: pwd
       - run: ls -l
       - run: ./test/test_pfb.exe > ./pfb_test.dat
-#      - run: ls -l /usr/local/lib/*fft*
       - run: mkdir -p /usr/lib/x86_64-linux-gnu/
       - run: cp /usr/local/lib/*fft* /usr/lib/x86_64-linux-gnu/
       - run: python3.10 -c 'import refspec'
@@ -57,4 +54,4 @@ jobs:
       # Will decide later how to compare best, now stick with literal equivalency
       # We could do precision-based comparison, too like --
       #      - run: python3 -c "import numpy as np; a=np.loadtxt('pfb_test1.dat')[:,1]; b=np.loadtxt('data/pfb_test1.dat')[:,1]; assert(np.all(np.abs(a-b)/(0.5*(a+b))<1e-4))"
-
+      # -mxp- Check later why this doesn't work anymore: - run: ls ${{ github.workspace }}

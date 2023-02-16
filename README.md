@@ -27,7 +27,8 @@ make install
 ```
 
 The `--enable-shared` option is important, as otherwise the shared version of the libraries won't be created
-and the software won't run properly.
+and the software won't run properly. The script `fft.sh` has the same functionality and is kept here for reference,
+it's no longer used in the build.
 
 ### pybind11
 
