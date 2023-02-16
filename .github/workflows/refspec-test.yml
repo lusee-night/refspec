@@ -2,9 +2,9 @@ name: refspec-test
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ main, pybind11 ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, pybind11 ]
 
   # Enable manual activation, too
   workflow_dispatch:
