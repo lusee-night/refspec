@@ -20,11 +20,13 @@ jobs:
       - run: git submodule update --init
       - run: python3.10 -m pip install pybind11
       #- run: ./fft.sh
-      #- run: make
-      - run: ls -l /usr/local/lib
+      - run: ls -l /usr/local/lib      
+      # Build local binaries:
+      - run: make
       - run: pwd
+      - run: ls -l
       - run: ./test/test_pfb.exe > ./pfb_test.dat
-      - run: ls -l /usr/local/lib/*fft*
+#      - run: ls -l /usr/local/lib/*fft*
       - run: mkdir -p /usr/lib/x86_64-linux-gnu/
       - run: cp /usr/local/lib/*fft* /usr/lib/x86_64-linux-gnu/
       - run: python3.10 -c 'import refspec'
