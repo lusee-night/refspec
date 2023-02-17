@@ -22,7 +22,15 @@ for header in headers:
 
 cppyy.load_library('refspec')
 
-#from cppyy.gbl import SpecConfig
-#dir(SpecConfig)
-#cfg = refspec.SpecConfig()
-#cfg = SpecConfig()
+from cppyy.gbl import SpecConfig
+
+# dir(SpecConfig)
+
+cfg = SpecConfig()
+
+cfg.Ntaps           = 8
+cfg.Nchannels       = 1
+cfg.Average1Size    = 64
+cfg.Average2Size    = 1
+
+fundamental         = cfg.fundamental_frequency()

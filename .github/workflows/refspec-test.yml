@@ -15,36 +15,37 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      # Submodule activation here is to pull pybind11
-      - run: git submodule update --init
-      - run: python3.10 -m pip install pybind11
+      # Submodule activation here is to pull pybind11 - comment out for now
+      # - run: git submodule update --init
+      # - run: python3.10 -m pip install pybind11
+      - run: python3.10 -m pip install cppyy
       - run: ls -l /usr/local/lib      
       # Build local binaries:
-      - run: make
+      - run: make -j4 -f Makefile-shared
       - run: pwd
       - run: ls -l
-      - run: ./test/test_pfb.exe > ./pfb_test.dat
-      - run: mkdir -p /usr/lib/x86_64-linux-gnu/
-      - run: cp /usr/local/lib/*fft* /usr/lib/x86_64-linux-gnu/
-      - run: python3.10 -c 'import refspec'
-      - run: ./scripts/pybind11_validator.py
-      - run: ./scripts/simple_demo.py
-      - name: 'pfb_test Artifact'
-        uses: actions/upload-artifact@v3
-        with:
-          name: pfb_test
-          path: pfb_test.dat
-          retention-days: 5
+      # - run: ./test/test_pfb.exe > ./pfb_test.dat
+      #- run: mkdir -p /usr/lib/x86_64-linux-gnu/
+      #- run: cp /usr/local/lib/*fft* /usr/lib/x86_64-linux-gnu/
+      # - run: python3.10 -c 'import refspec'
+      # - run: ./scripts/pybind11_validator.py
+      - run: ./scripts/cppyy_demo.py
+      #- name: 'pfb_test Artifact'
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: pfb_test
+      #    path: pfb_test.dat
+      #    retention-days: 5
     # -mxp-   temporarily remove, until we come up with a better way to compare        
     #  - run: diff ./pfb_test.dat ./testdata/pfb_test.dat
 #      - run: ./test/test_response.exe -c
 
-      - name: 'response_test Artifact'
-        uses: actions/upload-artifact@v3
-        with:
-          name: response_test
-          path: response_test.dat
-          retention-days: 5
+      #- name: 'response_test Artifact'
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: response_test
+      #    path: response_test.dat
+      #    retention-days: 5
 
     # -mxp-   temporarily remove, until we come up with a better way to compare  
     #  - run: diff ./response_test.dat ./testdata/response_test.dat
