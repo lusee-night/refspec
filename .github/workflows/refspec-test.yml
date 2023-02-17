@@ -19,7 +19,8 @@ jobs:
       # - run: git submodule update --init
       # - run: python3.10 -m pip install pybind11
       - run: python3.10 -m pip install cppyy
-      - run: ls -l /usr/local/lib      
+      - run: ls -l /usr/local/lib
+      - run: echo $LD_LIBRARY_PATH      
       # Build local binaries:
       - run: make -j4 -f Makefile-shared
       - run: pwd
@@ -29,7 +30,7 @@ jobs:
       #- run: cp /usr/local/lib/*fft* /usr/lib/x86_64-linux-gnu/
       # - run: python3.10 -c 'import refspec'
       # - run: ./scripts/pybind11_validator.py
-      - run: export CPATH=./include && ./scripts/cppyy_demo.py
+      - run: export CPATH=./include && export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH && ./scripts/cppyy_demo.py
       #- name: 'pfb_test Artifact'
       #  uses: actions/upload-artifact@v3
       #  with:
