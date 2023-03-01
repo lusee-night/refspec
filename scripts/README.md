@@ -10,10 +10,7 @@ Two binding methods have been partially implemented and tested:
 * pybind11
 * cppyy
 
-To demo the latter, run from this directory:
-```bash
-./cppyy_demo.py
-```
+For the cppyy version please see the dedicated folder `cppyy`.
 
 ## Suite of CI scripts
 

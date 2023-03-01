@@ -1,5 +1,7 @@
 #!/usr/bin/env python3.10
 
+### CPPYY ###
+
 from refspec import SpecConfig, SignalGenerator, SpecOutput, RefSpectrometer
 
 # -----------------------------------------------------------------------------------------
@@ -25,5 +27,7 @@ spectrometer = RefSpectrometer(signal, cfg)
 spectrometer.run(output)
 
 for i in range(1, cfg.Nbins()): print(fundamental*i/1e6, output.get_avg_pspec(0, i))
-print(signal.has_internal(), signal.get_Nchannels());
-print(signal.has_internal(), signal.get_Ninternal());
+
+# Prior testing, keep for now
+# print(signal.has_internal(), signal.get_Nchannels());
+# print(signal.has_internal(), signal.get_Ninternal());
