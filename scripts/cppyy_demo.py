@@ -18,9 +18,12 @@ Ampl                = 10.0;
 noiseA              = 0.0;
 
 signal = SignalGenerator(cfg.Nfft, cfg.Nchannels, blocks, 10e6, cfg.sampling_rate, Ampl, noiseA)
+
 output = SpecOutput(cfg)
 
 spectrometer = RefSpectrometer(signal, cfg)
 spectrometer.run(output)
 
 for i in range(1, cfg.Nbins()): print(fundamental*i/1e6, output.get_avg_pspec(0, i))
+print(signal.has_internal(), signal.get_Nchannels());
+print(signal.has_internal(), signal.get_Ninternal());

@@ -17,7 +17,8 @@ public:
 
   ~CombSource();
   
-  virtual void next_block(float **place); 
+  virtual void next_block(float **place);
+  virtual void next_block();
 
 private:
   float *buffer; // stores output

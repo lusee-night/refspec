@@ -24,7 +24,8 @@ public:
 
   ~PowerSpecSource();
   
-  virtual void next_block(float **place); 
+  virtual void next_block(float **place);
+  virtual void next_block();
   virtual bool data_available() const;
 
 private:

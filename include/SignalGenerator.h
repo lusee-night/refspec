@@ -13,7 +13,7 @@ public:
   ~SignalGenerator();
   
   virtual void next_block(float **place); 
-
+  virtual void next_block();
 private:
   float *buffer;
   size_t Nblocks;
