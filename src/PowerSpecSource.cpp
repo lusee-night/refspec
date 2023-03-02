@@ -126,4 +126,5 @@ void PowerSpecSource::next_block(float **place) {
 }
 
 void PowerSpecSource::next_block() {
+  next_block(internal);
 }

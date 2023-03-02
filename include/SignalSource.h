@@ -23,6 +23,8 @@ class SignalSource {
   bool has_internal(void) {return (internal!=NULL);}
   int get_Ninternal() {return Ninternal;}
 
+  float get_internal(int j, int k) {return internal[j][k];}
+
   size_t get_block_size() const { return block_size;}
   size_t get_Nchannels()  const { return Nchannels;}
 
