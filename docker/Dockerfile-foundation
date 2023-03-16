@@ -23,3 +23,5 @@ RUN cd fftw-3.3.10 && ./configure --enable-float --enable-shared && make -j4 && 
 RUN cd fftw-3.3.10 && ./configure --enable-shared && make -j4 && make install
 
 WORKDIR /user
+
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
