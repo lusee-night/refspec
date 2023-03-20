@@ -3,7 +3,8 @@
 ## Docker
 
 At the time of writing, two images are maintained in the official [LuSEE repository on Docker Hub](https://hub.docker.com/repositories/lusee).
-* [The "foundation image"](https://hub.docker.com/repository/docker/lusee/lusee-night-refspec-foundation/general
+* [The "foundation image"](https://hub.docker.com/repository/docker/lusee/lusee-night-refspec-foundation/general)
+* [The Python Binding version (based on cppyy)](https://hub.docker.com/repository/docker/lusee/lusee-night-refspec-cppyy/general)
 
 ## Prerequisites for Python bindings
 
