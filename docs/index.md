@@ -6,6 +6,12 @@ At the time of writing, two images are maintained in the official [LuSEE reposit
 * [The "foundation image"](https://hub.docker.com/repository/docker/lusee/lusee-night-refspec-foundation/general)
 * [The Python Binding version (based on cppyy)](https://hub.docker.com/repository/docker/lusee/lusee-night-refspec-cppyy/general)
 
+The "foundation image" contains the compiled `fftw` libraries and the `LD_LIBRARY_PATH` is
+set to reflect that. The "Python Binding" image is built on top of that, and it contains a pre-built
+shared library `refspec.so`, which can be used as a library on its own but is also called
+by `cppyy`. The folder (named cppyy) contains the Python interface module and example of
+Python code.
+
 ## Prerequisites for Python bindings
 
 ### About
