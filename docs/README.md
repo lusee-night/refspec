@@ -1,3 +1,3 @@
-# GitHub pages for the refspect package
+# GitHub pages for the refspec package
 
 Web documentation for _refspec_.
