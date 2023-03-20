@@ -1,5 +1,9 @@
-# REFSPEC
+# Reference Spectrometer
 
+## Docker
+
+At the time of writing, two images are maintained in the official [LuSEE repository on Docker Hub](https://hub.docker.com/repositories/lusee).
+* [The "foundation image"](https://hub.docker.com/repository/docker/lusee/lusee-night-refspec-foundation/general
 
 ## Prerequisites for Python bindings
 
@@ -26,7 +30,7 @@ Some technical details on both are given below.
 
 The `pybind11` is a header-only library which is one of popular methods
 to create Python bindings for C++ code (and one of the most powerful).
-There are a ![few ways to install pybind11](https://pybind11.readthedocs.io/en/stable/installing.html)
+There are a [few ways to install pybind11](https://pybind11.readthedocs.io/en/stable/installing.html)
 
 At the time of writing, we are using the `git submodule` method, and the headers
 will go into a subfolder of the `extern` folder. The following two lines were _originally_

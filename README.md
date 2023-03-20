@@ -37,8 +37,7 @@ The Python interface is now a part of the CI Action sequence on GitHub.
 
 ## Docker
 
-A Docker image is in preparation to facilitate testing, see the ```docker```
-folder in this repo.
+Docker images for `refspec` have been created, see the ```docker``` folder in this repo for details.
 
 ## Checking for memory leaks
 
