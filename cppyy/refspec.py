@@ -21,4 +21,4 @@ for header in headers:
 
 cppyy.load_library('refspec')
 
-from cppyy.gbl import RefSpectrometer, PowerSpecSource, SpecConfig, SignalGenerator, SpecOutput
+from cppyy.gbl import RefSpectrometer, PowerSpecSource, CombSource, SpecConfig, SignalGenerator, SignalCombiner, SpecOutput
