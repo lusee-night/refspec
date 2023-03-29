@@ -19,11 +19,21 @@ parser.add_argument("-A", "--amplitude_rescaling",
                                             help="Calibration Amplitude Rescaling", type=float, default=1.0)
 
 parser.add_argument("-N", "--Ngo",          help="Number of Big Samples",           type=int,   default=120)
-parser.add_argument("-a", "--a2",           help="Average 3",                       type=int,   default=20)
+parser.add_argument("-a", "--a2",           help="Average 2",                       type=int,   default=20)
 
 parser.add_argument("-d", "--drift",        help="Clock drift in ppm",              type=float, default=0.0)
 
-# parser.add_argument("-f", "--cachefile",type=str,            help="The optional cache file", default='')
+parser.add_argument("-P", "--pk_fname",     help="Filename for power spectrum",     type=str,   default='')
+parser.add_argument("-C", "--cal_fname",    help="Filename for calibrator",         type=str,   default='')
+
+# parser.add_argument("-a", "--a",            help="Average 2",                       type=int,   default=20)
+
+parser.add_argument("-r", "--shift_rec",    help="Number of records to shift calibrator by",
+                                                                                    type=int,   default=0)
+
+parser.add_argument("-o", "--out_root",     help="Output root",                     type=str,   default='')
+parser.add_argument("-S", "--seed",         help="Random seed",                     type=int,   default=100)
+
 #######################################
 
 
@@ -41,6 +51,14 @@ cal_A       = args.amplitude_rescaling
 Ngo         = args.Ngo
 a2          = args.a2
 drift       = args.drift
+
+pk_fname    = args.pk_fname
+cal_fname   = args.cal_fname
+
+caL_shift   = args.shift_rec
+out_root    = args.out_root
+seed        = args.seed
+
 # -----------------------------------------------------------------------------------------
 
 if verbose: print("*** Verbose mode ***")
@@ -53,7 +71,7 @@ if (not (pf_signal or sky_signal or cal_signal)):
 if verbose:
     print(f'''*** PF Signal: {pf_signal}, Sky Signal: {sky_signal}, Cal Signal: {cal_signal}, Spectral Notch: {notch}, Amplitude Rescaling: {cal_A} ***''')
     print(f'''*** Number of big samples: {Ngo}, Average 2: {a2}, Drift (ppm): {drift} ***''')
-
+    print(f'''*** Power spectrum filename: {pk_fname}, Calibrator filename: {cal_fname}, Output root: {out_root} ***''')
 
 cfg = SpecConfig()
 
