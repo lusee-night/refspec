@@ -28,6 +28,8 @@ void SignalGenerator::next_block(float **place) {
   for (size_t i=0;i<Nchannels;i++) place[i]=cur;
 }
   
+void SignalGenerator::next_block() {
+}
 
 void SignalGenerator::fill_buffer() {
   size_t N = block_size * Nblocks;

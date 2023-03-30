@@ -1,16 +1,6 @@
 CXX = g++
-CXXFLAGS = -Ofast -g -std=c++17 -fopenmp -static
-#CXXFLAGS = -D_GLIBCXX_DEBUG -g -Wall -Wno-sign-compare -Wno-reorder -std=c++17
-
-# Define convenience variables for use in the pb11 build
-lib_ext := $(shell python3.10-config --extension-suffix)
-python_includes := $(shell python3.10 -m pybind11 --includes)
-
-# -mxp-
-PB11_CXXFLAGS = -O3 -fPIC -g -std=c++17
-# -lfftw3 -lfftw3f
-
-PB11_BUILD = ./pb11_build
+CXXFLAGS_STATIC = -Ofast -g -std=c++17 -fopenmp -static
+#CXXFLAGS_STATIC= -D_GLIBCXX_DEBUG -g -Wall -Wno-sign-compare -Wno-reorder -std=c++17
 
 FFTW_LINK = -lfftw3 -lfftw3f  # older version: FFTW_LINK = -lfftw3f_omp  -lfftw3f -lm
 
@@ -19,12 +9,6 @@ LINKFLAGS =
 SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp \
           src/RefSpectrometer.cpp src/FileStreamSource.cpp src/PowerSpecSource.cpp \
 	  	  src/SignalCombiner.cpp src/CombSource.cpp src/WhiteNoise.cpp 
-
-# Deprecated: PB11_SOURCES = src/refspec.cpp src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp src/RefSpectrometer.cpp
-
-# -mxp- some definitions for pb11
-PB11_SRCS = refspec.cpp pfb.cpp SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp RefSpectrometer.cpp PowerSpecSource.cpp CombSource.cpp
-OBJ_FILES := $(patsubst %.cpp, $(PB11_BUILD)/%.o, $(PB11_SRCS) )
 
 OBJS = $(SOURCES:.cpp=.o)
 
@@ -39,36 +23,22 @@ TEST_EXECS = $(TEST_SOURCES:.cpp=.exe)
 
 # Main targets
 LIBRARY = refspec.a
-PB11_LIBRARY = refspec$(lib_ext)
 
-all: $(LIBRARY) $(TEST_EXECS) pb11
-
+all: $(LIBRARY) $(TEST_EXECS)
 $(OBJS): %.o: %.cpp
-	$(CXX) -c $(CXXFLAGS) -Iinclude  $< -o $@
+	$(CXX) -c $(CXXFLAGS_STATIC) -Iinclude  $< -o $@
 
-$(PB11_BUILD):
-	$(shell mkdir -p $(PB11_BUILD))
 
 $(TEST_EXECS): %.exe: %.cpp $(LIBRARY)
-	$(CXX) $(CXXFLAGS) $(LINKFLAGS) -Iinclude   $< $(LIBRARY) $(FFTW_LINK) -o $@ 
+	$(CXX) $(CXXFLAGS_STATIC) $(LINKFLAGS) -Iinclude   $< $(LIBRARY) $(FFTW_LINK) -o $@ 
 
 $(LIBRARY): $(OBJS) Makefile 
 	rm -f $(LIBRARY)
 	ar rcs $(LIBRARY) $(OBJS)
 
 clean:
-	rm -f $(LIBRARY) $(OBJS) $(PB11_LIBRARY)
-	rm -fr $(PB11_BUILD)
+	rm -f $(LIBRARY) $(OBJS)
 
-pb11: $(PB11_BUILD) $(OBJ_FILES) Makefile
-	@echo Building the shared library for PYBIND11
-	g++ $(OBJ_FILES) -shared -lfftw3 -lfftw3f -o $(PB11_LIBRARY) 
-#   rm -fr $(PB11_BUILD)
-
-$(OBJ_FILES): $(PB11_BUILD)/%.o: src/%.cpp Makefile
-	@echo Building object files for PYBIND11
-	@[ -d "extern/pybind11/pybind11" ] || (echo "---\nInstallation of pybind11 appears to be missing\nPlease consult README.md for instructions\nExiting...\n---"; exit 1;)	
-	$(CXX) -c $(PB11_CXXFLAGS) -Iinclude -Iextern ${python_includes} $< -o $@
 
 
 ########################################################################
@@ -80,4 +50,4 @@ $(OBJ_FILES): $(PB11_BUILD)/%.o: src/%.cpp Makefile
 #	rm -f $(PB11_LIBRARY) $(PB11_OBJS)
 #$(PB11_OBJS):  %.o: %.cpp
 #	@[ -d "extern/pybind11/pybind11" ] || (echo "---\nInstallation of pybind11 appears to be missing\nPlease consult README.md for instructions\nExiting...\n---"; exit 1;)
-#	$(CXX) -c $(PB11_CXXFLAGS) -Iinclude -Iextern ${python_includes} $< -o $@
+#	$(CXX) -c $(CXXFLAGS_DYNAMIC) -Iinclude -Iextern ${python_includes} $< -o $@
