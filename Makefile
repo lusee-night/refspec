@@ -18,7 +18,7 @@ LINKFLAGS =
 
 SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp \
           src/RefSpectrometer.cpp src/FileStreamSource.cpp src/PowerSpecSource.cpp \
-	  	  src/SignalCombiner.cpp src/CombSource.cpp src/WhiteNoise.cpp
+	  	  src/SignalCombiner.cpp src/CombSource.cpp src/WhiteNoise.cpp 
 
 # Deprecated: PB11_SOURCES = src/refspec.cpp src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp src/RefSpectrometer.cpp
 
@@ -32,7 +32,8 @@ OBJS = $(SOURCES:.cpp=.o)
 
 TEST_SOURCES = test/test_pfb.cpp test/test_timing.cpp test/test_response.cpp \
 	test/simple_demo.cpp test/response_leak_detector.cpp test/psp_run.cpp \
-	test/test_powspec_src.cpp calibrator_review22/calib.cpp calibrator_review22/drift_pred.cpp
+	test/test_powspec_src.cpp calibrator_review22/calib.cpp calibrator_review22/drift_pred.cpp \
+	test/test_bin_output.cpp
 
 TEST_EXECS = $(TEST_SOURCES:.cpp=.exe)
 
