@@ -30,7 +30,8 @@ int main(int argc, char *argv[]) {
   bool sky_signal, pf_signal, cal_signal;
   double cal_A = 1.0;
   double drift = 0.0;
-
+  double ADC_range = 2;
+  
   size_t Ngo          = 120;
   size_t cal_shift    = 0;
   int seed            = 100;
@@ -47,6 +48,7 @@ int main(int argc, char *argv[]) {
   std::string pk_fname="data/Pk/Pk_wnoise.txt";
   std::string cal_fname="data/samples/calib_filt.txt";
   std::string out_root="";
+  std::string write_to="";
   bool help;
   auto cli = lyra::cli()
     | lyra::opt(sky_signal)
@@ -75,6 +77,10 @@ int main(int argc, char *argv[]) {
     ["--outroot"]("output_root")
     | lyra::opt (seed, "seed")
      ["--seed"]("random seed")
+    | lyra::opt (write_to, "write_to")
+     ["-W"]("Do not run spectrometer, instead write to file int16 samples")
+    | lyra::opt (ADC_range, "ADC_range")
+     ["--ADC"]("ADC range peak to peak")
     | lyra::help(help)
 
     ;
@@ -129,6 +135,39 @@ int main(int argc, char *argv[]) {
 
   
   SignalCombiner source(slist, true);
+
+  if (write_to!="") {
+    float **buffer = new float*[cfg.Nchannels];
+    size_t Nwrite = cfg.Average1Size*cfg.Average2Size*Ngo*cfg.Nfft/block_size;
+    float buf;
+    std::cout << "Dumping "<<Nwrite<<" blocks of "<<block_size<<" int16 samples to "<<write_to <<std::endl;
+    std::ofstream of(write_to, std::ios::binary);
+    int16_t minval,maxval;
+    float minval_f, maxval_f;
+    minval = +32767;
+    maxval = -32767;
+    minval_f = +1e30;
+    maxval_f = -1e30;
+
+    for (size_t i=0;i<Nwrite;i++) {
+      source.next_block(buffer);
+      for (size_t j=0;j<block_size;j++) {
+	float val_f = buffer[0][j];
+	minval_f = std::min(minval_f,val_f);
+	maxval_f = std::max(maxval_f,val_f);
+	int16_t val = int16_t(val_f*65536/ADC_range);
+	minval = std::min(minval,val);
+	maxval = std::max(maxval,val);
+	of.write(reinterpret_cast<char*>(&val),sizeof(int16_t));
+      }
+    }
+    of.close();
+    std::cout << "Min val float = "<<minval_f << " Max val float = " <<maxval_f << std::endl;
+    std::cout << "Min val = "<<minval << " Max val = " <<maxval << std::endl;
+    std::cout << "Done. Exiting." << std::endl;
+    return 0;
+  }
+		  
   
  
   SpecOutput O(&cfg);
