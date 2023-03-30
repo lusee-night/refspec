@@ -1,0 +1,39 @@
+CXX = g++
+
+# Define convenience variables for use in the pb11 build
+lib_ext := $(shell python3.10-config --extension-suffix)
+python_includes := $(shell python3.10 -m pybind11 --includes)
+
+# -mxp-
+CXXFLAGS_DYNAMIC = -O3 -fPIC -g -std=c++17
+# -lfftw3 -lfftw3f
+
+BUILD = ./build
+
+FFTW_LINK = -lfftw3 -lfftw3f  # older version: FFTW_LINK = -lfftw3f_omp  -lfftw3f -lm
+
+# -mxp- some definitions for pb11
+PB11_SRCS = refspec.cpp pfb.cpp SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp RefSpectrometer.cpp PowerSpecSource.cpp CombSource.cpp
+OBJ_FILES := $(patsubst %.cpp, $(BUILD)/%.o, $(PB11_SRCS) )
+
+PB11_LIBRARY = refspec$(lib_ext)
+
+all: pb11
+
+$(BUILD):
+	$(shell mkdir -p $(BUILD))
+
+clean:
+	rm -f $(PB11_LIBRARY)
+	rm -fr $(BUILD)
+
+pb11: $(BUILD) $(OBJ_FILES) Makefile
+	@echo Building the shared library for PYBIND11
+	g++ $(OBJ_FILES) -shared -lfftw3 -lfftw3f -o $(PB11_LIBRARY) 
+#   rm -fr $(BUILD)
+
+$(OBJ_FILES): $(BUILD)/%.o: src/%.cpp Makefile
+	@echo Building object files for PYBIND11
+	@[ -d "extern/pybind11/pybind11" ] || (echo "---\nInstallation of pybind11 appears to be missing\nPlease consult README.md for instructions\nExiting...\n---"; exit 1;)	
+	$(CXX) -c $(CXXFLAGS_DYNAMIC) -Iinclude -Iextern ${python_includes} $< -o $@
+

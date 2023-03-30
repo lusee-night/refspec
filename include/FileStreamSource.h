@@ -13,7 +13,7 @@ public:
   ~FileStreamSource();
   
   virtual void next_block(float **place); 
-
+  virtual void next_block();
 private:
   float *buffer;
   

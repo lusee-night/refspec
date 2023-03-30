@@ -124,3 +124,7 @@ void PowerSpecSource::next_block(float **place) {
   cur_block = (cur_block+1) % Nblocks;
   for (size_t i=0;i<Nchannels;i++) place[i]=cur;
 }
+
+void PowerSpecSource::next_block() {
+  next_block(internal);
+}
