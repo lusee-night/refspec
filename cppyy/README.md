@@ -32,7 +32,7 @@ Some technical details on both are given below.
 
 ### cppyy
 
-This methods is the preffered one at the time of writing.
+This method is the preffered one at the time of writing.
 
 The `cppyy` Python package can be installed using `pip`.
 Conventional shared libraries and header files can be used with `cppyy`, so no custom
@@ -40,9 +40,14 @@ build is required. The location of libraries and header files need to be availab
 run time, which can be accomplished using the standard environment variables `CPATH`
 and `LD_LIBRARY_PATH`.
 
-The `cppyy` package provides a fairly transparent interface to STL object,
-for example a common Python array of objects of type 'T' will be translated into a
-`std::vector<T>` object, automatically -- with rare caveats.
+The `cppyy` package provides a fairly transparent interface to STL objects,
+for example a common Python array of objects of type `T` will be translated into a
+`std::vector<T>` on the C++ side, automatically -- with rare caveats.
+
+As can be expected, instantiattion of arrays of objects of abstract classes is not
+going to work, so care must be taken to implement all pure virtual functions before
+attempting to put Python bindings in place.
+
 
 ### pybind11
 
