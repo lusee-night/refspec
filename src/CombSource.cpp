@@ -63,5 +63,6 @@ void CombSource::next_block(float **place) {
 }
   
 void CombSource::next_block() {
+  next_block(internal);
 }
   

@@ -2,7 +2,7 @@
 
 ### CPPYY ###
 
-from refspec import SpecConfig, PowerSpecSource, CombSource, SignalCombiner, SignalSource
+from refspec import SpecConfig, PowerSpecSource, CombSource, SignalCombiner, SpecOutput, RefSpectrometer
 
 from cppyy.gbl.std import vector
 
@@ -95,6 +95,7 @@ block_size   = cfg.Nfft
 slist = []
 # v = vector[SignalSource]
 
+
 if sky_signal:
     SigNoise = PowerSpecSource(pk_fname, cfg.sampling_rate,
         block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps,
@@ -118,9 +119,17 @@ if cal_signal:
     slist.append(CalSig)
     if verbose: print ("*** Added Cal Signal ***")
 
-vv = SignalCombiner.conv(slist)
-print(vv)
+src     =   SignalCombiner(slist, True)
+if verbose: print("*** Signal Source created ***")
 
-src= SignalCombiner(True);
+output  =   SpecOutput(cfg)
+if verbose: print("*** Output Object created ***")
+
+spectrometer = RefSpectrometer(src, cfg)
+if verbose: print("*** Spectrometer created ***")
+
+
+for i in range(2):
+    spectrometer.run(output)
 
 exit(0)

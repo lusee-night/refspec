@@ -10,6 +10,7 @@ class SignalSource {
  public:
 
   SignalSource() : Nchannels(0), internal(NULL), Ninternal(0) {};
+  
   SignalSource(size_t block_size, size_t Nchannels) :
     block_size(block_size), Nchannels(Nchannels), internal(NULL), Ninternal(0) {}
 
