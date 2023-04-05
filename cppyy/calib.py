@@ -2,7 +2,9 @@
 
 ### CPPYY ###
 
-from refspec import SpecConfig, PowerSpecSource, CombSource, SignalCombiner
+from refspec import SpecConfig, PowerSpecSource, CombSource, SignalCombiner, SignalSource
+
+from cppyy.gbl.std import vector
 
 import argparse
 
@@ -91,17 +93,23 @@ fundamental  = cfg.fundamental_frequency()
 block_size   = cfg.Nfft
 
 slist = []
+# v = vector[SignalSource]
 
 if sky_signal:
     SigNoise = PowerSpecSource(pk_fname, cfg.sampling_rate,
         block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps,
 		False, False, seed)
     slist.append(SigNoise)
+    # v.push_back(SigNoise)
     if verbose: print ("*** Added Sky Signal ***")
+
+# exit(0)
 
 if pf_signal:
     PF = CombSource(block_size, cfg.Nchannels, 1024, "data/samples/picket_fence_1024.txt", 1, 0.008)
     slist.append(PF)
+    #v = vector([PF,])
+    # SignalCombiner.pushCombSource(PF)
     if verbose: print ("*** Added PF Signal ***")
 
 if cal_signal:
@@ -110,6 +118,9 @@ if cal_signal:
     slist.append(CalSig)
     if verbose: print ("*** Added Cal Signal ***")
 
-source = SignalCombiner(slist, True);
+vv = SignalCombiner.conv(slist)
+print(vv)
+
+src= SignalCombiner(True);
 
 exit(0)
