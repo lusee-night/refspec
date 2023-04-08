@@ -26,6 +26,9 @@ parser.add_argument("-d", "--drift",        help="Clock drift in ppm",          
 
 parser.add_argument("-P", "--pk_fname",     help="Filename for power spectrum",     type=str,   default='data/Pk/Pk_wnoise.txt')
 parser.add_argument("-C", "--cal_fname",    help="Filename for calibrator",         type=str,   default='data/samples/calib_filt.txt')
+parser.add_argument("-F", "--picket_fname", help="Filename for picket fence",       type=str,   default='data/samples/picket_fence_1024.txt')
+
+
 
 parser.add_argument("-r", "--shift_rec",    help="No.records to shift calibrator",  type=int,   default=0)
 
@@ -52,21 +55,20 @@ drift       = args.drift
 
 pk_fname    = args.pk_fname
 cal_fname   = args.cal_fname
+picket_fname= args.picket_fname
 
 cal_shift   = args.shift_rec
 out_root    = args.out_root
 seed        = args.seed
 
 # -----------------------------------------------------------------------------------------
-# Parameter printout/check:
-
 if verbose: print("*** Verbose mode ***")
 
-# If nothing specified, assume all signals are set:
-if (not (pf_signal or sky_signal or cal_signal)):
+if (not (pf_signal or sky_signal or cal_signal)): # if nothing specified, assume all signals are set
     pf_signal=sky_signal=cal_signal=True
     if verbose: print('*** No signals specified, assuming all ***')
 
+# Parameter printout/check:
 if verbose:
     print(f'''*** PF Signal: {pf_signal}, Sky Signal: {sky_signal}, Cal Signal: {cal_signal}, Spectral Notch: {notch}, Amplitude Rescaling: {cal_A} ***''')
     print(f'''*** Number of big samples: {Ngo}, Average 2: {a2}, Drift (ppm): {drift} ***''')
@@ -74,8 +76,7 @@ if verbose:
 
 
 # -----------------------------------------------------------------------------------------
-# The configuration object:
-cfg = SpecConfig()
+cfg = SpecConfig() # the configuration object
 
 cfg.Nfft            = 4096
 cfg.Ntaps           = 6
@@ -88,48 +89,64 @@ cfg.calib_odd       = True
 
 cfg.sanity_check()
 
-fundamental  = cfg.fundamental_frequency()
+fundamental         = cfg.fundamental_frequency()
+block_size          = cfg.Nfft
+Nbins               = cfg.Nbins()
 
-block_size   = cfg.Nfft
+if verbose: print("*** Nbins:", Nbins, "   Ncalib:", cfg.Ncalib, "***")
 
-slist = []
-# v = vector[SignalSource]
+# Mimic the file names in the C++ source
 
+of      = open(out_root+"powspect.txt", 'w')
+ofc     = open(out_root+"calib.txt", 'w')
+ofc2    = open(out_root+"calib_meta.txt", 'w')
+
+slist = [] # array of sources
 
 if sky_signal:
-    SigNoise = PowerSpecSource(pk_fname, cfg.sampling_rate,
-        block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps,
-		False, False, seed)
+    SigNoise = PowerSpecSource(pk_fname, cfg.sampling_rate, block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps, False, False, seed)
     slist.append(SigNoise)
-    # v.push_back(SigNoise)
     if verbose: print ("*** Added Sky Signal ***")
 
-# exit(0)
-
 if pf_signal:
-    PF = CombSource(block_size, cfg.Nchannels, 1024, "data/samples/picket_fence_1024.txt", 1, 0.008)
+    PF = CombSource(block_size, cfg.Nchannels, 1024, picket_fname, 1, 0.008)
     slist.append(PF)
-    #v = vector([PF,])
-    # SignalCombiner.pushCombSource(PF)
     if verbose: print ("*** Added PF Signal ***")
 
 if cal_signal:
-    CalSig = CombSource(block_size, cfg.Nchannels, 2048, cal_fname, 16,
-        cal_A, 0.0, drift*1e-6,0.0, cal_shift)
+    CalSig = CombSource(block_size, cfg.Nchannels, 2048, cal_fname, 16, cal_A, 0.0, drift*1e-6,0.0, cal_shift)
     slist.append(CalSig)
     if verbose: print ("*** Added Cal Signal ***")
 
-src     =   SignalCombiner(slist, True)
-if verbose: print("*** Signal Source created ***")
+# -- Combine all of the optional sources created above:
+src             =   SignalCombiner(slist, True)
+if verbose: print("*** Signal Combiner Source created ***")
 
-output  =   SpecOutput(cfg)
+output          =   SpecOutput(cfg)
 if verbose: print("*** Output Object created ***")
 
-spectrometer = RefSpectrometer(src, cfg)
+spectrometer    =   RefSpectrometer(src, cfg)
 if verbose: print("*** Spectrometer created ***")
 
 
-for i in range(2):
+for iNgo in range(Ngo):
     spectrometer.run(output)
+    if(verbose): print("*** Source rms: ", src.rms())
+
+    # newlist = [str(x) for x in output.avg_pspec[0]]    
+    #for i in range(1, Nbins):
+        
+        # newlist = [str(x) for x in output.avg_pspec[0]]
+        # print(newlist)
+        # print(" ".join(newlist))
+
+        # print(output.avg_pspec[0][i])
+        # This following line in the C++ source but it's unclear why: k = fundamental*float(i)*(10**(-6))
+       
+
+
+of.close()
+ofc.close()
+ofc2.close()
 
 exit(0)
