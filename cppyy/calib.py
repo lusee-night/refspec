@@ -17,7 +17,8 @@ parser.add_argument("-p", "--pf_signal",    help="PF signal",                   
 parser.add_argument("-s", "--sky_signal",   help="Sky signal",                      action='store_true')
 parser.add_argument("-n", "--notch",        help="Spectral notch",                  action='store_true')
 
-parser.add_argument("-A", "--ampl_resc",    help="Calibration Amplitude Rescaling", type=float, default=1.0)
+parser.add_argument("-R", "--ampl_resc",    help="Calibration Amplitude Rescaling", type=float, default=1.0)
+parser.add_argument("-A", "--ADC_range",    help="ADC range peak to peak",          type=float, default=2.0)
 
 parser.add_argument("-N", "--Ngo",          help="Number of Big Samples",           type=int,   default=120)
 parser.add_argument("-a", "--a2",           help="Average 2",                       type=int,   default=20)
@@ -33,6 +34,7 @@ parser.add_argument("-F", "--picket_fname", help="Filename for picket fence",   
 parser.add_argument("-r", "--shift_rec",    help="No.records to shift calibrator",  type=int,   default=0)
 
 parser.add_argument("-o", "--out_root",     help="Output root",                     type=str,   default='')
+parser.add_argument("-W", "--write_to",     help="Do not run spectrometer, instead write to file int16 samples", type=str,   default='')
 parser.add_argument("-S", "--seed",         help="Random seed",                     type=int,   default=100)
 
 #######################################
@@ -48,6 +50,7 @@ cal_signal  = args.cal_signal
 
 notch       = args.notch
 cal_A       = args.ampl_resc
+ADC_range   = args.ADC_range
 
 Ngo         = args.Ngo
 a2          = args.a2
@@ -59,6 +62,7 @@ picket_fname= args.picket_fname
 
 cal_shift   = args.shift_rec
 out_root    = args.out_root
+write_to    = args.write_to
 seed        = args.seed
 
 # -----------------------------------------------------------------------------------------
@@ -70,10 +74,9 @@ if (not (pf_signal or sky_signal or cal_signal)): # if nothing specified, assume
 
 # Parameter printout/check:
 if verbose:
-    print(f'''*** PF Signal: {pf_signal}, Sky Signal: {sky_signal}, Cal Signal: {cal_signal}, Spectral Notch: {notch}, Amplitude Rescaling: {cal_A} ***''')
+    print(f'''*** PF Signal: {pf_signal}, Sky Signal: {sky_signal}, Cal Signal: {cal_signal}, Spectral Notch: {notch}, Amplitude Rescaling: {cal_A}, ADC range: {ADC_range} ***''')
     print(f'''*** Number of big samples: {Ngo}, Average 2: {a2}, Drift (ppm): {drift} ***''')
-    print(f'''*** Power spectrum filename: {pk_fname}, Calibrator filename: {cal_fname}, Output root: {out_root} ***''')
-
+    print(f'''*** Power spectrum filename: {pk_fname}, Calibrator filename: {cal_fname}, Output root: {out_root}, Write to: {write_to} ***''')
 
 # -----------------------------------------------------------------------------------------
 cfg = SpecConfig() # the configuration object
@@ -105,6 +108,7 @@ slist = [] # array of sources
 
 if sky_signal:
     SigNoise = PowerSpecSource(pk_fname, cfg.sampling_rate, block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps, False, False, seed)
+    SigNoise.set_verbose(verbose) #   print(SigNoise.get_verbose())
     slist.append(SigNoise)
     if verbose: print ("*** Added Sky Signal ***")
 
@@ -119,19 +123,53 @@ if cal_signal:
     if verbose: print ("*** Added Cal Signal ***")
 
 # -- Combine all of the optional sources created above:
-src             =   SignalCombiner(slist, True)
+source =  SignalCombiner(slist, True)
+
+# ---
+# Check the "write only" option:
+if write_to!='':
+    Nwrite = int(cfg.Average1Size*cfg.Average2Size*Ngo*cfg.Nfft/block_size)
+    if verbose: print(f'''*** Dumping {Nwrite} blocks of {block_size} int16 samples to {write_to} ***''')
+    of = open(write_to, 'wb')
+    
+    minval = +32767
+    maxval = -32767
+    
+    minval_f = +1e30
+    maxval_f = -1e30
+
+    source.init_internal(cfg.Nchannels)
+    if verbose: print(f'''*** Initialized the internal buffer of {cfg.Nchannels} elements ***''')
+
+    for i in range(0, Nwrite):
+        source.next_block()
+        for j in range(0, block_size):
+            val_f = source.get_internal(0, j)
+            minval_f = min(minval_f, val_f)
+            maxval_f = max(maxval_f, val_f)
+            val = int(val_f*65536/ADC_range)
+            of.write((int(val)).to_bytes(2, byteorder='big', signed=True))
+
+    of.close()
+    if verbose:
+        print(f'''*** Min val float = {minval_f}   Max val float = {maxval_f} ***''')
+        print(f'''*** Min val = {minval}   Max val = {maxval} ***''')
+        print("*** Done. Exiting. ***")
+
+    exit(0)
+
 if verbose: print("*** Signal Combiner Source created ***")
 
 output          =   SpecOutput(cfg)
 if verbose: print("*** Output Object created ***")
 
-spectrometer    =   RefSpectrometer(src, cfg)
+spectrometer    =   RefSpectrometer(source, cfg)
 if verbose: print("*** Spectrometer created ***")
 
 
 for iNgo in range(Ngo):
     spectrometer.run(output)
-    if(verbose): print("*** Source rms: ", src.rms())
+    if(verbose): print("*** Source rms: ", source.rms())
 
     # newlist = [str(x) for x in output.avg_pspec[0]]    
     #for i in range(1, Nbins):

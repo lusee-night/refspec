@@ -11,7 +11,7 @@ PowerSpecSource::PowerSpecSource(const std::vector<double> &kk,
 		  const std::vector<double> &Pk,
 		  float sampling_rate,
 		  size_t block_size, size_t Nchannels,
-				 size_t Nblocks_gen, bool repeat, bool second_fourier, int seed):
+			size_t Nblocks_gen, bool repeat, bool second_fourier, int seed):
   SignalSource(block_size, Nchannels), sampling_rate(sampling_rate), cur_block(0), Nblocks(Nblocks_gen),
   repeat(repeat), second_fourier(second_fourier) {
   generate_data(kk,Pk,seed);
@@ -53,10 +53,17 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
   fftwf_complex* fourier = fftwf_alloc_complex(Nfft);
   buffer = fftwf_alloc_real(N);
   bool align_out = fftwf_alignment_of((float*)buffer);
-  std::cout << "Planning " << N << " samples = " << N/sampling_rate << " seconds."  <<std::endl;
+
+
+  if(verbose) { 
+    std::cout << "*** Planning " << N << " samples = " << N/sampling_rate << " seconds. ***"  <<std::endl;
+  }
+
   fftwf_set_timelimit(1.0);
   fftwf_plan plan = fftwf_plan_dft_c2r_1d(N, fourier, buffer, FFTW_DESTROY_INPUT || FFTW_ESTIMATE);
-  std::cout << "Generating... " <<std::endl;
+  if(verbose) {
+    std::cout << "*** Generating... ***" <<std::endl;
+  }
   // now generate fourier variates
   size_t ki=0;
   size_t kj=1;
@@ -73,7 +80,9 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
 
   std::default_random_engine generator;
   generator.seed(seed);
-  std::cout <<seed << "= seed" <<std::endl;
+  if(verbose) {
+    std::cout << "*** Seed: " << seed << " ***" << std::endl;
+  }
   std::normal_distribution<double> gauss(0.0,1.0);
   
   size_t NUp = N/2 + (second_fourier*N/2);
@@ -103,12 +112,19 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
     fourier[j][1]=A*gauss(generator);
   }
   
-  std::cout << "Transforming... " <<std::endl;
+  if(verbose) {
+    std::cout << "*** Transforming... ***" <<std::endl;
+  }
 
   fftwf_execute(plan);
   fftwf_free(fourier);
   fftwf_destroy_plan(plan);
-  std::cout << "Done " <<std::endl;
+  
+  // std::cout << "*** V ***" << get_verbose() << std::endl;
+  
+  if(verbose) {
+    std::cout << "*** Done ***" <<std::endl;
+  }
 
 }
 

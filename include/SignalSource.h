@@ -9,10 +9,10 @@ class SignalSource {
 
  public:
 
-  SignalSource() : Nchannels(0), internal(NULL), Ninternal(0) {};
+  SignalSource() : Nchannels(0), internal(NULL), Ninternal(0), verbose(false) {};
   
   SignalSource(size_t block_size, size_t Nchannels) :
-    block_size(block_size), Nchannels(Nchannels), internal(NULL), Ninternal(0) {}
+    block_size(block_size), Nchannels(Nchannels), internal(NULL), Ninternal(0), verbose(false) {}
 
   virtual void next_block(float **place) = 0; 
   virtual void next_block() = 0;
@@ -31,8 +31,11 @@ class SignalSource {
 
   virtual bool data_available() const {return true;}
 
+  void set_verbose(bool v) {verbose=v;}
+  bool get_verbose(void) {return verbose;}
  protected:
   size_t block_size, Nchannels;
   float **internal;
   int Ninternal;
+  bool verbose;
 };
