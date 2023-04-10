@@ -19,6 +19,7 @@ struct SpecOutput {
   SpecOutput (SpecOutput const &S);
 
   float get_avg_pspec(size_t i, size_t j) {return avg_pspec[i][j];};
+  float get_calib_out(size_t i, size_t j) {return calib_out[i][j];};
 
   void zero();
   SpecOutput& operator+=(SpecOutput& toadd);

@@ -98,17 +98,11 @@ Nbins               = cfg.Nbins()
 
 if verbose: print("*** Nbins:", Nbins, "   Ncalib:", cfg.Ncalib, "***")
 
-# Mimic the file names in the C++ source
-
-of      = open(out_root+"powspect.txt", 'w')
-ofc     = open(out_root+"calib.txt", 'w')
-ofc2    = open(out_root+"calib_meta.txt", 'w')
-
 slist = [] # array of sources
 
 if sky_signal:
-    SigNoise = PowerSpecSource(pk_fname, cfg.sampling_rate, block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps, False, False, seed)
-    SigNoise.set_verbose(verbose) #   print(SigNoise.get_verbose())
+    SigNoise = PowerSpecSource(pk_fname, cfg.sampling_rate, block_size, cfg.Nchannels, Ngo*cfg.AverageSize()+cfg.Ntaps, False, False, seed, verbose)
+    # print(SigNoise.get_verbose())
     slist.append(SigNoise)
     if verbose: print ("*** Added Sky Signal ***")
 
@@ -124,6 +118,7 @@ if cal_signal:
 
 # -- Combine all of the optional sources created above:
 source =  SignalCombiner(slist, True)
+if verbose: print("*** Signal Combiner Source created ***")
 
 # ---
 # Check the "write only" option:
@@ -158,29 +153,42 @@ if write_to!='':
 
     exit(0)
 
-if verbose: print("*** Signal Combiner Source created ***")
 
+# ---
+# Mimic the file names in the C++ source
+of      = open(out_root+"powspect.txt", 'w')
+ofc     = open(out_root+"calib.txt", 'w')
+ofc2    = open(out_root+"calib_meta.txt", 'w')
+
+# Run the spectrometer
 output          =   SpecOutput(cfg)
 if verbose: print("*** Output Object created ***")
 
 spectrometer    =   RefSpectrometer(source, cfg)
 if verbose: print("*** Spectrometer created ***")
 
-
 for iNgo in range(Ngo):
     spectrometer.run(output)
     if(verbose): print("*** Source rms: ", source.rms())
 
-    # newlist = [str(x) for x in output.avg_pspec[0]]    
-    #for i in range(1, Nbins):
-        
-        # newlist = [str(x) for x in output.avg_pspec[0]]
-        # print(newlist)
-        # print(" ".join(newlist))
+    for iFund in range(1, cfg.Nbins()):
+        k = fundamental*iFund/1e6
+        of.write(str(k))
+        of.write(" ")
+    
+    of.write("\n")
 
-        # print(output.avg_pspec[0][i])
-        # This following line in the C++ source but it's unclear why: k = fundamental*float(i)*(10**(-6))
-       
+    for iCalib in range(0, cfg.Ncalib):
+        ofc.write(str(output.get_calib_out(0, iCalib)))
+        ofc.write(" ")
+    
+    ofc.write("\n")
+
+ofc2.write(str(output.calib_drift_count))
+ofc2.write(" ")
+ofc2.write(str(output.calib_det))
+ofc2.write("\n")
+
 
 
 of.close()

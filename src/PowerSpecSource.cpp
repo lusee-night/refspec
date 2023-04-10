@@ -11,16 +11,16 @@ PowerSpecSource::PowerSpecSource(const std::vector<double> &kk,
 		  const std::vector<double> &Pk,
 		  float sampling_rate,
 		  size_t block_size, size_t Nchannels,
-			size_t Nblocks_gen, bool repeat, bool second_fourier, int seed):
-  SignalSource(block_size, Nchannels), sampling_rate(sampling_rate), cur_block(0), Nblocks(Nblocks_gen),
+			size_t Nblocks_gen, bool repeat, bool second_fourier, int seed, bool verb):
+  SignalSource(block_size, Nchannels, verb), sampling_rate(sampling_rate), cur_block(0), Nblocks(Nblocks_gen),
   repeat(repeat), second_fourier(second_fourier) {
   generate_data(kk,Pk,seed);
 };
 
 PowerSpecSource::PowerSpecSource(std::string filename, float sampling_rate,
 				 size_t block_size, size_t Nchannels,
-				 size_t Nblocks_gen, bool repeat, bool second_fourier, int seed) :
-  SignalSource(block_size, Nchannels),  sampling_rate(sampling_rate),  cur_block(0), Nblocks(Nblocks_gen),
+				 size_t Nblocks_gen, bool repeat, bool second_fourier, int seed, bool verb) :
+  SignalSource(block_size, Nchannels, verb),  sampling_rate(sampling_rate),  cur_block(0), Nblocks(Nblocks_gen),
   repeat(repeat), second_fourier(second_fourier) 
 {
   std::ifstream inf(filename, std::ios::in);

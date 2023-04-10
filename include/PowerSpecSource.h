@@ -16,11 +16,11 @@ public:
 		  float sampling_rate,
 		  size_t block_size, size_t Nchannels,
 		  size_t Nblocks_gen, bool repeat = false, bool second_fourier=false,
-		  int seed=123);
+		  int seed=123, bool verb=false);
 
   PowerSpecSource(std::string filename, float sampling_rate, size_t block_size,
 		  size_t Nchannels, size_t Nblocks_gen, bool repeat = false,
-		  bool second_fourier=false, int seed=123);
+		  bool second_fourier=false, int seed=123, bool verb=false);
 
   ~PowerSpecSource();
   
