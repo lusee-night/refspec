@@ -1,38 +1,14 @@
 # Refspec bindings based on cppyy
 
 
-## Python code
-The names of the script are modeled on their *.cpp prototypes
-in the `test` folder, where applicable. Example:
+## Python bindings with cppyy
 
-```bash
-./simple_demo.py
-```
-
-## Prerequisites for Python bindings
-
-### About
-
-There are multiple ways to implement Python bindings for C++ code. Two options are currently
-being investigated:
-
-* pybind11
-* cppyy
-
-The former framework relies on advanced C++ macros to create a shared library that can be loaded
-into a Python application as a module. It works well but requires a non-trivial amount of C++
-boilerplate code, especially to convert C++ data structures into common Python objects e.g.
-`numpy` arrays.
-
-The latter utilizes the `clang` interpreter to inspect the C++ header files and thus be able
-to parse a conventional shared library from within a Python application, so effectively
-is an inversion of the process used in `pybind11`. 
-
-Some technical details on both are given below.
-
-### cppyy
-
-This method is the preffered one at the time of writing.
+There are multiple ways to implement Python bindings for C++ code. One option previously investigated
+was the `pybind11` C++ macro library, which allows to build native bindings at compile time. This,
+however, required a substantial amount of extra code. The choice finally made was the `cppyy`
+Python package, which leverages the `cling` interpreter, making it possible to do some
+of the work dynamically at runtime (e.g. automatically parse the C++ header files),
+drastically reducing the amount of extra code necessary for the implementation of the bindings.
 
 The `cppyy` Python package can be installed using `pip`.
 Conventional shared libraries and header files can be used with `cppyy`, so no custom
@@ -49,7 +25,10 @@ going to work, so care must be taken to implement all pure virtual functions bef
 attempting to put Python bindings in place.
 
 
-### pybind11
+
+## Appendix
+
+### pybind11 (for historical reference only)
 
 The `pybind11` is a header-only library which is one of popular methods
 to create Python bindings for C++ code (and one of the most powerful).
