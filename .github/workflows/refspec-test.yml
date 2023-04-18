@@ -15,8 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        run: env
-        run: ls -l /user/include
+      - run: env
+      - run: ls -l /user/include
       # Submodule activation here is to pull pybind11 - comment out for now
       # - run: git submodule update --init
       # - run: python3.10 -m pip install pybind11
