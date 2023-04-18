@@ -4,7 +4,7 @@
 
 These Dockerfiles should be used from the folder one level above, e.g.
 ```bash
-docker build -t lusee/lusee-night-refspec-foundation:0.1 -f docker/Dockerfile-foundation
+docker build . -t lusee/lusee-night-refspec-foundation:0.1 -f docker/Dockerfile-foundation
 ```
 
 To check a local copy of the refspec code, a command similar to the following one should be used
