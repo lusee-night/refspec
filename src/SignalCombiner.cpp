@@ -3,6 +3,10 @@
 #include <cmath>
 #include <iostream>
 
+using namespace std;
+
+SignalCombiner::SignalCombiner(bool get_rms): calc_rms(get_rms), Nchannels(0) {};
+
 SignalCombiner::SignalCombiner(std::vector<SignalSource*> sources, bool get_rms) : sources(sources),
 										   calc_rms(get_rms)
 {
@@ -28,10 +32,16 @@ SignalCombiner::SignalCombiner(std::vector<SignalSource*> sources, bool get_rms)
 
 
 SignalCombiner::SignalCombiner::~SignalCombiner() {
-  for (size_t i=0;i<Nchannels;i++) fftwf_free(buf[i]);
-  delete buf;
+  if(Nchannels>0) {
+    for (size_t i=0;i<Nchannels;i++) fftwf_free(buf[i]);
+    delete buf;
+  }
 }
 
+// ---
+// This is the original next_block,
+// and below is the version designed to work with the internal buffer
+// ---
 void SignalCombiner::SignalCombiner::next_block(float **place) {
   bool first_block = true;
   size_t i=0;
@@ -51,6 +61,11 @@ void SignalCombiner::SignalCombiner::next_block(float **place) {
   }
   for (size_t i=0;i<Nchannels;i++) place[i] = buf[i];
 }
+
+void SignalCombiner::next_block() {
+  next_block(internal);
+}
+// ---
 
 std::vector<double> SignalCombiner::rms() const {
   if (!calc_rms) return std::vector<double>(0);

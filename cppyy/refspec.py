@@ -16,9 +16,16 @@ headers = [
 ]
 
 for header in headers:
-    print(f'''Loading {header}''')
-    cppyy.include(header)
+    try:
+        cppyy.include(header)
+    except:
+        print(f'''Error loading {header}, exiting''')
+        exit(-1)
 
-cppyy.load_library('refspec')
+try:
+    cppyy.load_library('refspec')
+except:
+    print("Error loading the refspect library, exiting...")
+    exit(-1)
 
-from cppyy.gbl import RefSpectrometer, PowerSpecSource, SpecConfig, SignalGenerator, SpecOutput
+from cppyy.gbl import RefSpectrometer, PowerSpecSource, CombSource, SpecConfig, SignalGenerator, SignalCombiner, SignalSource, SpecOutput

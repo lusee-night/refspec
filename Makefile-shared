@@ -6,8 +6,8 @@ BUILD = ./build
 
 FFTW_LINK = -lfftw3 -lfftw3f
 
-SRCS = pfb.cpp SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp RefSpectrometer.cpp PowerSpecSource.cpp CombSource.cpp
-HDRS = SpecConfig.h SpecOutput.h SignalGenerator.h RefSpectrometer.h PowerSpecSource.h CombSource.h
+SRCS = pfb.cpp SpecConfig.cpp SpecOutput.cpp SignalGenerator.cpp SignalCombiner.cpp RefSpectrometer.cpp PowerSpecSource.cpp CombSource.cpp
+HDRS = SpecConfig.h SpecOutput.h SignalGenerator.h SignalCombiner.h RefSpectrometer.h PowerSpecSource.h CombSource.h
 OBJS := $(patsubst %.cpp, $(BUILD)/%.o, $(SRCS) )
 
 LIBRARY = refspec.so
