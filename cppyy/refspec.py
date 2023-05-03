@@ -4,6 +4,7 @@ from cppyy import ll
 headers = [
     'CombSource.h',
     'FileStreamSource.h',
+    'FileStreamSink.h',
     'pfb.h',
     'PowerSpecSource.h',
     'RefSpectrometer.h',
@@ -22,10 +23,6 @@ for header in headers:
         print(f'''Error loading {header}, exiting''')
         exit(-1)
 
-try:
-    cppyy.load_library('refspec')
-except:
-    print("Error loading the refspect library, exiting...")
-    exit(-1)
+cppyy.load_library('refspec')
 
-from cppyy.gbl import RefSpectrometer, PowerSpecSource, CombSource, SpecConfig, SignalGenerator, SignalCombiner, SignalSource, SpecOutput
+from cppyy.gbl import RefSpectrometer, PowerSpecSource, CombSource, SpecConfig, SignalGenerator, SignalCombiner, SignalSource, SpecOutput, FileStreamSource, FileStreamSink, WhiteNoise

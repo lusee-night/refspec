@@ -25,7 +25,7 @@ class SignalSource {
   int get_Ninternal() {return Ninternal;}
 
   float get_internal(int j, int k) {return internal[j][k];}
-
+  
   size_t get_block_size() const { return block_size;}
   size_t get_Nchannels()  const { return Nchannels;}
 
@@ -33,6 +33,7 @@ class SignalSource {
 
   void set_verbose(bool v) {verbose=v;}
   bool get_verbose(void) {return verbose;}
+ 
  protected:
   size_t block_size, Nchannels;
   float **internal;

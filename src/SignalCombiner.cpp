@@ -5,7 +5,7 @@
 
 using namespace std;
 
-SignalCombiner::SignalCombiner(bool get_rms): calc_rms(get_rms), Nchannels(0) {};
+SignalCombiner::SignalCombiner(bool get_rms): calc_rms(get_rms) {};
 
 SignalCombiner::SignalCombiner(std::vector<SignalSource*> sources, bool get_rms) : sources(sources),
 										   calc_rms(get_rms)

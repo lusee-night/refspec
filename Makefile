@@ -8,7 +8,7 @@ LINKFLAGS =
 
 SOURCES = src/pfb.cpp src/SpecConfig.cpp src/SpecOutput.cpp src/SignalGenerator.cpp \
           src/RefSpectrometer.cpp src/FileStreamSource.cpp src/PowerSpecSource.cpp \
-	  	  src/SignalCombiner.cpp src/CombSource.cpp src/WhiteNoise.cpp 
+	  	  src/SignalCombiner.cpp src/CombSource.cpp src/WhiteNoise.cpp src/FileStreamSink.cpp
 
 OBJS = $(SOURCES:.cpp=.o)
 

@@ -34,7 +34,7 @@ class SignalCombiner: public SignalSource {
   // };
 
  protected:
-  size_t block_size, Nchannels, Nsources;
+  size_t Nsources;
 
   std::vector <SignalSource*> sources;
 

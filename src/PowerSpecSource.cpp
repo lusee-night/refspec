@@ -13,7 +13,7 @@ PowerSpecSource::PowerSpecSource(const std::vector<double> &kk,
 		  size_t block_size, size_t Nchannels,
 			size_t Nblocks_gen, bool repeat, bool second_fourier, int seed, bool verb):
   SignalSource(block_size, Nchannels, verb), sampling_rate(sampling_rate), cur_block(0), Nblocks(Nblocks_gen),
-  repeat(repeat), second_fourier(second_fourier) {
+  repeat(repeat), second_fourier(second_fourier), buffer(NULL) {
   generate_data(kk,Pk,seed);
 };
 
@@ -21,12 +21,12 @@ PowerSpecSource::PowerSpecSource(std::string filename, float sampling_rate,
 				 size_t block_size, size_t Nchannels,
 				 size_t Nblocks_gen, bool repeat, bool second_fourier, int seed, bool verb) :
   SignalSource(block_size, Nchannels, verb),  sampling_rate(sampling_rate),  cur_block(0), Nblocks(Nblocks_gen),
-  repeat(repeat), second_fourier(second_fourier) 
+  repeat(repeat), second_fourier(second_fourier), buffer(NULL) 
 {
   std::ifstream inf(filename, std::ios::in);
   if (!inf.is_open()) {
     std::cout << "Cannot open "<<filename<<std::endl;
-    exit(1);
+    return;
   }
 
   std::vector<double> kk,Pk;
@@ -43,7 +43,7 @@ PowerSpecSource::PowerSpecSource(std::string filename, float sampling_rate,
 
 
 PowerSpecSource::~PowerSpecSource() {
-  fftwf_free(buffer);
+  if (buffer)  fftwf_free(buffer);
 }
 
 
@@ -94,15 +94,19 @@ void PowerSpecSource::generate_data(const std::vector<double> &kk, const std::ve
     //size_t mythread = omp_get_thread_num();
     float omega = domega*i;
     size_t j;
-    while (omega>kk[kj]) {ki++; kj++;}
-    // now interpolate / extrapolate
-    double Phere = Pk[ki]+(Pk[kj]-Pk[ki])/(kk[kj]-kk[ki])*(omega-kk[ki]); // in dvar/Hz
-    if ((omega<1e-2) && (Phere<0)) Phere = 0;
+    double Phere;
+    if ((omega<=kk[0])||(omega>kk[kk.size()-1])) {
+      Phere = 0.0;
+     } else {
+      while (omega>kk[kj]) {ki++; kj++;}
+      // now interpolate / extrapolate
+      Phere = Pk[ki]+(Pk[kj]-Pk[ki])/(kk[kj]-kk[ki])*(omega-kk[ki]); // in dvar/Hz
+     };
 
     double A = sqrt(Phere/2)*Pnorm; // fix norm factors
     if (std::isnan(A)) {
-	std::cout << "Fatal, negative power spec <<"<<omega<<" " <<Phere <<std::endl;
-	exit(1);
+	    std::cout << "Fatal, negative power spec <<"<<omega<<" " <<Phere <<std::endl;
+	    exit(1);
       }
 
     if (i<=Nfft) j=i; else j = N-i;
