@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SpecConfig.h"
+#include <vector>
 
 struct SpecOutput {
 
@@ -18,8 +19,13 @@ struct SpecOutput {
   SpecOutput(SpecConfig const *config);
   SpecOutput (SpecOutput const &S);
 
-  float get_avg_pspec(size_t i, size_t j) {return avg_pspec[i][j];};
-  float get_calib_out(size_t i, size_t j) {return calib_out[i][j];};
+
+
+  float get_avg_pspec(size_t c, size_t bin) {return avg_pspec[c][bin];};
+  float get_avg_pspec_zoom(size_t c, size_t bin) {return avg_pspec_zoom[c][bin];};
+  std::vector<double> get_avg_pspec (size_t c);
+  std::vector<double> get_avg_pspec_zoom (size_t c);
+  float get_calib_out(size_t c, size_t bin) {return calib_out[c][bin];};
 
   void zero();
   SpecOutput& operator+=(SpecOutput& toadd);

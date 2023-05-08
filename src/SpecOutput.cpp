@@ -66,6 +66,18 @@ SpecOutput& SpecOutput::operator/=(float V) {
   return *this;
 }
 
+std::vector<double> SpecOutput::get_avg_pspec (size_t c) {
+  std::vector<double> out(Nbins);
+  for (size_t i=0;i<Nbins;i++) out[i] = avg_pspec[c][i];
+  return out;
+}
+
+std::vector<double> SpecOutput::get_avg_pspec_zoom (size_t c) {
+  std::vector<double> out(Nbins_zoom);
+  for (size_t i=0;i<Nbins_zoom;i++) out[i] = avg_pspec_zoom[c][i];
+  return out;
+}
+
 
 
 SpecOutput::~SpecOutput() {
