@@ -2,7 +2,9 @@
 #include "pfb.h"
 
 #include <string>
+#include <vector>
 #include <cstdint>
+
 
 #define MAX_CHANNELS 4
 #define MAX_TAPS 128
@@ -41,14 +43,15 @@ struct  SpecConfig {
 
   // zoom-in size
   uint32_t zoomin_st, zoomin_en; // start end end of the zoom in region, C counting
-  uint32_t zoomin_fact; // zoom in factor
-  
+  std::vector<std::vector<float>> zoom_weights, zoom_weights_imag; // zoom in factor
+  virtual ~SpecConfig() {} ;
 
  public:
   // default constructor with some same defaults
   SpecConfig();
   void sanity_check() const;
-  
+  void resize_zoom(size_t Nzoom, size_t Nweights);
+  void set_zoom_weight (size_t i, size_t j, float value_real, float value_imag);  
 };
  
-  
+ 
