@@ -1,25 +1,29 @@
 
+import numpy as np
 import refspec
-import numpy as np
 import lusee
-import numpy as np
 
 import matplotlib
 import matplotlib.pyplot as plt
+
 matplotlib.rcParams['figure.figsize'] = [5, 3.5]
 matplotlib.rcParams['figure.dpi'] = 100
-from scipy.ndimage import gaussian_filter
-from scipy.interpolate import interp1d
-from scipy.integrate import simpson
-import refspec
+
+from scipy.ndimage      import gaussian_filter
+from scipy.interpolate  import interp1d
+from scipy.integrate    import simpson
+
 import os
 
 beam = lusee.Beam(os.environ['LUSEE_DRIVE_DIR']+"Simulations/BeamModels/LanderRegolithComparison/eight_layer_regolith/hfss_lbl_3m_75deg.2port.fits")
-f=np.logspace(-2,np.log10(50.),1000)
+
+f = np.logspace(-2,np.log10(50.),1000)
+
 sky_frac_in = 1-beam.ground_fraction()
 sky_frac_s = gaussian_filter(sky_frac_in,1)
 sky_frac_s[0] = sky_frac_in[0]
 sky_frac = interp1d(np.hstack((0,beam.freq)),np.hstack((0,sky_frac_s)),kind='quadratic')
+
 T_sky = lusee.monosky.T_C(f).value
 T_ant = sky_frac(f)*T_sky + ((1-sky_frac(f))*200)
 T=lusee.Throughput(beam)
@@ -33,6 +37,7 @@ P_sky_jfet = T_ant * T.T2Vsq(f)
 P_plasma_jfet  = P_plasma*T.Gamma_VD(f)**2
 
 gain = T.power_gain(f,'M')
+
 P_sky_adc = P_sky_jfet * gain
 P_plasma_adc = P_plasma_jfet * gain
 P_noise_adc = T.noise(f) * gain * 2 # a factor of 2 due to two amplifiers
@@ -46,12 +51,12 @@ def measure  (Nsec=1, PF_amplitude=0.0006,  tone=None, bit_level=1/(2**13),bits=
     Nsamples = int(Nsec*sampling_rate)
     Nblocks_gen = Nsamples//block_size+2*cfg.Ntaps
     Nchannels = 1
+
     cfg.Ntaps        = 6
     cfg.zoomin_st    = 0
     cfg.zoomin_en    = 5*4; # 500 kHz times 4 / 100kHz
     cfg.set_zoom(5,4,None)
     
-
     cfg.Nchannels       = 1
     cfg.Average1Size    = 60
     cfg.Average2Size    = int(Nsec*cfg.sampling_rate/(cfg.Average1Size*cfg.Nfft))
