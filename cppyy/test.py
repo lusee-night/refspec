@@ -98,7 +98,7 @@ def measure  (Nsec=1, PF_amplitude=0.0006,  tone=None, bit_level=1/(2**13),bits=
 
 fk,Pk,Pkr = measure(0.2,PF_amplitude=0.0006,noise_source=False,seed=24)
 print ("and back")
-print (fk)
+print (f'''fk: {fk}''')
 print (Pk)
 print (Pkr)
 
