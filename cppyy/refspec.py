@@ -1,6 +1,7 @@
 import cppyy
 from cppyy import ll
 import numpy as np
+import scipy.linalg as la
 
 headers = [
     'CombSource.h',
@@ -8,6 +9,7 @@ headers = [
     'FileStreamSink.h',
     'pfb.h',
     'PowerSpecSource.h',
+    'CorrelatedSpecSource.h',
     'RefSpectrometer.h',
     'SignalCombiner.h',
     'SignalGenerator.h',
@@ -15,19 +17,39 @@ headers = [
     'SpecConfig.h',
     'SpecOutput.h',
     'WhiteNoise.h',
+    'testing.h'
 ]
 
 for header in headers:
     try:
-        cppyy.include(header)
+        print ("Loading ",header)
+        cppyy.include("/home/anze/work/lusee/refspec/include/"+header)
     except:
         print(f'''Error loading {header}, exiting''')
         exit(-1)
 
-cppyy.load_library('refspec')
+cppyy.load_library('refspec.so')
 
-from cppyy.gbl import RefSpectrometer, PowerSpecSource, CombSource, SignalGenerator, SignalCombiner, SignalSource, \
-                      SpecOutput, FileStreamSource, FileStreamSink, WhiteNoise
+from cppyy.gbl import RefSpectrometer, PowerSpecSource, CombSource, SignalGenerator, \
+                      SignalCombiner, SignalSource, SpecOutput, FileStreamSource, FileStreamSink, WhiteNoise
+            
+
+
+
+    
+def CorrelatedSpecSource(f, Pmat, sampling_rate, block_size, Nchannels, Nblocks, 
+                 repeat=False, second_fourier=False, seed=123, verbose=False):
+
+    assert(Pmat.shape==(len(f),Nchannels,Nchannels))
+    obj = cppyy.gbl.CorrelatedSpecSource(f,sampling_rate, block_size, Nchannels, Nblocks, repeat,
+                        second_fourier, seed, verbose)
+    Pchol = np.array([la.cholesky(C) for C in Pmat])
+    for i,f_ in enumerate(f):
+        for j in range(Nchannels):
+            for k in range(Nchannels):
+                obj._set_internal_C(i,j,k,Pchol[i,j,k])
+    obj._go_internal(f, seed)
+    return obj
 
 class SpecConfig(cppyy.gbl.SpecConfig):
     
@@ -64,4 +86,7 @@ class SpecConfig(cppyy.gbl.SpecConfig):
             mat[-1,:] = np.conj(mat[0,:])
             
         self.set_zoom_weights(mat)
+
+    def __del__(self):
+        print ("SpecConfig deleted")
 
