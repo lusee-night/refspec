@@ -55,7 +55,11 @@ def measure  (Nsec=1, PF_amplitude=0.0006,  tone=None, bit_level=1/(2**13),bits=
     cfg.Ntaps        = 6
     cfg.zoomin_st    = 0
     cfg.zoomin_en    = 5*4; # 500 kHz times 4 / 100kHz
-    cfg.set_zoom(5,4,None)
+
+    helper = refspec.SpecConfigHelper()
+
+    helper.set_zoom(cfg, 5, 4, None)
+    # cfg.set_zoom(5,4,None)
     
     cfg.Nchannels       = 1
     cfg.Average1Size    = 60
