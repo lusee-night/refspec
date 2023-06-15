@@ -13,7 +13,7 @@ SpecConfig::SpecConfig():  Nchannels(1), sampling_rate(1.024e8), Nfft(4096),
 }
 
 void SpecConfig::sanity_check() const {
-  size_t zoomin_fact= zoom_weights.size();
+  size_t zoomin_fact=0; zoom_weights.size();
   if (zoomin_fact>0) {
     assert(Average1Size % zoomin_fact==0);
     assert((zoomin_fact==0) || (zoomin_fact==3) || (zoomin_fact==4)|| (zoomin_fact==5));

@@ -35,7 +35,18 @@ from cppyy.gbl import RefSpectrometer, PowerSpecSource, CombSource, SignalGenera
             
 
 
+class Testing(cppyy.gbl.Testing):
 
+    def __init__(self):
+        pass
+
+    def set_zoom_weights (self,arr):
+        N,M = arr.shape
+        self.resize_zoom(N,M)
+        for i in range(N):
+            for j in range(M):
+                self.set_zoom_weight(i,j,np.real(arr[i,j]),np.imag(arr[i,j]))
+    
     
 def CorrelatedSpecSource(f, Pmat, sampling_rate, block_size, Nchannels, Nblocks, 
                  repeat=False, second_fourier=False, seed=123, verbose=False):
@@ -53,6 +64,9 @@ def CorrelatedSpecSource(f, Pmat, sampling_rate, block_size, Nchannels, Nblocks,
 
 class SpecConfig(cppyy.gbl.SpecConfig):
     
+    def __init__(self):
+        pass
+
     def set_zoom_weights (self,arr):
         N,M = arr.shape
         self.resize_zoom(N,M)
