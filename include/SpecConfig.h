@@ -4,11 +4,12 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-
+#include <iostream>
 
 #define MAX_CHANNELS 4
 #define MAX_TAPS 128
 
+using namespace std;
 
 struct  SpecConfig {
 
@@ -43,12 +44,17 @@ struct  SpecConfig {
 
   // zoom-in size
   uint32_t zoomin_st, zoomin_en; // start end end of the zoom in region, C counting
+
   std::vector<std::vector<float>> zoom_weights, zoom_weights_imag; // zoom in factor
-  virtual ~SpecConfig() {} ;
+
+  virtual ~SpecConfig() {
+    // Caveat -- this was experimentation with memory management, please do not use
+    // cout << "SpecConfig dtor" << endl; zoom_weights.~vector(); zoom_weights_imag.~vector(); cout << "SpecConfig dtor done" << endl;
+    // zoom_weights.erase(zoom_weights.begin(),zoom_weights.end()); zoom_weights_imag.erase(zoom_weights_imag.begin(),zoom_weights_imag.end());
+  } ;
 
  public:
-  // default constructor with some same defaults
-  SpecConfig();
+    SpecConfig(); // default constructor with some same defaults
   void sanity_check() const;
   void resize_zoom(size_t Nzoom, size_t Nweights);
   void set_zoom_weight (size_t i, size_t j, float value_real, float value_imag);  

@@ -31,6 +31,9 @@ from cppyy.gbl import RefSpectrometer, PowerSpecSource, CombSource, SignalGenera
 
 class SpecConfig(cppyy.gbl.SpecConfig):
     
+    def __del__(self):
+        print("Python SpecConfig del")
+
     def set_zoom_weights (self,arr):
         N,M = arr.shape
         self.resize_zoom(N,M)
