@@ -40,7 +40,7 @@ class Testing2(Testing):
     def mine(self):
         return 3
 
-def CorrelatedSpecSource(f, Pmat, sampling_rate, block_size, Nchannels, Nblocks, 
+def CorrelatedSpecSourceHelper(f, Pmat, sampling_rate, block_size, Nchannels, Nblocks, 
                  repeat=False, second_fourier=False, seed=123, verbose=False):
 
     assert(Pmat.shape==(len(f),Nchannels,Nchannels))
@@ -54,24 +54,29 @@ def CorrelatedSpecSource(f, Pmat, sampling_rate, block_size, Nchannels, Nblocks,
     obj._go_internal(f, seed)
     return obj
 
-class SpecConfig(cppyy.gbl.SpecConfig):
-    
+class SpecConfigHelper():
 
-    def set_zoom_weights (self,arr):
+    def __init__ (self, SpConf):
+        self.SpConf = SpConf
+
+    def set_zoom_weights (self, arr):
         N,M = arr.shape
-        self.resize_zoom(N,M)
+        self.SpConf.resize_zoom(N,M)
         for i in range(N):
             for j in range(M):
-                self.set_zoom_weight(i,j,np.real(arr[i,j]),np.imag(arr[i,j]))
+                self.SpConf.set_zoom_weight(i,j, np.real(arr[i,j]), np.imag(arr[i,j]))
 
-    def set_zoom (self,Nchan, Ntaps,window=None, antialias=True):
+    def set_zoom (self, Nchan, Ntaps,window=None, antialias=True):
         def onzero(i):
             a=np.zeros(Nchan,complex)
             a[i]=1.0
             return a
-        mat0 = np.array([np.fft.ifft(onzero(i),Nchan) for i in range(Nchan//2,-Nchan//2,-1)])
-        mat = np.hstack([mat0]*Ntaps)
+        
+        mat0    = np.array([np.fft.ifft(onzero(i),Nchan) for i in range(Nchan//2,-Nchan//2,-1)])
+        mat     = np.hstack([mat0]*Ntaps)
+
         L = Nchan*Ntaps
+        
         if Ntaps>1:
             x=np.pi*(np.arange(L)-L/2+0.5)/Nchan
             pfb = np.sin(x)/(x+1e-30)     
@@ -85,12 +90,10 @@ class SpecConfig(cppyy.gbl.SpecConfig):
 
         if Nchan%2==1 and antialias:
             x = np.fft.fft(mat[0,:])
-            x[len(x)//2-Ntaps//2+1:]=0.0
-            mat[0,:] = np.fft.ifft(x)
-            mat[-1,:] = np.conj(mat[0,:])
+            x[len(x)//2-Ntaps//2+1:] = 0.0
+            mat[0,:]    = np.fft.ifft(x)
+            mat[-1,:]   = np.conj(mat[0,:])
             
         self.set_zoom_weights(mat)
 
-    def __del__(self):
-        print ("SpecConfig deleted")
 
