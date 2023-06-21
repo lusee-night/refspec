@@ -1,7 +1,7 @@
 FROM lusee/lusee-night-refspec-foundation:0.1
 
 RUN pip install --upgrade pip
-RUN pip install numpy cppyy
+RUN pip install numpy cppyy scipy
 #
 WORKDIR /user/refspec
 COPY cppyy /user/refspec/cppyy
@@ -19,4 +19,5 @@ COPY refspec.so /usr/local/lib
 
 ENV LD_LIBRARY_PATH=/user:$LD_LIBRARY_PATH
 ENV CPATH=/user/refspec/include:$CPATH
-
+ENV REFSPEC_PATH=/user/refspec
+ENV PYTHONPATH=$REFSPEC_PATH/cppyy
