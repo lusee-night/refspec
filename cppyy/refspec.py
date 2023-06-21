@@ -17,7 +17,6 @@ headers = [
     'SpecConfig.h',
     'SpecOutput.h',
     'WhiteNoise.h',
-    'testing.h'
 ]
 
 for header in headers:
@@ -31,14 +30,8 @@ for header in headers:
 cppyy.load_library('refspec.so')
 
 from cppyy.gbl import RefSpectrometer, PowerSpecSource, CombSource, SignalGenerator, \
-                      SignalCombiner, SignalSource, SpecOutput, FileStreamSource, FileStreamSink, WhiteNoise, \
-                        Testing
-            
+                      SignalCombiner, SignalSource, SpecOutput, FileStreamSource, FileStreamSink, WhiteNoise
 
-
-class Testing2(Testing):
-    def mine(self):
-        return 3
 
 def CorrelatedSpecSourceHelper(f, Pmat, sampling_rate, block_size, Nchannels, Nblocks, 
                  repeat=False, second_fourier=False, seed=123, verbose=False):
