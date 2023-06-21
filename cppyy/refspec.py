@@ -46,7 +46,18 @@ def CorrelatedSpecSourceHelper(f, Pmat, sampling_rate, block_size, Nchannels, Nb
     assert(Pmat.shape==(len(f),Nchannels,Nchannels))
     obj = cppyy.gbl.CorrelatedSpecSource(f,sampling_rate, block_size, Nchannels, Nblocks, repeat,
                         second_fourier, seed, verbose)
-    Pchol = np.array([la.cholesky(C) for C in Pmat])
+    Pchol = np.zeros_like(Pmat)
+    for i,C in enumerate(Pmat):
+        try:
+            Pchol[i,:,:] = la.cholesky(C)
+        except la.LinAlgError:
+            print (f"Cholesky failed in index {i}. Full matrix:")
+            for line in C:
+                for val in line:
+                    print ("   ",val,end="")
+                print ("")
+            raise ValueError
+        
     for i,f_ in enumerate(f):
         for j in range(Nchannels):
             for k in range(Nchannels):
