@@ -1,15 +1,15 @@
-import cppyy
-from cppyy import ll
-import numpy as np
-import scipy.linalg as la
+import  cppyy
+from    cppyy import ll
+import  numpy as np
+import  scipy.linalg as la
 
 headers = [
     'CombSource.h',
+    'CorrelatedSpecSource.h',
     'FileStreamSource.h',
     'FileStreamSink.h',
     'pfb.h',
     'PowerSpecSource.h',
-    'CorrelatedSpecSource.h',
     'RefSpectrometer.h',
     'SignalCombiner.h',
     'SignalGenerator.h',
@@ -19,26 +19,36 @@ headers = [
     'WhiteNoise.h',
 ]
 
+# ---
 for header in headers:
     try:
-        print ("Loading ",header)
-        cppyy.include("/home/anze/work/lusee/refspec/include/"+header)
+        cppyy.include(header)
     except:
         print(f'''Error loading {header}, exiting''')
         exit(-1)
 
-cppyy.load_library('refspec.so')
+cppyy.load_library('refspec')
 
-from cppyy.gbl import RefSpectrometer, PowerSpecSource, CombSource, SignalGenerator, \
-                      SignalCombiner, SignalSource, SpecOutput, FileStreamSource, FileStreamSink, WhiteNoise
+# ---
+from cppyy.gbl import   CombSource, \
+                        CorrelatedSpecSource, \
+                        FileStreamSink, \
+                        FileStreamSource, \
+                        PowerSpecSource, \
+                        RefSpectrometer, \
+                        SignalCombiner, \
+                        SignalGenerator, \
+                        SignalSource, \
+                        SpecConfig, \
+                        SpecOutput, \
+                        WhiteNoise
 
-
-def CorrelatedSpecSourceHelper(f, Pmat, sampling_rate, block_size, Nchannels, Nblocks, 
-                 repeat=False, second_fourier=False, seed=123, verbose=False):
+# ---
+def CorrelatedSpecSourceHelper(f, Pmat, sampling_rate, block_size, Nchannels, Nblocks, repeat=False, second_fourier=False, seed=123, verbose=False):
 
     assert(Pmat.shape==(len(f),Nchannels,Nchannels))
-    obj = cppyy.gbl.CorrelatedSpecSource(f,sampling_rate, block_size, Nchannels, Nblocks, repeat,
-                        second_fourier, seed, verbose)
+
+    obj = CorrelatedSpecSource(f,sampling_rate, block_size, Nchannels, Nblocks, repeat, second_fourier, seed, verbose)
     Pchol = np.zeros_like(Pmat)
     for i,C in enumerate(Pmat):
         try:
@@ -58,6 +68,7 @@ def CorrelatedSpecSourceHelper(f, Pmat, sampling_rate, block_size, Nchannels, Nb
     obj._go_internal(f, seed)
     return obj
 
+# ---
 class SpecConfigHelper():
 
     def __init__ (self, SpConf):

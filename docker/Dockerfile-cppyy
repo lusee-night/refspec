@@ -1,5 +1,6 @@
 FROM lusee/lusee-night-refspec-foundation:0.1
 
+RUN pip install --upgrade pip
 RUN pip install numpy cppyy
 #
 WORKDIR /user/refspec

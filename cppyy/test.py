@@ -2,8 +2,13 @@ from scipy.ndimage      import gaussian_filter
 from scipy.interpolate  import interp1d
 from scipy.integrate    import simpson
 
+import numpy as np
+import refspec
+import lusee
+
 import os
 
+# ---
 beam = lusee.Beam(os.environ['LUSEE_DRIVE_DIR']+"Simulations/BeamModels/LanderRegolithComparison/eight_layer_regolith/hfss_lbl_3m_75deg.2port.fits")
 
 f = np.logspace(-2,np.log10(50.),1000)
@@ -45,10 +50,9 @@ def measure  (Nsec=1, PF_amplitude=0.0006,  tone=None, bit_level=1/(2**13),bits=
     cfg.zoomin_st    = 0
     cfg.zoomin_en    = 5*4; # 500 kHz times 4 / 100kHz
 
-    helper = refspec.SpecConfigHelper()
-
-    helper.set_zoom(cfg, 5, 4, None)
-    # cfg.set_zoom(5,4,None)
+    helper = refspec.SpecConfigHelper(cfg)
+    helper.set_zoom(5, 4, None)
+ 
     
     cfg.Nchannels       = 1
     cfg.Average1Size    = 60
