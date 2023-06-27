@@ -1,4 +1,4 @@
-FROM lusee/lusee-night-refspec-foundation:0.1
+FROM lusee/lusee-night-refspec-foundation:1.0
 
 RUN pip install --upgrade pip
 RUN pip install numpy cppyy scipy
