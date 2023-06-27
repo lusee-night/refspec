@@ -11,7 +11,7 @@ on:
 jobs:
   refcpec-build:
     runs-on: ubuntu-latest
-    container: lusee/lusee-night-refspec-cppyy:0.1 
+    container: lusee/lusee-night-refspec-cppyy:1.0 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
