@@ -1,6 +1,8 @@
 import cppyy
 from cppyy import ll
 
+__version__ = '1.0'
+
 headers = [
     'CombSource.h',
     'FileStreamSource.h',
