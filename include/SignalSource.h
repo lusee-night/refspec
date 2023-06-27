@@ -34,6 +34,8 @@ class SignalSource {
   void set_verbose(bool v) {verbose=v;}
   bool get_verbose(void) {return verbose;}
  
+  virtual ~SignalSource() {}
+  
  protected:
   size_t block_size, Nchannels;
   float **internal;

@@ -1,14 +1,23 @@
 FROM lusee/lusee-night-refspec-foundation:0.1
 
-RUN pip install numpy cppyy
+RUN pip install --upgrade pip
+RUN pip install numpy cppyy scipy
 #
-COPY cppyy /user/cppyy
-RUN rm -fr /user/cppyy/__*
+WORKDIR /user/refspec
+COPY cppyy /user/refspec/cppyy
+RUN rm -fr /user/refspec/cppyy/__*
 #
-COPY include /user/include
-COPY refspec.so /user
+COPY include    /user/refspec/include
+COPY src        /user/refspec/src
+COPY data       /user/refspec/data
+COPY testdata   /user/refspec/testdata
+COPY scripts    /user/refspec/scripts
+COPY test       /user/refspec/test
+#
+COPY refspec.so /usr/local/lib
 #
 
 ENV LD_LIBRARY_PATH=/user:$LD_LIBRARY_PATH
-ENV CPATH=/user/include:$CPATH
-
+ENV CPATH=/user/refspec/include:$CPATH
+ENV REFSPEC_PATH=/user/refspec
+ENV PYTHONPATH=$REFSPEC_PATH/cppyy

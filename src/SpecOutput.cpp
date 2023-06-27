@@ -9,7 +9,7 @@ SpecOutput::SpecOutput (SpecConfig const *config) :
 
   Nspec = Nchannels*Nchannels; // think about matrix;
   Nbins = Nfft / 2 + 1;
-  Nbins_zoom = (config->zoomin_en-config->zoomin_st) * config->zoomin_fact;
+  Nbins_zoom = (config->zoomin_en-config->zoomin_st) * config->zoom_weights.size();
   allocate();
 }
 
@@ -36,12 +36,12 @@ void SpecOutput::allocate() {
 }
 
 void SpecOutput::zero() {
-    for (size_t i=0;i<Nspec;i++) {
-      for (size_t j=0;j<Nbins;j++) avg_pspec[i][j] = 0.0; 
-      if (Nbins_zoom>0)
-	for (size_t j=0;j<Nbins_zoom;j++) avg_pspec_zoom[i][j] = 0.0; 
-    }
-    Nradiometer = 0.0;
+  for (size_t i=0;i<Nspec;i++) {
+    for (size_t j=0;j<Nbins;j++) avg_pspec[i][j] = 0.0; 
+    if (Nbins_zoom>0)
+      for (size_t j=0;j<Nbins_zoom;j++) avg_pspec_zoom[i][j] = 0.0; 
+  }
+  Nradiometer = 0.0;
 }
 
 
