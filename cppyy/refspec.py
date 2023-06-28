@@ -3,7 +3,7 @@ from    cppyy import ll
 import  numpy as np
 import  scipy.linalg as la
 
-__version__ = '1.0'
+__version__ = '1.2-dev'
 
 headers = [
     'CombSource.h',
