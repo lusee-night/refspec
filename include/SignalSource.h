@@ -15,7 +15,7 @@ class SignalSource {
     block_size(block_size), Nchannels(Nchannels), internal(NULL), Ninternal(0), verbose(verb) {}
 
   virtual void next_block(float **place) = 0; 
-  virtual void next_block() {};
+  virtual void next_block() { next_block(internal); }
 
   void init_internal(int N) {
     internal = new float*[N];

@@ -70,7 +70,4 @@ void CombSource::next_block(float **place) {
   for (size_t i=0;i<Nchannels;i++) place[i]=buffer;
 }
   
-void CombSource::next_block() {
-  next_block(internal);
-}
   
