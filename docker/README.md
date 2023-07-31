@@ -17,7 +17,12 @@ docker run -it --rm -v /home/user/projects/lusee/refspec:/user buddhasystem/luse
 In the above, the local user directory (which needs to be adjusted
 to the actual situation) containing the refspec folder is mapped to
 the internal ```/user``` directory in the running container.
-Usual ```bash``` commands can be used interactively at this point.
+
+## Foundation
+
+The _foundation_ image is based on a recent version of __Debian__, with FFTW software
+added. The intent is to keep this relatively static part intact, building images
+such as _lusee/lusee-night-refspec-cppyy:1.0_ on top of it.
 
 ## Environment
 
