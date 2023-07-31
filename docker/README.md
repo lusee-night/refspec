@@ -7,6 +7,10 @@ These Dockerfiles should be used from the folder one level above, e.g.
 docker build . -t lusee/lusee-night-refspec-foundation:1.0 -f docker/Dockerfile-foundation
 ```
 
+The "foundation" image is a recent version of __Debian__ with Python 3.10, and FFTW software
+compiled and installed on top of it. It is used (as the name suggests) to built subsequent
+_refspec-cppyy_ images and by extention, the _luseepy_.
+
 To run with a local copy of the _refspec_ code, a command similar to the following one should be used,
 substituting "user" with the desired user name:
 
