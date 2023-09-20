@@ -29,7 +29,7 @@ for header in headers:
         print(f'''Error loading {header}, exiting''')
         exit(-1)
 
-cppyy.load_library('/user/refspec/refspec.so')
+cppyy.load_library('/user/refspec/librefspec.so')
 
 # ---
 from cppyy.gbl import   CombSource, \

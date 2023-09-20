@@ -187,7 +187,7 @@ int main(int argc, char *argv[]) {
 
   
   for (size_t i=0;i<Ngo;i++) {
-    
+    std::cout <<"--------" <<std::endl;
     S.run(&O);
 
     std::cout << "RMS : ";
@@ -213,6 +213,7 @@ int main(int argc, char *argv[]) {
     if (cfg.notch) {
       for (size_t i=1;i<cfg.Nbins();i++) {
         std::complex<float> v = O.get_notch_out(0,i);
+        if (i==2) std::cout << v.real() << " " << v.imag() << std::endl;
         ofn << v.real() << " " << v.imag() << " ";
       }  
       ofn << std::endl;

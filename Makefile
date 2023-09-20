@@ -13,7 +13,7 @@ HDRS = SpecConfig.h SpecOutput.h SignalGenerator.h SignalCombiner.h RefSpectrome
 
 OBJS := $(patsubst %.cpp, $(BUILD)/%.o, $(SRCS) )
 
-LIBRARY = refspec.so
+LIBRARY = librefspec.so
 
 all: LIBRARY
 

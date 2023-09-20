@@ -45,6 +45,14 @@ void SpecOutput::zero() {
     if (Nbins_zoom>0)
       for (size_t j=0;j<Nbins_zoom;j++) avg_pspec_zoom[i][j] = 0.0; 
   }
+  if (notch_out) {
+    for (size_t i=0;i<Nspec;i++) {
+      for (size_t j=0;j<Nbins;j++) {
+          notch_out[i][j][0] = 0.0;
+          notch_out[i][j][1] = 0.0;
+      }   
+    }
+  }
   Nradiometer = 0.0;
 }
 
@@ -56,6 +64,14 @@ SpecOutput& SpecOutput::operator+=(SpecOutput& toadd) {
     if (Nbins_zoom>0)
       for (size_t j=0;j<Nbins_zoom;j++) avg_pspec_zoom[i][j] += toadd.avg_pspec_zoom[i][j]; 
   }
+  if (notch_out){
+    for (size_t i=0;i<Nspec;i++) {
+      for (size_t j=0;j<Nbins;j++) {
+          notch_out[i][j][0] += toadd.notch_out[i][j][0];
+          notch_out[i][j][1] += toadd.notch_out[i][j][1];
+      }
+    }
+  }
   Nradiometer += toadd.Nradiometer;
   return *this;
 }
@@ -66,6 +82,14 @@ SpecOutput& SpecOutput::operator/=(float V) {
     for (size_t j=0;j<Nbins;j++) avg_pspec[i][j] /= V;
     if (Nbins_zoom>0)
       for (size_t j=0;j<Nbins_zoom;j++) avg_pspec_zoom[i][j] /= V;
+  }
+  if (notch_out){
+    for (size_t i=0;i<Nspec;i++) {
+      for (size_t j=0;j<Nbins;j++) {
+          notch_out[i][j][0] /= V;
+          notch_out[i][j][1] /= V;
+      }
+    }
   }
   return *this;
 }

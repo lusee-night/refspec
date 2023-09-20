@@ -210,7 +210,7 @@ void RefSpectrometer::run (SpecOutput *res) {
 
 void RefSpectrometer::process_output(SpecOutput *res) {
 
-    
+  
   // Notch filter
   if (c->notch) {
     for (size_t i=0;i<c->Nchannels;i++) {
@@ -222,8 +222,11 @@ void RefSpectrometer::process_output(SpecOutput *res) {
 	      }
 	      mean[0] /= c->Average1Size;
 	      mean[1] /= c->Average1Size;
+
         res->notch_out[i][k][0]=mean[0];
         res->notch_out[i][k][1]=mean[1];
+        if (k==2)
+          std::cout << res->notch_out[i][k][0] <<std::endl;
 	      for (size_t j=0;j<c->Average1Size;j++) {
 	        pfb_out[j][i][k][0] -= mean[0];
 	        pfb_out[j][i][k][1] -= mean[1];
