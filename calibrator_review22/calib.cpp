@@ -39,10 +39,10 @@ int main(int argc, char *argv[]) {
   cfg.Nfft            = 4096;
   cfg.Ntaps           = 6;
   cfg.Nchannels       = 1;
-  cfg.Average1Size    = 50;
-  cfg.Average2Size    = 20;
-  cfg.notch           = false;
-  cfg.Ncalib          = 1024;
+  cfg.Average1Size    = 16; // now set by Nnotch
+  cfg.Average2Size    = 1;
+  cfg.notch           = true;
+  cfg.Ncalib          = 0; // 1024; now we are doing it the new way
   cfg.calib_odd       = true;
 
   std::string pk_fname="data/Pk/Pk_wnoise.txt";
@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
     ["-c"]["--cal"]("cal signal")
     | lyra::opt (cfg.notch)
     ["-n"]["--notch"]("spectral Notch")
-    | lyra::opt (cal_A, "calibratot rescaling")
+    | lyra::opt (cal_A, "calibrator rescaling")
     ["-A"]["--ampl"]("Calibration amplitude rescaling")
     | lyra::opt (Ngo, "N_go")
     ["-N"]["--Ngo"]("Number of big samples")
@@ -177,9 +177,12 @@ int main(int argc, char *argv[]) {
   std::ofstream of(out_root+"powspec.txt");
   std::ofstream ofc(out_root+"calib.txt");
   std::ofstream ofc2(out_root+"calib_meta.txt");
+  std::ofstream ofn(out_root+"notch.txt");
+
   of<<std::setprecision(16);
   ofc<<std::setprecision(16);
   ofc2<<std::setprecision(16);
+  ofn<<std::setprecision(16);
 
 
   
@@ -198,17 +201,29 @@ int main(int argc, char *argv[]) {
     }
     of << std::endl; 
 
-    for (size_t i=0;i<cfg.Ncalib;i++) {
-      ofc <<  O.calib_out[0][i] << " ";
-	}
-    ofc << std::endl;
-
+    if (cfg.Ncalib>0) {
+      for (size_t i=0;i<cfg.Ncalib;i++) {
+        ofc <<  O.calib_out[0][i] << " ";
+      }
+      ofc << std::endl;
+    
     ofc2 << O.calib_drift_count << " " <<O.calib_det <<std::endl;
+    }
+
+    if (cfg.notch) {
+      for (size_t i=1;i<cfg.Nbins();i++) {
+        std::complex<float> v = O.get_notch_out(0,i);
+        ofn << v.real() << " " << v.imag() << " ";
+      }  
+      ofn << std::endl;
+    }
+
   }
   
   of.close();
   ofc.close();
   ofc2.close();
+  ofn.close();
 
   if (sky_signal) delete SigNoise;
   if (pf_signal) delete PF;

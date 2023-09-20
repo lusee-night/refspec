@@ -10,7 +10,7 @@ SpecOutput::SpecOutput (SpecConfig const *config) :
   Nspec = Nchannels*Nchannels; // think about matrix;
   Nbins = Nfft / 2 + 1;
   Nbins_zoom = (config->zoomin_en-config->zoomin_st) * config->zoom_weights.size();
-  allocate();
+  allocate(config->notch);
 }
 
 SpecOutput::SpecOutput (SpecOutput const &S) :
@@ -18,11 +18,11 @@ SpecOutput::SpecOutput (SpecOutput const &S) :
   Nspec(S.Nspec), Nbins(S.Nbins), Nbins_zoom(S.Nbins_zoom),
   constructed(true)
 {
-  allocate();
+  allocate((notch_out!=NULL));
 }
 
 
-void SpecOutput::allocate() {
+void SpecOutput::allocate(bool do_notch) {
     avg_pspec = new float*[Nspec];
     if (Nbins_zoom>0) avg_pspec_zoom = new float*[Nspec];
     for (size_t i=0;i<Nspec;i++) {
@@ -33,6 +33,10 @@ void SpecOutput::allocate() {
       calib_out = new float*[Nchannels];
       for (size_t i=0;i<Nchannels;i++) calib_out[i] = new float[Ncalib];
     }
+    if (do_notch) {
+      notch_out= new fftwf_complex*[Nchannels];
+      for (size_t i=0;i<Nchannels;i++) notch_out[i] = new fftwf_complex[Nbins];
+    } else notch_out = NULL;
 }
 
 void SpecOutput::zero() {
@@ -93,5 +97,8 @@ SpecOutput::~SpecOutput() {
       for (size_t i=0;i<Nchannels;i++) delete calib_out[i];
       delete calib_out;
     }
+    if (notch_out) {
+      for (size_t i=0;i<Nchannels;i++) delete notch_out[i];
+      delete notch_out;}
   }
 }

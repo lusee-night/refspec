@@ -222,6 +222,8 @@ void RefSpectrometer::process_output(SpecOutput *res) {
 	      }
 	      mean[0] /= c->Average1Size;
 	      mean[1] /= c->Average1Size;
+        res->notch_out[i][k][0]=mean[0];
+        res->notch_out[i][k][1]=mean[1];
 	      for (size_t j=0;j<c->Average1Size;j++) {
 	        pfb_out[j][i][k][0] -= mean[0];
 	        pfb_out[j][i][k][1] -= mean[1];

@@ -35,6 +35,7 @@ struct  SpecConfig {
   uint32_t MinGenSize() const {return AverageSize() + Ntaps;} 
   
   // calibrator detector_setup
+  // likely to be deprecated soon
   size_t Ncalib;
   bool   calib_odd; // use calibrator 
   size_t calib_subint; // sub integration for clock tracking
