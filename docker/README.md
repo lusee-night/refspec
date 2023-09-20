@@ -4,14 +4,18 @@
 
 These Dockerfiles should be used from the folder one level above, e.g.
 ```bash
-docker build . -t lusee/lusee-night-refspec-foundation:0.1 -f docker/Dockerfile-foundation
+docker build . -t lusee/lusee-night-refspec-foundation:1.0 -f docker/Dockerfile-foundation
 ```
 
-To check a local copy of the refspec code, a command similar to the following one should be used
-at the time of writing, substituting "user" with the desited user name:
+The "foundation" image is a recent version of __Debian__ with Python 3.10, and FFTW software
+compiled and installed on top of it. It is used (as the name suggests) to built subsequent
+_refspec-cppyy_ images and by extention, the _luseepy_.
+
+To run with a local copy of the _refspec_ code, a command similar to the following one should be used,
+substituting "user" with the desired user name:
 
 ```bash
-docker run -it --rm -v /home/user/projects/lusee/refspec:/user buddhasystem/lusee-night-refspec-foundation:0.1 bash
+docker run -it --rm -v /home/user/projects/lusee/refspec:/user buddhasystem/lusee-night-refspec-foundation:1.0 bash
 ```
 
 In the above, the local user directory (which needs to be adjusted
